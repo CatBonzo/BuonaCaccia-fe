@@ -1,0 +1,25 @@
+<header class="top">
+  @if (menu.narrow() && menu.hasMenu()) {
+    <button mat-icon-button type="button" aria-label="Apri il menu" (click)="menuToggle.emit()" data-testid="menu-toggle">
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
+  <a class="brand" routerLink="/eventi">Buona Caccia</a>
+  <span class="spacer"></span>
+  <button
+    mat-icon-button
+    type="button"
+    class="theme"
+    (click)="themes.cycle()"
+    [attr.aria-label]="themes.theme() === null ? 'Tema: come il sistema. Cambia' : themes.theme() === 'light' ? 'Tema: chiaro. Cambia' : 'Tema: scuro. Cambia'"
+    data-testid="theme"
+  >
+    <mat-icon>{{ themes.theme() === null ? 'brightness_auto' : themes.theme() === 'light' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+  @if (session.loggedIn()) {
+    <a mat-button routerLink="/profilo" class="who" data-testid="who">{{ session.fullName() }}</a>
+    <button mat-button type="button" data-testid="logout" (click)="logout()">Esci</button>
+  } @else {
+    <a mat-flat-button routerLink="/login" data-testid="login">Accedi</a>
+  }
+</header>

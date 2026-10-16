@@ -1,0 +1,16 @@
+<app-navbar (menuToggle)="nav.toggle()" />
+<mat-sidenav-container class="container">
+  <mat-sidenav
+    #nav
+    class="nav"
+    [mode]="menu.narrow() ? 'over' : 'side'"
+    [opened]="!menu.narrow() && menu.hasMenu()"
+    [class.hidden]="!menu.hasMenu()"
+  >
+    <app-sidebar />
+  </mat-sidenav>
+  <mat-sidenav-content class="content">
+    <main><router-outlet /></main>
+    <app-footer />
+  </mat-sidenav-content>
+</mat-sidenav-container>

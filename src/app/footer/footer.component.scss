@@ -1,0 +1,10 @@
+footer {
+  margin-top: 48px;
+  padding: 24px 0 8px;
+  border-top: 1px solid var(--bc-line);
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-body-medium);
+}
+p { margin: 2px 0; }
+.brand { font: var(--mat-sys-title-medium); font-weight: 700; color: var(--mat-sys-primary); }
+.small { font: var(--mat-sys-body-small); }

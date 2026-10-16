@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  margin-bottom: 8px;
+  // I campi che la testata contiene stanno su fondo chiaro, per staccare dal verde.
+  --mat-form-field-filled-container-color: var(--mat-sys-surface-container-lowest);
+}
+section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 36px 32px 28px;
+  border-radius: 20px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+// Le curve di livello di una carta topografica: il sentiero che porta all'evento. E' una maschera, cosi' prende il colore del tema.
+section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--mat-sys-primary);
+  opacity: 0.3;
+  -webkit-mask: url('/contour.svg') center / cover no-repeat;
+  mask: url('/contour.svg') center / cover no-repeat;
+  animation: contour-in 900ms ease-out both;
+}
+@keyframes contour-in { from { opacity: 0; transform: scale(1.04); } to { opacity: 0.3; transform: none; } }
+h1 {
+  margin: 0;
+  font-size: clamp(2.6rem, 7vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: inherit;
+}
+.lead { margin: 12px 0 24px; max-width: 34ch; font: var(--mat-sys-title-large); }
+@media (max-width: 720px) {
+  section { padding: 24px 16px 20px; border-radius: 16px; }
+}

@@ -23,6 +23,7 @@ const MENU: MenuItem[] = [
   { label: 'Documenti da validare', path: '/segreteria/documenti', icon: 'fact_check', entitlement: 'iscrizione:gestione' },
   { label: 'Gestione eventi', path: '/segreteria/eventi', icon: 'edit_calendar', entitlement: 'evento:gestione' },
   { label: 'Pagamenti', path: '/segreteria/pagamenti', icon: 'payments', entitlement: 'pagamento:registrazione' },
+  { label: 'Rimborsi', path: '/segreteria/rimborsi', icon: 'currency_exchange', entitlement: 'pagamento:registrazione' },
   { label: 'Tipi di evento', path: '/amministrazione/tipi-evento', icon: 'category', entitlement: 'tipoevento:gestione' },
 ];
 

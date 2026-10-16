@@ -1,0 +1,93 @@
+<h1>Rimborsi</h1>
+
+<div class="filters">
+  <mat-form-field class="event">
+    <mat-label>Evento</mat-label>
+    <mat-select name="eventId" [(ngModel)]="eventId" (selectionChange)="filter()" data-testid="event">
+      <mat-option value="">Tutti gli eventi</mat-option>
+      @for (e of events(); track e.id) {
+        <mat-option [value]="e.id">{{ e.title }} ({{ e.code }})</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Stato</mat-label>
+    <mat-select name="status" [(ngModel)]="status" (selectionChange)="filter()" data-testid="status-filter">
+      <mat-option value="">Tutti</mat-option>
+      @for (s of statuses; track s[0]) {
+        <mat-option [value]="s[0]">{{ s[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</div>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p class="error" role="alert" data-testid="refund-error">{{ message }}</p>
+}
+@if (!loading() && refunds().length === 0) {
+  <p data-testid="empty">Nessun rimborso con questi filtri.</p>
+}
+
+<div class="list">
+  @for (r of refunds(); track r.id) {
+    <mat-card appearance="outlined" [attr.data-refund]="r.id">
+      <mat-card-header>
+        <mat-card-title>{{ r.amount | currency: 'EUR' }} a {{ r.participantName }}</mat-card-title>
+        <mat-card-subtitle>{{ r.enrollmentNumber }} · {{ r.eventCode }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set><mat-chip data-testid="refund-status">{{ labelOf(statusLabels, r.status) }}</mat-chip></mat-chip-set>
+        <p>{{ labelOf(closingLabels, r.closingReason) }} · richiesto il {{ r.createdAt | date: 'd MMM y' }}</p>
+        @if (r.status === 'ISSUED') {
+          <p data-testid="issued">Emesso il {{ r.issuedOn | date: 'd MMM y' }}{{ r.reference ? ' · riferimento ' + r.reference : '' }}</p>
+        }
+        @if (r.status === 'REJECTED' && r.rejectReason) {
+          <p data-testid="rejected">Rifiutato: {{ r.rejectReason }}</p>
+        }
+
+        @if (issuing() === r.id) {
+          <div class="form">
+            <mat-form-field>
+              <mat-label>Data del rimborso</mat-label>
+              <input matInput type="date" name="issuedOn" [(ngModel)]="issuedOn" data-testid="issued-on" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Riferimento del bonifico</mat-label>
+              <input matInput name="reference" [(ngModel)]="reference" data-testid="reference" />
+            </mat-form-field>
+            <button mat-flat-button type="button" data-testid="confirm-issue" (click)="issue(r)">Segna come emesso</button>
+            <button mat-button type="button" (click)="issuing.set(null)">Indietro</button>
+          </div>
+        }
+        @if (rejecting() === r.id) {
+          <div class="form">
+            <mat-form-field>
+              <mat-label>Motivo del rifiuto</mat-label>
+              <textarea matInput rows="2" name="reason" [(ngModel)]="reason" data-testid="reject-reason"></textarea>
+            </mat-form-field>
+            <button mat-flat-button type="button" data-testid="confirm-reject" (click)="reject(r)">Conferma il rifiuto</button>
+            <button mat-button type="button" (click)="rejecting.set(null)">Indietro</button>
+          </div>
+        }
+      </mat-card-content>
+      @if (issuing() !== r.id && rejecting() !== r.id) {
+        <mat-card-actions>
+          @if (r.status === 'REQUESTED') {
+            <button mat-button type="button" data-testid="take" (click)="take(r)">Prendi in carico</button>
+          }
+          @if (r.status === 'IN_PROGRESS') {
+            <button mat-button type="button" data-testid="issue" (click)="startIssue(r)">Segna come emesso</button>
+          }
+          @if (r.status === 'REQUESTED' || r.status === 'IN_PROGRESS') {
+            <button mat-button type="button" data-testid="reject" (click)="startReject(r)">Rifiuta</button>
+          }
+        </mat-card-actions>
+      }
+    </mat-card>
+  }
+</div>
+
+<mat-paginator [length]="total()" [pageSize]="pageSize" [pageIndex]="pageIndex()" [hidePageSize]="true" (page)="onPage($event)" aria-label="Pagine dei rimborsi" />

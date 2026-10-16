@@ -55,7 +55,7 @@ export class Payments {
   protected reason = '';
 
   constructor() {
-    this.api.invoke(eventManaged, { size: 100, sort: 'title,asc' }).then(
+    this.api.invoke(eventManaged, { size: 100, sort: 'createdAt,desc' }).then(
       (r) => this.events.set((r.payload?.content ?? []).filter((e) => e.status !== 'DRAFT' && (e.fee ?? 0) > 0)),
       (e: ApiError) => this.error.set(e.message),
     );

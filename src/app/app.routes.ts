@@ -51,6 +51,12 @@ export const routes: Routes = [
         data: { entitlement: 'pagamento:registrazione' },
         loadComponent: () => import('./pages/segreteria/payments').then((m) => m.Payments),
       },
+      {
+        path: 'segreteria/rimborsi',
+        canActivate: [authGuard, entitlementGuard],
+        data: { entitlement: 'pagamento:registrazione' },
+        loadComponent: () => import('./pages/segreteria/refund-queue').then((m) => m.RefundQueue),
+      },
       { path: 'profilo', canActivate: [authGuard], loadComponent: () => import('./pages/home/home').then((m) => m.Home) },
     ],
   },

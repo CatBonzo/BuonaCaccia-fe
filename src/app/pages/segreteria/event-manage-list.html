@@ -58,6 +58,9 @@
         @if (e.status !== 'DRAFT') {
           <a mat-button routerLink="/segreteria/iscrizioni" [queryParams]="{ evento: e.id }" data-testid="enrollments">Iscrizioni</a>
         }
+        @if (e.status !== 'DRAFT' && (e.fee ?? 0) > 0 && session.can('pagamento:registrazione')) {
+          <a mat-button routerLink="/segreteria/pagamenti" [queryParams]="{ evento: e.id }" data-testid="payments">Pagamenti</a>
+        }
         @if (can(e, 'EDIT')) {
           <a mat-button [routerLink]="['/segreteria/eventi', e.id, 'modifica']" data-testid="edit">Modifica</a>
         }

@@ -1,0 +1,108 @@
+<h1>Pagamenti</h1>
+
+<mat-form-field class="event">
+  <mat-label>Evento a pagamento</mat-label>
+  <mat-select name="eventId" [(ngModel)]="eventId" (selectionChange)="pick()" data-testid="event">
+    @for (e of events(); track e.id) {
+      <mat-option [value]="e.id">{{ e.title }} ({{ e.code }})</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p class="error" role="alert" data-testid="payment-error">{{ message }}</p>
+}
+@if (!eventId) {
+  <p data-testid="pick-event">Scegli un evento per vedere i suoi pagamenti.</p>
+}
+
+@if (report(); as r) {
+  <section class="totals" aria-label="Totali">
+    <mat-card appearance="outlined"><mat-card-content><span>Incassato</span><strong data-testid="collected">{{ r.collected | currency: 'EUR' }}</strong></mat-card-content></mat-card>
+    <mat-card appearance="outlined"><mat-card-content><span>Rimborsato</span><strong data-testid="refunded">{{ r.refunded | currency: 'EUR' }}</strong></mat-card-content></mat-card>
+    <mat-card appearance="outlined"><mat-card-content><span>Da rimborsare</span><strong data-testid="to-refund">{{ r.toRefund | currency: 'EUR' }}</strong></mat-card-content></mat-card>
+    <mat-card appearance="outlined"><mat-card-content><span>Annullato</span><strong>{{ r.cancelled | currency: 'EUR' }}</strong></mat-card-content></mat-card>
+  </section>
+  <p><button mat-stroked-button type="button" data-testid="export" (click)="exportCsv()">Scarica il CSV</button></p>
+
+  <h2>Da incassare</h2>
+  @if (owing().length === 0) {
+    <p data-testid="nothing-owed">Nessuna iscrizione con un residuo da pagare.</p>
+  }
+  <div class="list">
+    @for (e of owing(); track e.id) {
+      <mat-card appearance="outlined" [attr.data-enrollment]="e.number">
+        <mat-card-header>
+          <mat-card-title>{{ e.participantName }}</mat-card-title>
+          <mat-card-subtitle>{{ e.number }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p data-testid="owed">Pagato {{ e.payment?.paid | currency: 'EUR' }} su {{ e.payment?.fee | currency: 'EUR' }}, residuo {{ e.payment?.due | currency: 'EUR' }}.</p>
+          @if (registering() === e.id) {
+            <div class="form">
+              <mat-form-field>
+                <mat-label>Importo (€)</mat-label>
+                <input matInput type="number" min="0.01" step="0.01" name="amount" [(ngModel)]="amount" data-testid="amount" />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Data dell'incasso</mat-label>
+                <input matInput type="date" name="receivedOn" [(ngModel)]="receivedOn" data-testid="received-on" />
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Riferimento del bonifico</mat-label>
+                <input matInput name="reference" [(ngModel)]="reference" data-testid="reference" />
+              </mat-form-field>
+              <button mat-flat-button type="button" data-testid="confirm-register" (click)="register(e)">Registra</button>
+              <button mat-button type="button" (click)="registering.set(null)">Non registrare</button>
+            </div>
+          }
+        </mat-card-content>
+        @if (registering() !== e.id) {
+          <mat-card-actions>
+            <button mat-button type="button" data-testid="register" (click)="startRegister(e)">Registra bonifico</button>
+          </mat-card-actions>
+        }
+      </mat-card>
+    }
+  </div>
+
+  <h2>Pagamenti registrati</h2>
+  @if (!r.payments?.length) {
+    <p data-testid="no-payments">Nessun pagamento registrato.</p>
+  }
+  <div class="list">
+    @for (p of r.payments; track p.id) {
+      <mat-card appearance="outlined" [attr.data-payment]="p.id">
+        <mat-card-header>
+          <mat-card-title>{{ p.amount | currency: 'EUR' }}</mat-card-title>
+          <mat-card-subtitle>{{ p.enrollmentNumber }} · incassato il {{ p.receivedOn | date: 'd MMM y' }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-chip-set><mat-chip data-testid="payment-status">{{ p.status === 'VALID' ? 'Valido' : 'Annullato' }}</mat-chip></mat-chip-set>
+          @if (p.reference) {
+            <p>Riferimento: {{ p.reference }}</p>
+          }
+          @if (p.status === 'CANCELLED' && p.cancelReason) {
+            <p>Annullato: {{ p.cancelReason }}</p>
+          }
+          @if (cancelling() === p.id) {
+            <mat-form-field class="full">
+              <mat-label>Motivo dell'annullamento</mat-label>
+              <textarea matInput rows="2" name="reason" [(ngModel)]="reason" data-testid="cancel-reason"></textarea>
+            </mat-form-field>
+            <button mat-flat-button type="button" data-testid="confirm-cancel" (click)="cancel(p)">Conferma l'annullamento</button>
+            <button mat-button type="button" (click)="cancelling.set(null)">Non annullare</button>
+          }
+        </mat-card-content>
+        @if (p.status === 'VALID' && cancelling() !== p.id) {
+          <mat-card-actions>
+            <button mat-button type="button" data-testid="cancel" (click)="startCancel(p)">Annulla pagamento</button>
+          </mat-card-actions>
+        }
+      </mat-card>
+    }
+  </div>
+}

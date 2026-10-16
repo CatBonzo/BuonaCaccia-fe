@@ -1,0 +1,7 @@
+.event { min-width: 320px; }
+.totals { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin: 16px 0; }
+.totals mat-card-content { display: flex; flex-direction: column; gap: 4px; }
+.list { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.form { display: flex; flex-direction: column; }
+.full { width: 100%; }
+.error { color: var(--mat-sys-error); }

@@ -78,6 +78,14 @@ Artefatti: ramo 006-segreteria-iscrizioni, pages/segreteria (enrollment-manage, 
 Problemi: (1) la segreteria non ha un'azione per rifiutare un adempimento: l'endpoint e' dei capi; (2) il test sulla coda ha avuto una corsa: il clic partiva prima che il filtro per evento fosse applicato, risolto aspettando che resti una sola scheda.
 Spunto: dove il backend non offre un'azione il frontend non deve inventarla: lo si annota nel registro e si decide con la persona se serve.
 
+[2026-10-16] Pagamenti della segreteria (F4c): il test scopre una regola che il codice non diceva
+Cosa: schermata dei pagamenti di un evento: totali, iscrizioni con residuo, registrazione di un bonifico (anche parziale), annullamento con motivo, CSV per la riconciliazione.
+Chi: Claude, nel seguito della F4 concordata con Mahima.
+Paradigma: contract-first e loop engineering: il primo scenario e2e e' fallito perche' il backend rifiuta i bonifici prima dell'autorizzazione del capo (409); il test e' stato corretto sulla regola reale e la schermata mostra l'errore del backend invece di copiare la regola.
+Artefatti: ramo 007-segreteria-pagamenti, pages/segreteria/payments, core/file-download.ts, e2e/pagamenti.spec.ts.
+Problemi: (1) il CSV e' descritto come testo JSON (stesso problema dei documenti); (2) il riepilogo non porta l'id delle iscrizioni con residuo, quindi servono due chiamate.
+Spunto: due difetti dello stesso tipo (file descritti come JSON) in due schermate diverse: segnale che conviene correggerli una volta nel backend, non aggirarli ogni volta.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

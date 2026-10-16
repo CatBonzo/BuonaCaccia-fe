@@ -19,6 +19,7 @@ import { eventPublish } from '../../api/fn/events/event-publish';
 import { EventDto } from '../../api/models';
 import { ApiError } from '../../core/api-error';
 import { STATUS_LABELS, label } from '../../core/labels';
+import { SessionService } from '../../core/session.service';
 
 const PAGE_SIZE = 12;
 
@@ -35,6 +36,7 @@ const PAGE_SIZE = 12;
 export class EventManageList {
   private readonly api = inject(Api);
   private readonly snackBar = inject(MatSnackBar);
+  protected readonly session = inject(SessionService);
 
   protected readonly events = signal<EventDto[]>([]);
   protected readonly total = signal(0);

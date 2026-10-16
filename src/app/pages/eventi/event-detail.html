@@ -83,6 +83,32 @@
       </ul>
     }
 
-    <p class="hint">L'iscrizione arriva con la prossima fase.</p>
+    <section class="enroll">
+      @if (e.status === 'CANCELLED') {
+        <!-- niente iscrizione a un evento annullato -->
+      } @else if (!session.loggedIn()) {
+        <a mat-flat-button routerLink="/login" data-testid="login-to-enroll">Accedi per iscriverti</a>
+      } @else if (!session.can('iscrizione:self')) {
+        <p class="hint">Il tuo profilo non può iscriversi agli eventi.</p>
+      } @else if (canEnroll(e)) {
+        <button mat-flat-button type="button" data-testid="enroll" [disabled]="enrolling()" (click)="enroll(e)">
+          {{ e.availability === 'HEAVY_OVERBOOKING' ? 'Mettiti in lista d\u2019attesa' : 'Iscriviti' }}
+        </button>
+      } @else {
+        <p class="hint">{{ labelOf(availabilityLabels, e.availability) }}.</p>
+      }
+      @if (enrollError(); as err) {
+        <div class="error" role="alert" data-testid="enroll-error">
+          <p>{{ err.message }}</p>
+          @if (err.details.length) {
+            <ul>
+              @for (d of err.details; track $index) {
+                <li>{{ d.message }}</li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </section>
   </article>
 }

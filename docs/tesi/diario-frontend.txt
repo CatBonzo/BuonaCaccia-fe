@@ -30,6 +30,14 @@ Artefatti: pages/eventi (elenco e dettaglio), core/labels.ts, e2e/catalogo.spec.
 Problemi: (1) l'interfaccia mostrava i posti vuoti: il locale italiano non era registrato in Angular e il formato della valuta andava in errore, cosa visibile solo aprendo la pagina in un browser vero, non nei test unitari; (2) per pubblicare un evento di prova il backend chiede zona solo per eventi di zona e la modalita' di iscrizione: i messaggi di errore per campo hanno permesso di correggere il dato al primo tentativo.
 Spunto: gli errori per campo dell'API (422 con nome del campo) sono costati zero fatica al consumatore: un buon contratto di errore e' parte del contratto.
 
+[2026-10-16] Iscrizione del socio (F2): gli errori del backend diventano frasi per la persona
+Cosa: dal dettaglio di un evento il socio si iscrive con un clic (o si mette in lista d'attesa se i posti sono finiti); la pagina "Le mie iscrizioni" mostra stato, posizione in lista, scadenza, adempimenti con il loro stato, dati per il bonifico e il ritiro con conferma. Chi non ha i requisiti vede tutti i motivi insieme (eta', branca, modalita' di iscrizione), non uno alla volta.
+Chi: Claude, su richiesta di Mahima di passare alla fase successiva.
+Paradigma: contract-first e "azioni disponibili" calcolate dal backend: il pulsante Ritira compare solo se la risposta dell'iscrizione contiene l'azione WITHDRAW, il frontend non ripete le regole (NFR-12 della specifica). Scenari end-to-end che ripuliscono dopo di se' (ritirano le iscrizioni di prova) perche' il tipo di evento ammette una sola iscrizione attiva.
+Artefatti: pages/iscrizioni, azione Iscriviti in pages/eventi/event-detail, ApiError con elenco dei motivi, e2e/iscrizione.spec.ts.
+Problemi: (1) l'errore dei requisiti (422) porta un elenco di motivi nel payload, mentre gli altri errori portano un solo campo: ApiError ora legge entrambe le forme; (2) nel contratto OpenAPI le azioni disponibili sono semplici stringhe, senza elenco dei valori possibili: il frontend deve conoscerle a parte (annotato nel registro dei contratti).
+Spunto: spostare nel backend la decisione "cosa puo' fare questa persona adesso" evita che le regole vivano in due posti e si contraddicano.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

@@ -47,6 +47,8 @@ Frontend del progetto di tesi "Buona Caccia" (iscrizioni agli eventi AGESCI). Il
 | 2026-10-16 | "Da incassare" si ricava dall'elenco iscrizioni (attive, con posto, residuo > 0), non dal campo `outstanding` della riconciliazione | `outstanding` non porta l'id dell'iscrizione, che serve per registrare il bonifico (vedi registro dei contratti) |
 | 2026-10-16 | Il blocco "il pagamento si abilita dopo l'autorizzazione del capo" non e' copiato nel frontend: si mostra l'errore del backend (409 40910) | La regola vive nel servizio; copiarla vorrebbe dire tenerla allineata in due posti |
 | 2026-10-16 | `FileDownload` (core/file-download.ts) scarica qualunque file come Blob; `DocumentDownload` lo usa | Il CSV ha lo stesso problema dei documenti: il contratto lo descrive come testo JSON |
+| 2026-10-16 | Coda rimborsi (`/segreteria/rimborsi`, permesso `pagamento:registrazione`): filtri evento e stato (di default "Da lavorare"), azioni prendi in carico / segna emesso (data, riferimento facoltativo) / rifiuta con motivo | Sono i tre passi che offre il backend; il motivo del rifiuto e' obbligatorio anche nella schermata per non aspettare l'errore. Le azioni mostrate seguono lo stato del rimborso, il backend resta l'arbitro |
+| 2026-10-16 | I menu degli eventi nelle pagine della segreteria sono ordinati dai piu' recenti (`createdAt,desc`), non per titolo | Con piu' di 100 eventi (capita nei dati di prova) quelli nuovi finivano oltre il limite e non si potevano scegliere; i recenti sono anche quelli che si cercano di solito |
 
 ## 4. Registro dei contratti
 

@@ -84,3 +84,10 @@ export function formatBytes(bytes: number | undefined): string {
   if (!bytes) return '';
   return bytes >= 1048576 ? `${(bytes / 1048576).toFixed(bytes % 1048576 ? 1 : 0)} MB` : `${Math.round(bytes / 1024)} KB`;
 }
+
+export const REFUND_STATUS_LABELS: Record<string, string> = {
+  REQUESTED: 'Da lavorare',
+  IN_PROGRESS: 'In lavorazione',
+  ISSUED: 'Emesso',
+  REJECTED: 'Rifiutato',
+};

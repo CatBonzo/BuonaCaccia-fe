@@ -1,0 +1,5 @@
+.filters { display: flex; flex-wrap: wrap; gap: 0 16px; align-items: baseline; }
+.event { min-width: 320px; }
+.list { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.form { display: flex; flex-direction: column; }
+.error { color: var(--mat-sys-error); }

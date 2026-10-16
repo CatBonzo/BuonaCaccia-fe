@@ -86,6 +86,14 @@ Artefatti: ramo 007-segreteria-pagamenti, pages/segreteria/payments, core/file-d
 Problemi: (1) il CSV e' descritto come testo JSON (stesso problema dei documenti); (2) il riepilogo non porta l'id delle iscrizioni con residuo, quindi servono due chiamate.
 Spunto: due difetti dello stesso tipo (file descritti come JSON) in due schermate diverse: segnale che conviene correggerli una volta nel backend, non aggirarli ogni volta.
 
+[2026-10-16] Rimborsi della segreteria (F4d): chiude il ciclo del denaro
+Cosa: coda dei rimborsi con filtri evento e stato; la segreteria prende in carico, segna emesso (data e riferimento) o rifiuta con motivo.
+Chi: Claude, come ultimo pezzo della F4 annunciato a Mahima dopo i pagamenti.
+Paradigma: SDD e test-first: il contratto dei rimborsi era gia' nel client generato, senza attriti; lo scenario e2e crea il rimborso dal backend (iscrizione, bonifico, ritiro) e poi guida la schermata.
+Artefatti: ramo 009-segreteria-rimborsi, pages/segreteria/refund-queue, e2e/rimborsi.spec.ts.
+Problemi: nessuno nel contratto; unico accorgimento, il filtro "Da lavorare" nasconde la scheda appena presa in carico, il test cambia filtro.
+Spunto: dopo gli interventi sul backend (azioni, file) una fase intera senza attriti: segnale che il contratto sta maturando.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

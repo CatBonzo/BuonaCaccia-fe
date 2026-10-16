@@ -56,7 +56,7 @@ export class DocumentQueue {
   protected reason = '';
 
   constructor() {
-    this.api.invoke(eventManaged, { size: 100, sort: 'title,asc' }).then(
+    this.api.invoke(eventManaged, { size: 100, sort: 'createdAt,desc' }).then(
       (r) => this.events.set((r.payload?.content ?? []).filter((e) => e.status !== 'DRAFT')),
       () => undefined,
     );

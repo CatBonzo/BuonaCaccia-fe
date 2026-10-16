@@ -126,3 +126,17 @@ export async function satisfyObligation(request: APIRequestContext, enrollmentId
   const headers = { Authorization: `Bearer ${await tokenOf(request, 'segreteria')}` };
   await request.post(`${API}/api/v1/enrollments/${enrollmentId}/obligations/${type}/satisfy`, { headers, data: {} });
 }
+
+/** Il rover paga l'intera quota (autorizzazione del capo e bonifico registrati dalla segreteria) e poi si ritira: nasce un rimborso da lavorare. */
+export async function payAndWithdraw(request: APIRequestContext, username: string, eventId: string, amount: number): Promise<void> {
+  const id = await enrollId(request, username, eventId);
+  await satisfyObligation(request, id, 'UNIT_LEADER_AUTHORIZATION');
+  const headers = { Authorization: `Bearer ${await tokenOf(request, 'segreteria')}` };
+  await request.post(`${API}/api/v1/enrollments/${id}/payments`, {
+    headers,
+    data: { amount, method: 'BANK_TRANSFER', receivedOn: new Date().toISOString().slice(0, 10), reference: `R-${Date.now()}` },
+  });
+  await request.post(`${API}/api/v1/enrollments/${id}/withdraw`, {
+    headers: { Authorization: `Bearer ${await tokenOf(request, username)}` },
+  });
+}

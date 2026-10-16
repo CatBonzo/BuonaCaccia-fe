@@ -45,3 +45,28 @@ export const SORT_OPTIONS: { value: string; label: string }[] = [
 export function label(map: Record<string, string>, key: string | undefined): string {
   return key ? (map[key] ?? key) : '';
 }
+
+export const ENROLLMENT_STATUS_LABELS: Record<string, string> = {
+  REGISTERED: 'Iscritto, da completare',
+  COMPLETED: 'Iscrizione completa',
+  EXPIRED: 'Scaduta',
+  WITHDRAWN: 'Ritirata',
+  REJECTED: 'Rifiutata',
+  CANCELLED: 'Annullata',
+};
+
+export const OBLIGATION_STATUS_LABELS: Record<string, string> = {
+  TODO: 'Da fare',
+  IN_REVIEW: 'In verifica',
+  SATISFIED: 'Fatto',
+  REJECTED: 'Rifiutato',
+  NOT_REQUIRED: 'Non richiesto',
+};
+
+export const CLOSING_REASON_LABELS: Record<string, string> = {
+  WITHDRAWN: 'Ritirata da te',
+  EXPIRED: 'Scaduta perché gli adempimenti non sono stati completati in tempo',
+  REJECTED: 'Rifiutata dalla segreteria',
+  EVENT_CANCELLED: 'Evento annullato',
+  SEATS_EXHAUSTED: 'Posti esauriti',
+};

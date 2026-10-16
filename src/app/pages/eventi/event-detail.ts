@@ -1,15 +1,18 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject, input, signal, effect } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Api } from '../../api/api';
+import { eventEnrollmentEnroll } from '../../api/fn/enrollments/event-enrollment-enroll';
 import { eventGet } from '../../api/fn/events/event-get';
 import { EventDto } from '../../api/models';
-import { ApiError } from '../../core/api-error';
+import { ApiError, ApiErrorDetail } from '../../core/api-error';
+import { SessionService } from '../../core/session.service';
 import { AVAILABILITY_LABELS, CATEGORY_LABELS, LEVEL_LABELS, OBLIGATION_LABELS, STATUS_LABELS, label } from '../../core/labels';
 
 /** Dettaglio di un evento: date, quota, posti, requisiti, adempimenti e referenti. */
@@ -21,6 +24,9 @@ import { AVAILABILITY_LABELS, CATEGORY_LABELS, LEVEL_LABELS, OBLIGATION_LABELS, 
 })
 export class EventDetail {
   private readonly api = inject(Api);
+  private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
+  protected readonly session = inject(SessionService);
 
   /** Arriva dal percorso `/eventi/:id`. */
   readonly id = input.required<string>();
@@ -29,6 +35,9 @@ export class EventDetail {
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly notFound = signal(false);
+  protected readonly enrolling = signal(false);
+  /** Perche' l'iscrizione e' stata rifiutata: messaggio e, se ci sono, i motivi uno per uno. */
+  protected readonly enrollError = signal<{ message: string; details: ApiErrorDetail[] } | null>(null);
 
   protected readonly labelOf = label;
   protected readonly categoryLabels = CATEGORY_LABELS;
@@ -43,6 +52,27 @@ export class EventDetail {
 
   protected seatsLeft(event: EventDto): number {
     return Math.max((event.seats ?? 0) - (event.enrolledCount ?? 0), 0);
+  }
+
+  /** Le iscrizioni si possono tentare solo a eventi aperti; il backend decide comunque l'ultima parola. */
+  protected canEnroll(event: EventDto): boolean {
+    return event.availability === 'OPEN' || event.availability === 'LIMITED' || event.availability === 'HEAVY_OVERBOOKING';
+  }
+
+  protected enroll(event: EventDto): void {
+    this.enrolling.set(true);
+    this.enrollError.set(null);
+    this.api.invoke(eventEnrollmentEnroll, { eventId: event.id!, body: {} }).then(
+      (response) => {
+        const waiting = response.payload?.position === 'WAITING';
+        this.snackBar.open(waiting ? 'Sei in lista d\u2019attesa.' : 'Iscrizione registrata: completa gli adempimenti.', 'Chiudi', { duration: 6000 });
+        void this.router.navigate(['/iscrizioni']);
+      },
+      (e: ApiError) => {
+        this.enrolling.set(false);
+        this.enrollError.set({ message: e.message, details: e.details });
+      },
+    );
   }
 
   private load(id: string): void {

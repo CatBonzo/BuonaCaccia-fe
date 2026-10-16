@@ -120,3 +120,9 @@ export async function uploadPdf(request: APIRequestContext, username: string, en
     multipart: { file: { name: 'scheda.pdf', mimeType: 'application/pdf', buffer: TINY_PDF } },
   });
 }
+
+/** La segreteria segna soddisfatto un adempimento (qui l'autorizzazione del capo, che abilita il pagamento). */
+export async function satisfyObligation(request: APIRequestContext, enrollmentId: string, type: string): Promise<void> {
+  const headers = { Authorization: `Bearer ${await tokenOf(request, 'segreteria')}` };
+  await request.post(`${API}/api/v1/enrollments/${enrollmentId}/obligations/${type}/satisfy`, { headers, data: {} });
+}

@@ -45,6 +45,12 @@ export const routes: Routes = [
         data: { entitlement: 'iscrizione:gestione' },
         loadComponent: () => import('./pages/segreteria/document-queue').then((m) => m.DocumentQueue),
       },
+      {
+        path: 'segreteria/pagamenti',
+        canActivate: [authGuard, entitlementGuard],
+        data: { entitlement: 'pagamento:registrazione' },
+        loadComponent: () => import('./pages/segreteria/payments').then((m) => m.Payments),
+      },
       { path: 'profilo', canActivate: [authGuard], loadComponent: () => import('./pages/home/home').then((m) => m.Home) },
     ],
   },

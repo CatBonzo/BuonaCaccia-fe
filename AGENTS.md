@@ -43,6 +43,10 @@ Frontend del progetto di tesi "Buona Caccia" (iscrizioni agli eventi AGESCI). Il
 | 2026-10-16 | Iscrizioni da gestire: si sceglie un evento (non bozza) e si vedono le sue iscrizioni con filtri stato e posto; "Segna come fatto" compare solo se `availableActions` contiene `SATISFY` e l'adempimento e' da fare | La regola di chi puo' agire resta nel backend. Il pagamento e' escluso: ha la sua schermata (F4c) perche' va registrato con importo e data |
 | 2026-10-16 | La segreteria non puo' rifiutare un adempimento dalla schermata iscrizioni | L'endpoint `reject` dell'adempimento e' dei capi (autorizzazioni); la segreteria rifiuta i documenti dalla coda e annulla/riapre altrove. Non ho inventato un'azione che il backend non offre |
 | 2026-10-16 | Coda documenti con filtro per evento e stato (di default "caricato, in attesa"); il rifiuto richiede il motivo, che il socio riceve | Il backend ordina dal piu' vecchio e senza filtro per evento la coda di una regione e' lunga da scorrere; il motivo e' gia' obbligatorio nel contratto, qui lo si chiede prima di inviare |
+| 2026-10-16 | Pagamenti: si sceglie un evento a pagamento; si vedono i totali (incassato, rimborsato, da rimborsare, annullato), le iscrizioni con residuo, i pagamenti registrati e il CSV | La segreteria riconcilia per evento. I rimborsi hanno una coda propria (prossima PR) |
+| 2026-10-16 | "Da incassare" si ricava dall'elenco iscrizioni (attive, con posto, residuo > 0), non dal campo `outstanding` della riconciliazione | `outstanding` non porta l'id dell'iscrizione, che serve per registrare il bonifico (vedi registro dei contratti) |
+| 2026-10-16 | Il blocco "il pagamento si abilita dopo l'autorizzazione del capo" non e' copiato nel frontend: si mostra l'errore del backend (409 40910) | La regola vive nel servizio; copiarla vorrebbe dire tenerla allineata in due posti |
+| 2026-10-16 | `FileDownload` (core/file-download.ts) scarica qualunque file come Blob; `DocumentDownload` lo usa | Il CSV ha lo stesso problema dei documenti: il contratto lo descrive come testo JSON |
 
 ## 4. Registro dei contratti
 
@@ -60,6 +64,8 @@ Attriti trovati nel contratto del backend durante lo sviluppo del frontend.
 | 2026-10-16 | L'elenco `GET /events/managed` non ha ricerca per titolo ne' ordinamento: i nuovi eventi finiscono in pagine lontane | Corretto nel backend, PR 10 (`q`, `sort`, default piu' recenti) |
 | 2026-10-16 | Una bozza accetta dati incompleti o incoerenti (date invertite), la pubblicazione li rifiuta | Voluto (bozza = lavoro in corso); il frontend mostra il motivo al momento della pubblicazione |
 | 2026-10-16 | La segreteria non ha un'azione per rifiutare un adempimento di un'iscrizione (l'endpoint reject e' dei capi) | Aperto: chiedere a Mahima se serve (es. rifiutare per documento cartaceo non valido) |
+| 2026-10-16 | `GET /events/{id}/reconciliation/export` e' descritto come testo JSON, non come file CSV | Aperto, come per i documenti: dichiarare `text/csv` nel backend; per ora download come Blob |
+| 2026-10-16 | `outstanding` nella riconciliazione ha numero e nome ma non l'id dell'iscrizione | Aperto: aggiungere `enrollmentId` toglierebbe la seconda chiamata che il frontend fa per registrare un bonifico |
 
 ## 5. Fasi
 

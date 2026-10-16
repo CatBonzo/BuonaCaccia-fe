@@ -1,0 +1,28 @@
+DIARIO DEL FRONTEND - materiale grezzo per il capitolo 3 della tesi
+===================================================================
+Come applicare i paradigmi in un progetto full-stack. Qui si tiene traccia, passo per passo, di cosa si fa nel frontend, del perche', delle alternative e del metodo. Il diario del backend e' in Buoncaccia-be (docs/tesi/diario-capitolo-3.txt): le due parti si leggono insieme.
+
+Formato di ogni voce: [data] titolo, poi Cosa / Chi / Paradigma / Artefatti / Problemi / Spunto.
+
+1. VOCI
+
+[2026-10-16] Il frontend come primo vero cliente delle API
+Cosa: avviato il frontend (Angular 22 con Angular Material) per verificare che le API progettate funzionino davvero. Prima un planner a fasi (F0 fondamenta, F1 catalogo, F2 iscrizione del socio, F3 adempimenti, F4 segreteria, F5 capi), poi la fase F0: accesso di prova, guscio con menu per permessi, client generato dal contratto OpenAPI, intercettori per Bearer ed errori, guardie, test unitari e scenari end-to-end.
+Chi: Claude, su richiesta di Mahima; le fasi si approvano con "si vai".
+Paradigma: spec-driven e contract-first. Il contratto OpenAPI e' l'unica fonte: il client TypeScript si genera, non si scrive. Test prima, e scenari end-to-end contro il backend vero invece che contro finti.
+Artefatti: repository BuonaCaccia-fe, ramo 001-fondamenta, PR 1; AGENTS.md del frontend; planner nel Claude Doc.
+Problemi: (1) il browser bloccava ogni chiamata perche' il backend non ammetteva l'origine del frontend (CORS); (2) i nomi delle operazioni OpenAPI (get_1, update_2) rendevano illeggibile il client generato. Entrambi corretti nel backend, PR 8.
+Spunto: un contratto si valida costruendo chi lo usa. Due difetti che nessun test del backend aveva visto sono comparsi al primo contatto col browser.
+
+[2026-10-16] Permessi, non ruoli
+Cosa: il menu e le guardie del frontend guardano i permessi (entitlement) del token, non il ruolo.
+Chi: Claude, coerente con la scelta di Mahima sul backend (2026-10-09).
+Paradigma: separazione delle responsabilita' e difesa in profondita': il frontend nasconde, il backend decide.
+Artefatti: SessionService, guardie, menu in layout/shell.ts.
+Problemi: nessuno; resta da ricordare che nascondere una voce non e' una protezione.
+Spunto: stessa regola nei due strati, quella vera sta nel backend.
+
+2. NOTE APERTE PER IL CAPITOLO 3
+
+- Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.
+- Annotare, a ogni fase, cosa e' stato necessario cambiare nel backend per il frontend (registro dei contratti in AGENTS.md).

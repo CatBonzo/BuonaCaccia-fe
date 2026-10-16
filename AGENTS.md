@@ -39,6 +39,7 @@ Frontend del progetto di tesi "Buona Caccia" (iscrizioni agli eventi AGESCI). Il
 | 2026-10-16 | L'elenco gestito si cerca per titolo (`q`) e si ordina (`sort`, di default i piu' recenti) | Parametri aggiunti al backend (PR 10); i test trovano la scheda cercando il titolo, senza sfogliare le pagine |
 | 2026-10-16 | La regione di una nuova bozza viene da `SessionService.regionCode()`, letta da `isMemberOf` (`agesci:PIE:segreteria`) | Nessuna claim `region` dedicata (scelta di Mahima); la segreteria crea solo per la sua regione |
 | 2026-10-16 | Il modulo evento non tocca requisiti, adempimenti e referenti: li rimanda come li ha ricevuti | Arrivano dal tipo di evento e dopo la pubblicazione sono congelati; cosi' non si cambiano per sbaglio |
+| 2026-10-16 | Il modulo evento avvisa subito delle date incoerenti (`dateWarnings()`), ma la bozza si salva comunque | Mahima: "l'avviso teniamolo". Le regole sono le stesse del backend (rientro dopo la partenza, chiusura dopo l'apertura, chiusura entro la partenza); il backend resta l'arbitro alla pubblicazione |
 
 ## 4. Registro dei contratti
 

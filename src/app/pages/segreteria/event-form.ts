@@ -75,6 +75,16 @@ export class EventForm {
     return this.session.can('tipoevento:gestione');
   }
 
+  /** Avvisi sulle date mentre si scrive: stesse regole che il backend applica alla pubblicazione, la bozza si salva comunque. */
+  protected dateWarnings(): string[] {
+    const { startDate: start, endDate: end, registrationOpenDate: open, registrationCloseDate: close } = this.f;
+    const warnings: string[] = [];
+    if (start && end && end < start) warnings.push('Il rientro non può precedere la partenza.');
+    if (open && close && open >= close) warnings.push('La chiusura delle iscrizioni deve seguire l’apertura.');
+    else if (close && start && close > start) warnings.push('Le iscrizioni devono chiudere entro la partenza.');
+    return warnings;
+  }
+
   protected err(field: string): string {
     return this.fieldErrors()[field] ?? '';
   }

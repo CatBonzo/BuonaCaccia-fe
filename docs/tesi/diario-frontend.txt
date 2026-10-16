@@ -62,6 +62,14 @@ Artefatti: backend ramo 010-eventi-azioni-ricerca; frontend event-manage-list (c
 Problemi: nessuno; il test che sfogliava le pagine e' diventato una ricerca per titolo, piu' corta e piu' stabile.
 Spunto: toglie codice dal frontend invece di aggiungerne: e' il segno che la correzione era nel posto giusto.
 
+[2026-10-16] Avviso sulle date nel modulo evento: una domanda di Mahima diventa una funzione
+Cosa: dopo la spiegazione del comportamento della bozza (si salva anche con date incoerenti, la pubblicazione le rifiuta) Mahima ha chiesto di tenere un avviso: il modulo ora segnala subito date in ordine sbagliato, senza impedire di salvare la bozza.
+Chi: Mahima ha deciso; Claude ha eseguito.
+Paradigma: AI-assisted, con la persona che usa il prodotto a guidare il comportamento; le regole dell'avviso copiano quelle del backend, che resta l'arbitro.
+Artefatti: event-form (dateWarnings), e2e/gestione-eventi.spec.ts.
+Problemi: la regola e' scritta due volte (backend e frontend): va tenuta allineata. Accettato perche' l'avviso e' solo un aiuto.
+Spunto: spiegare una scelta a chi non e' tecnico ha fatto emergere un dubbio di usabilita' che i test non avrebbero mai trovato.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

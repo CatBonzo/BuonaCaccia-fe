@@ -27,6 +27,8 @@ test.describe('gestione eventi della segreteria', () => {
     await page.getByTestId('f-province').fill('cn');
     await page.getByTestId('f-start').fill('2027-03-10');
     await page.getByTestId('f-end').fill('2027-03-09');
+    // L'avviso compare subito, senza salvare; con l'ordine giusto sparisce.
+    await expect(page.getByTestId('date-warning')).toContainText('rientro non può precedere');
     await page.getByTestId('f-open').fill('2026-10-01');
     await page.getByTestId('f-close').fill('2027-03-01');
     await page.getByTestId('f-seats').fill('10');
@@ -48,6 +50,7 @@ test.describe('gestione eventi della segreteria', () => {
     await card.getByTestId('edit').click();
     await expect(page.getByTestId('f-title')).toHaveValue(title);
     await page.getByTestId('f-end').fill('2027-03-12');
+    await expect(page.getByTestId('date-warning')).toHaveCount(0);
     await page.getByTestId('save-event').click();
     await expect(page).toHaveURL(/\/segreteria\/eventi$/);
     const fixed = await findCard(page, title);

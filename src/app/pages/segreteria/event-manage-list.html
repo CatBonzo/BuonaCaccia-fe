@@ -3,6 +3,19 @@
   <a mat-flat-button routerLink="/segreteria/eventi/nuovo" data-testid="new-event">Nuovo evento</a>
 </div>
 
+<form class="filters" (ngSubmit)="filter()">
+<mat-form-field>
+  <mat-label>Cerca nel titolo</mat-label>
+  <input matInput name="q" [(ngModel)]="q" data-testid="q" />
+</mat-form-field>
+<mat-form-field>
+  <mat-label>Ordina per</mat-label>
+  <mat-select name="sort" [(ngModel)]="sort" (selectionChange)="filter()" data-testid="sort">
+    @for (o of sorts; track o[0]) {
+      <mat-option [value]="o[0]">{{ o[1] }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
 <mat-form-field>
   <mat-label>Stato</mat-label>
   <mat-select name="status" [(ngModel)]="status" (selectionChange)="filter()" data-testid="status-filter">
@@ -12,6 +25,8 @@
     }
   </mat-select>
 </mat-form-field>
+<button mat-flat-button type="submit" data-testid="apply">Cerca</button>
+</form>
 
 @if (loading()) {
   <mat-progress-bar mode="indeterminate" />
@@ -40,14 +55,16 @@
         }
       </mat-card-content>
       <mat-card-actions>
-        <a mat-button [routerLink]="['/segreteria/eventi', e.id, 'modifica']" data-testid="edit">Modifica</a>
-        @if (canPublish(e)) {
+        @if (can(e, 'EDIT')) {
+          <a mat-button [routerLink]="['/segreteria/eventi', e.id, 'modifica']" data-testid="edit">Modifica</a>
+        }
+        @if (can(e, 'PUBLISH')) {
           <button mat-button type="button" data-testid="publish" (click)="publish(e)">Pubblica</button>
         }
-        @if (canClose(e)) {
+        @if (can(e, 'CLOSE_REGISTRATIONS')) {
           <button mat-button type="button" data-testid="close" (click)="close(e)">Chiudi le iscrizioni</button>
         }
-        @if (canCancel(e)) {
+        @if (can(e, 'CANCEL')) {
           <button mat-button type="button" data-testid="cancel" (click)="startCancel(e)">Annulla l'evento</button>
         }
       </mat-card-actions>

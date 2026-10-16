@@ -46,6 +46,13 @@ export class EventManageList {
   protected readonly statusLabels = STATUS_LABELS;
   protected readonly pageSize = PAGE_SIZE;
   protected status = '';
+  protected q = '';
+  protected sort = 'createdAt,desc';
+  protected readonly sorts = [
+    ['createdAt,desc', 'Più recenti'],
+    ['startDate,asc', 'Data di inizio'],
+    ['title,asc', 'Titolo'],
+  ];
 
   /** Evento per cui si sta scrivendo il motivo dell'annullamento. */
   protected readonly cancelling = signal<string | null>(null);
@@ -63,15 +70,9 @@ export class EventManageList {
     this.load(event.pageIndex);
   }
 
-  /** Il backend non indica le azioni possibili di un evento: si deducono dallo stato. */
-  protected canPublish(e: EventDto): boolean {
-    return e.status === 'DRAFT';
-  }
-  protected canClose(e: EventDto): boolean {
-    return e.status === 'REGISTRATION_OPEN';
-  }
-  protected canCancel(e: EventDto): boolean {
-    return e.status !== 'CANCELLED' && e.status !== 'COMPLETED';
+  /** Le azioni possibili le decide il backend (`availableActions`): qui si legge solo l'elenco. */
+  protected can(e: EventDto, action: NonNullable<EventDto['availableActions']>[number]): boolean {
+    return !!e.availableActions?.includes(action);
   }
 
   protected publish(e: EventDto): void {
@@ -110,6 +111,8 @@ export class EventManageList {
   private load(page: number): void {
     this.loading.set(true);
     const params: EventManaged$Params = { page, size: PAGE_SIZE };
+    if (this.q.trim()) params.q = this.q.trim();
+    params.sort = this.sort;
     if (this.status) params.status = this.status as EventManaged$Params['status'];
     this.api.invoke(eventManaged, params).then(
       (response) => {

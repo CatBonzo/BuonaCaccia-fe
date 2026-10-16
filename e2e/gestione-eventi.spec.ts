@@ -6,16 +6,12 @@ async function choose(page: Page, testId: string, option: string) {
   await page.getByRole('option', { name: option, exact: true }).click();
 }
 
-/** L'elenco gestito non ha ricerca per titolo: si sfogliano le pagine finche' la scheda compare. */
+/** Si cerca per titolo: il titolo e' unico, quindi resta una sola scheda. */
 async function findCard(page: Page, title: string) {
+  await page.getByTestId('q').fill(title);
+  await page.getByTestId('apply').click();
   const card = page.locator('mat-card', { hasText: title });
-  await page.locator('mat-card').first().waitFor();
-  const next = page.locator('.mat-mdc-paginator-navigation-next');
-  while (!(await card.count()) && (await next.isEnabled())) {
-    await next.click();
-    await page.waitForTimeout(400);
-  }
-  await expect(card).toBeVisible();
+  await expect(card).toHaveCount(1);
   return card;
 }
 

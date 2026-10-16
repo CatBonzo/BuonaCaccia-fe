@@ -54,6 +54,14 @@ Artefatti: ramo 005-gestione-eventi, PR di F4a (vedi commit).
 Problemi: (1) gli eventi non hanno availableActions, quindi i pulsanti si decidono dallo stato; (2) l'elenco gestito non si puo' cercare ne' ordinare, il test deve sfogliare le pagine; (3) la bozza accetta date invertite e solo la pubblicazione le rifiuta: il test aspettava un errore al salvataggio e il comportamento reale era un altro.
 Spunto: un test scritto in base a cio' che ci si aspetta dal backend e' una domanda; la risposta e' il comportamento reale. Qui il frontend ha mostrato tre lacune del contratto senza che nessuno le cercasse.
 
+[2026-10-16] Il ciclo si chiude: due attriti di F4a tornano corretti dal backend
+Cosa: Mahima ha chiesto di correggere nel backend i primi due attriti di F4a. Il backend ora manda le azioni possibili di ogni evento e permette di cercare e ordinare l'elenco gestito; il frontend ha buttato la regola copiata e legge l'elenco.
+Chi: Mahima ha deciso; Claude ha eseguito su backend (PR 10) e frontend (stessa PR 5).
+Paradigma: contract-first con ciclo di ritorno; loop engineering: il registro dei contratti ha prodotto la correzione, il client rigenerato e i test e2e hanno confermato che il comportamento non e' cambiato.
+Artefatti: backend ramo 010-eventi-azioni-ricerca; frontend event-manage-list (can(), q, sort), e2e che cerca per titolo.
+Problemi: nessuno; il test che sfogliava le pagine e' diventato una ricerca per titolo, piu' corta e piu' stabile.
+Spunto: toglie codice dal frontend invece di aggiungerne: e' il segno che la correzione era nel posto giusto.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

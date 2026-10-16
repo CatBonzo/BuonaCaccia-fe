@@ -3,3 +3,5 @@
 .cancel-box { padding: 0 16px 16px; }
 .full { width: 100%; }
 .error { color: var(--mat-sys-error); }
+
+.filters { display: flex; flex-wrap: wrap; gap: 0 16px; align-items: baseline; }

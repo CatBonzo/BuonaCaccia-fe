@@ -1,0 +1,88 @@
+<h1>Iscrizioni da gestire</h1>
+
+<form class="filters" (ngSubmit)="filter()">
+  <mat-form-field class="event">
+    <mat-label>Evento</mat-label>
+    <mat-select name="eventId" [(ngModel)]="eventId" (selectionChange)="filter()" data-testid="event">
+      @for (e of events(); track e.id) {
+        <mat-option [value]="e.id">{{ e.title }} ({{ e.code }})</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Stato</mat-label>
+    <mat-select name="status" [(ngModel)]="status" (selectionChange)="filter()" data-testid="status-filter">
+      <mat-option value="">Tutti</mat-option>
+      @for (s of statuses; track s[0]) {
+        <mat-option [value]="s[0]">{{ s[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Posto</mat-label>
+    <mat-select name="position" [(ngModel)]="position" (selectionChange)="filter()" data-testid="position-filter">
+      <mat-option value="">Tutti</mat-option>
+      <mat-option value="IN_SEATS">Con posto</mat-option>
+      <mat-option value="WAITING">In lista d'attesa</mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p class="error" role="alert" data-testid="manage-error">{{ message }}</p>
+}
+@if (!eventId) {
+  <p data-testid="pick-event">Scegli un evento per vedere le sue iscrizioni.</p>
+} @else if (!loading() && enrollments().length === 0) {
+  <p data-testid="empty">Nessuna iscrizione con questi filtri.</p>
+}
+
+<div class="list">
+  @for (e of enrollments(); track e.id) {
+    <mat-card appearance="outlined" [attr.data-enrollment]="e.number">
+      <mat-card-header>
+        <mat-card-title>{{ e.participantName }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ e.number }}{{ e.participantMemberCode ? ' · socio ' + e.participantMemberCode : ' · non socio' }}
+          @if (e.presenterName && e.presenterId !== e.participantId) {
+            · presentato da {{ e.presenterName }}
+          }
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set>
+          <mat-chip data-testid="status">{{ labelOf(statusLabels, e.status) }}</mat-chip>
+          @if (e.active && e.position === 'WAITING') {
+            <mat-chip data-testid="waiting">In lista d'attesa: posto {{ e.waitingPosition }}</mat-chip>
+          }
+        </mat-chip-set>
+        @if (e.active && e.deadline) {
+          <p>Scade il {{ e.deadline | date: "d MMMM y 'alle' HH:mm" }}.</p>
+        }
+        @if (e.payment) {
+          <p data-testid="payment">Pagato {{ e.payment.paid }} su {{ e.payment.fee }} €.</p>
+        }
+        @if (e.obligations?.length) {
+          <ul class="obligations">
+            @for (o of e.obligations; track $index) {
+              @if (o.status !== 'NOT_REQUIRED') {
+                <li [class.done]="o.status === 'SATISFIED'">
+                  <span>{{ o.description || labelOf(obligationLabels, o.type) }}</span>
+                  <span class="state" data-testid="obligation-status">{{ labelOf(obligationStatusLabels, o.status) }}</span>
+                  @if (canSatisfy(e, o)) {
+                    <button mat-button type="button" data-testid="satisfy" (click)="satisfy(e, o)">Segna come fatto</button>
+                  }
+                </li>
+              }
+            }
+          </ul>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
+
+<mat-paginator [length]="total()" [pageSize]="pageSize" [pageIndex]="pageIndex()" [hidePageSize]="true" (page)="onPage($event)" aria-label="Pagine delle iscrizioni" />

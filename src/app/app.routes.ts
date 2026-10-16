@@ -33,6 +33,18 @@ export const routes: Routes = [
           { path: ':id/modifica', loadComponent: () => import('./pages/segreteria/event-form').then((m) => m.EventForm) },
         ],
       },
+      {
+        path: 'segreteria/iscrizioni',
+        canActivate: [authGuard, entitlementGuard],
+        data: { entitlement: 'iscrizione:gestione' },
+        loadComponent: () => import('./pages/segreteria/enrollment-manage').then((m) => m.EnrollmentManage),
+      },
+      {
+        path: 'segreteria/documenti',
+        canActivate: [authGuard, entitlementGuard],
+        data: { entitlement: 'iscrizione:gestione' },
+        loadComponent: () => import('./pages/segreteria/document-queue').then((m) => m.DocumentQueue),
+      },
       { path: 'profilo', canActivate: [authGuard], loadComponent: () => import('./pages/home/home').then((m) => m.Home) },
     ],
   },

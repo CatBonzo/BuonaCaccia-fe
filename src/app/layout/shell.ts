@@ -20,6 +20,7 @@ const MENU: MenuItem[] = [
   { label: 'Eventi', path: '/eventi', icon: 'event' },
   { label: 'Le mie iscrizioni', path: '/iscrizioni', icon: 'how_to_reg', entitlement: 'iscrizione:self' },
   { label: 'Iscrizioni da gestire', path: '/segreteria/iscrizioni', icon: 'inbox', entitlement: 'iscrizione:gestione' },
+  { label: 'Documenti da validare', path: '/segreteria/documenti', icon: 'fact_check', entitlement: 'iscrizione:gestione' },
   { label: 'Gestione eventi', path: '/segreteria/eventi', icon: 'edit_calendar', entitlement: 'evento:gestione' },
   { label: 'Pagamenti', path: '/segreteria/pagamenti', icon: 'payments', entitlement: 'pagamento:registrazione' },
   { label: 'Tipi di evento', path: '/amministrazione/tipi-evento', icon: 'category', entitlement: 'tipoevento:gestione' },

@@ -1,0 +1,8 @@
+.filters { display: flex; flex-wrap: wrap; gap: 0 16px; align-items: baseline; }
+.event { min-width: 320px; }
+.list { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.obligations { list-style: none; padding: 0; margin: 8px 0 0; }
+.obligations li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 4px 0; }
+.obligations li.done { color: var(--mat-sys-on-surface-variant); }
+.state { font-size: 0.85em; color: var(--mat-sys-on-surface-variant); }
+.error { color: var(--mat-sys-error); }

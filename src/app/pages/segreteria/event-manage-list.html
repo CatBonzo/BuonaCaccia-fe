@@ -55,6 +55,9 @@
         }
       </mat-card-content>
       <mat-card-actions>
+        @if (e.status !== 'DRAFT') {
+          <a mat-button routerLink="/segreteria/iscrizioni" [queryParams]="{ evento: e.id }" data-testid="enrollments">Iscrizioni</a>
+        }
         @if (can(e, 'EDIT')) {
           <a mat-button [routerLink]="['/segreteria/eventi', e.id, 'modifica']" data-testid="edit">Modifica</a>
         }

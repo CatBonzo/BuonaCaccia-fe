@@ -3,6 +3,7 @@
 
 export interface Outstanding {
   due?: number;
+  enrollmentId?: string;
   enrollmentNumber?: string;
   fee?: number;
   paid?: number;

@@ -10,12 +10,12 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Api } from '../../api/api';
-import { eventEnrollmentList } from '../../api/fn/enrollments/event-enrollment-list';
 import { eventManaged } from '../../api/fn/events/event-managed';
 import { paymentCancel } from '../../api/fn/payments/payment-cancel';
 import { paymentRegister } from '../../api/fn/payments/payment-register';
+import { eventPaymentExport } from '../../api/fn/reconciliation/event-payment-export';
 import { eventPaymentReconciliation } from '../../api/fn/reconciliation/event-payment-reconciliation';
-import { EnrollmentDto, EventDto, PaymentDto, ReconciliationDto } from '../../api/models';
+import { EventDto, Outstanding, PaymentDto, ReconciliationDto } from '../../api/models';
 import { ApiError } from '../../core/api-error';
 import { FileDownload } from '../../core/file-download';
 
@@ -39,7 +39,7 @@ export class Payments {
 
   protected readonly events = signal<EventDto[]>([]);
   protected readonly report = signal<ReconciliationDto | null>(null);
-  protected readonly owing = signal<EnrollmentDto[]>([]);
+  protected readonly owing = signal<Outstanding[]>([]);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   protected eventId = '';
@@ -74,17 +74,17 @@ export class Payments {
     this.load();
   }
 
-  protected startRegister(e: EnrollmentDto): void {
-    this.registering.set(e.id!);
-    this.amount = e.payment?.due ?? null;
+  protected startRegister(o: Outstanding): void {
+    this.registering.set(o.enrollmentId!);
+    this.amount = o.due ?? null;
     this.receivedOn = new Date().toISOString().slice(0, 10);
     this.reference = '';
   }
 
-  protected register(e: EnrollmentDto): void {
+  protected register(o: Outstanding): void {
     this.error.set(null);
     const body = { amount: this.amount ?? 0, receivedOn: this.receivedOn, reference: this.reference.trim() || undefined };
-    this.api.invoke(paymentRegister, { id: e.id!, body }).then(
+    this.api.invoke(paymentRegister, { id: o.enrollmentId!, body }).then(
       () => {
         this.registering.set(null);
         this.snackBar.open('Bonifico registrato.', 'Chiudi', { duration: 4000 });
@@ -116,9 +116,10 @@ export class Payments {
   }
 
   protected exportCsv(): void {
-    this.files
-      .download(`/api/v1/events/${this.eventId}/reconciliation/export`, `riconciliazione-${this.eventId}.csv`)
-      .catch(() => this.error.set('Non riesco a scaricare il CSV.'));
+    this.api.invoke(eventPaymentExport, { eventId: this.eventId }).then(
+      (csv) => this.files.save(csv, `riconciliazione-${this.eventId}.csv`),
+      () => this.error.set('Non riesco a scaricare il CSV.'),
+    );
   }
 
   private load(): void {
@@ -129,16 +130,10 @@ export class Payments {
     }
     this.loading.set(true);
     this.error.set(null);
-    // Il riepilogo non porta l'id delle iscrizioni con residuo: serve l'elenco delle iscrizioni per registrare un bonifico.
-    Promise.all([
-      this.api.invoke(eventPaymentReconciliation, { eventId: this.eventId }),
-      this.api.invoke(eventEnrollmentList, { eventId: this.eventId, size: 100 }),
-    ]).then(
-      ([reconciliation, enrollments]) => {
+    this.api.invoke(eventPaymentReconciliation, { eventId: this.eventId }).then(
+      (reconciliation) => {
         this.report.set(reconciliation.payload ?? null);
-        this.owing.set(
-          (enrollments.payload?.content ?? []).filter((e) => e.active && e.position === 'IN_SEATS' && (e.payment?.due ?? 0) > 0),
-        );
+        this.owing.set(reconciliation.payload?.outstanding ?? []);
         this.loading.set(false);
       },
       (e: ApiError) => {

@@ -12,18 +12,18 @@ export interface EventPaymentExport$Params {
   eventId: string;
 }
 
-export function eventPaymentExport(http: HttpClient, rootUrl: string, params: EventPaymentExport$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
+export function eventPaymentExport(http: HttpClient, rootUrl: string, params: EventPaymentExport$Params, context?: HttpContext): Observable<StrictHttpResponse<Blob>> {
   const rb = new RequestBuilder(rootUrl, eventPaymentExport.PATH, 'get');
   if (params) {
     rb.path('eventId', params.eventId, {});
   }
 
   return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
+    rb.build({ responseType: 'blob', accept: 'text/csv', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<string>;
+      return r as StrictHttpResponse<Blob>;
     })
   );
 }

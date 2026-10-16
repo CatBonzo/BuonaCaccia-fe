@@ -1,0 +1,100 @@
+<h1>Eventi</h1>
+
+<form class="filters" (ngSubmit)="apply()">
+  <mat-form-field class="wide">
+    <mat-label>Cerca</mat-label>
+    <input matInput name="q" [(ngModel)]="q" placeholder="Titolo, luogo, tipo" data-testid="q" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Regione</mat-label>
+    <mat-select name="region" [(ngModel)]="region" data-testid="region">
+      <mat-option value="">Tutte</mat-option>
+      @for (r of regions(); track r.code) {
+        <mat-option [value]="r.code">{{ r.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Categoria</mat-label>
+    <mat-select name="category" [(ngModel)]="category" data-testid="category">
+      <mat-option value="">Tutte</mat-option>
+      @for (c of categories; track c[0]) {
+        <mat-option [value]="c[0]">{{ c[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Disponibilità</mat-label>
+    <mat-select name="availability" [(ngModel)]="availability">
+      <mat-option value="">Tutte</mat-option>
+      @for (a of availabilities; track a[0]) {
+        <mat-option [value]="a[0]">{{ a[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Dal</mat-label>
+    <input matInput type="date" name="startFrom" [(ngModel)]="startFrom" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Al</mat-label>
+    <input matInput type="date" name="startTo" [(ngModel)]="startTo" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Ordina per</mat-label>
+    <mat-select name="sort" [(ngModel)]="sort">
+      @for (s of sorts; track s.value) {
+        <mat-option [value]="s.value">{{ s.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <div class="actions">
+    <button mat-flat-button type="submit" data-testid="apply">Cerca</button>
+    <button mat-button type="button" (click)="reset()">Azzera filtri</button>
+  </div>
+</form>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+}
+
+@if (!loading() && !error() && events().length === 0) {
+  <p data-testid="empty">Nessun evento trovato con questi filtri.</p>
+}
+
+<div class="grid">
+  @for (event of events(); track event.id) {
+    <mat-card appearance="outlined" class="event" [attr.data-event]="event.code">
+      <mat-card-header>
+        <mat-card-title>{{ event.title }}</mat-card-title>
+        <mat-card-subtitle>{{ event.typeName }} · {{ event.location }} ({{ event.region }})</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ event.startDate | date: 'd MMM y' }} – {{ event.endDate | date: 'd MMM y' }}</p>
+        <mat-chip-set>
+          <mat-chip>{{ labelOf(availabilityLabels, event.availability) }}</mat-chip>
+          <mat-chip>{{ labelOf(categoryLabels, event.category) }}</mat-chip>
+          @if (event.status === 'CANCELLED') {
+            <mat-chip>{{ labelOf(statusLabels, event.status) }}</mat-chip>
+          }
+        </mat-chip-set>
+        <p class="fee">{{ event.fee | currency: 'EUR' : 'symbol' : '1.0-2' : 'it' }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button [routerLink]="['/eventi', event.id]">Dettaglio</a>
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>
+
+<mat-paginator
+  [length]="total()"
+  [pageSize]="pageSize"
+  [pageIndex]="pageIndex()"
+  [hidePageSize]="true"
+  (page)="onPage($event)"
+  aria-label="Pagine degli eventi"
+/>

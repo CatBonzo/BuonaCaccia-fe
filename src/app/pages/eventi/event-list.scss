@@ -1,0 +1,7 @@
+.filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0 12px; align-items: start; }
+.filters .wide { grid-column: span 2; }
+.actions { display: flex; gap: 8px; align-items: center; height: 56px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin: 16px 0; }
+.fee { font-weight: 500; margin-top: 12px; }
+.error { color: var(--mat-sys-error); }
+@media (max-width: 480px) { .filters .wide { grid-column: span 1; } }

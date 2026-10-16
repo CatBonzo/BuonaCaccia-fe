@@ -1,0 +1,88 @@
+<a mat-button routerLink="/eventi">← Tutti gli eventi</a>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (notFound()) {
+  <p data-testid="not-found">Evento non trovato: potrebbe non essere più pubblicato.</p>
+}
+@if (error(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+}
+
+@if (event(); as e) {
+  <article>
+    <h1 data-testid="title">{{ e.title }}</h1>
+    <p class="subtitle">{{ e.typeName }} · {{ labelOf(levelLabels, e.level) }} · {{ e.location }}, {{ e.province }} ({{ e.region }})</p>
+
+    @if (e.status === 'CANCELLED') {
+      <p class="cancelled" role="status">
+        Evento annullato{{ e.cancellationReason ? ': ' + e.cancellationReason : '' }}.
+      </p>
+    }
+
+    <mat-chip-set>
+      <mat-chip data-testid="availability">{{ labelOf(availabilityLabels, e.availability) }}</mat-chip>
+      <mat-chip>{{ labelOf(categoryLabels, e.category) }}</mat-chip>
+    </mat-chip-set>
+
+    <mat-card appearance="outlined">
+      <mat-card-content>
+        <dl>
+          <dt>Quando</dt>
+          <dd>{{ e.startDate | date: 'd MMMM y' }} – {{ e.endDate | date: 'd MMMM y' }}</dd>
+          <dt>Iscrizioni</dt>
+          <dd>dal {{ e.registrationOpenDate | date: 'd MMMM y' }} al {{ e.registrationCloseDate | date: 'd MMMM y' }}</dd>
+          <dt>Quota</dt>
+          <dd>{{ e.fee | currency: 'EUR' : 'symbol' : '1.0-2' : 'it' }}</dd>
+          <dt>Posti</dt>
+          <dd data-testid="seats">{{ seatsLeft(e) }} liberi su {{ e.seats }}</dd>
+        </dl>
+        @if (e.description) {
+          <p>{{ e.description }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    @if (e.requirements; as r) {
+      <h2>Chi può partecipare</h2>
+      <ul>
+        @if (r.minAge || r.maxAge) {
+          <li>Età: {{ r.minAge ?? 'qualsiasi' }} – {{ r.maxAge ?? 'qualsiasi' }} anni</li>
+        }
+        @if (r.branches?.length) {
+          <li>Branche: {{ r.branches!.join(', ') }}</li>
+        }
+        @if (r.memberTypes?.length) {
+          <li>Tipo di socio: {{ r.memberTypes!.join(', ') }}</li>
+        }
+        @if (r.maxPerGroup) {
+          <li>Al massimo {{ r.maxPerGroup }} per gruppo</li>
+        }
+      </ul>
+    }
+
+    @if (e.obligations?.length) {
+      <h2>Cosa serve per completare l'iscrizione</h2>
+      <mat-list>
+        @for (o of e.obligations; track $index) {
+          <mat-list-item>{{ o.description || labelOf(obligationLabels, o.type) }}</mat-list-item>
+        }
+      </mat-list>
+    }
+
+    @if (e.contacts?.administrative || e.contacts?.methodological) {
+      <h2>Referenti</h2>
+      <ul>
+        @if (e.contacts?.administrative; as c) {
+          <li>Amministrativo: {{ c.name }} {{ c.email }} {{ c.phone }}</li>
+        }
+        @if (e.contacts?.methodological; as c) {
+          <li>Metodologico: {{ c.name }} {{ c.email }} {{ c.phone }}</li>
+        }
+      </ul>
+    }
+
+    <p class="hint">L'iscrizione arriva con la prossima fase.</p>
+  </article>
+}

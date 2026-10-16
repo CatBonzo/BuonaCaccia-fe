@@ -22,6 +22,14 @@ Artefatti: SessionService, guardie, menu in layout/shell.ts.
 Problemi: nessuno; resta da ricordare che nascondere una voce non e' una protezione.
 Spunto: stessa regola nei due strati, quella vera sta nel backend.
 
+[2026-10-16] Catalogo eventi (F1): il browser trova quello che i test non vedono
+Cosa: elenco pubblico degli eventi con ricerca per testo, regione, categoria, disponibilita' e date, ordinamento e paginazione; pagina di dettaglio con date, quota, posti liberi, requisiti, adempimenti e referenti. Il catalogo si legge senza accedere (come nella specifica), il resto resta dietro il login.
+Chi: Claude, su richiesta di Mahima di passare alla fase successiva.
+Paradigma: contract-first (il client generato dal contratto fa da unica via di accesso all'API) e test end-to-end contro il backend vero, con dati creati dal test stesso (evento con titolo unico) cosi' da non dipendere da cosa c'e' nel database.
+Artefatti: pages/eventi (elenco e dettaglio), core/labels.ts, e2e/catalogo.spec.ts, e2e/api.ts.
+Problemi: (1) l'interfaccia mostrava i posti vuoti: il locale italiano non era registrato in Angular e il formato della valuta andava in errore, cosa visibile solo aprendo la pagina in un browser vero, non nei test unitari; (2) per pubblicare un evento di prova il backend chiede zona solo per eventi di zona e la modalita' di iscrizione: i messaggi di errore per campo hanno permesso di correggere il dato al primo tentativo.
+Spunto: gli errori per campo dell'API (422 con nome del campo) sono costati zero fatica al consumatore: un buon contratto di errore e' parte del contratto.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

@@ -1,9 +1,16 @@
 import { expect, test } from '@playwright/test';
 
-test('senza login si arriva alla scelta dell\'utente', async ({ page }) => {
+test('il catalogo e\' pubblico, il login e\' a un clic', async ({ page }) => {
   await page.goto('/');
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/eventi$/);
+  await expect(page.getByRole('link', { name: 'Accedi' })).toBeVisible();
+  await page.getByRole('link', { name: 'Accedi' }).click();
   await expect(page.getByRole('button', { name: /Entra come socio$/ })).toBeVisible();
+});
+
+test('la sezione riservata chiede il login', async ({ page }) => {
+  await page.goto('/profilo');
+  await expect(page).toHaveURL(/\/login$/);
 });
 
 test('la segreteria vede le voci di gestione, il socio no', async ({ page }) => {
@@ -14,6 +21,7 @@ test('la segreteria vede le voci di gestione, il socio no', async ({ page }) => 
   await expect(page.getByRole('link', { name: 'Tipi di evento' })).toHaveCount(0);
 
   await page.getByTestId('logout').click();
+  await page.goto('/login');
   await page.getByRole('button', { name: 'Entra come socio', exact: true }).click();
   await expect(page.getByRole('link', { name: 'Le mie iscrizioni' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Gestione eventi' })).toHaveCount(0);

@@ -25,6 +25,9 @@ Frontend del progetto di tesi "Buona Caccia" (iscrizioni agli eventi AGESCI). Il
 | 2026-10-16 | Accesso di prova: si sceglie un utente di `/api/v1/mock/auth/findAll`; il token Bearer sta in sessionStorage | Il backend ha solo il mock; Keycloak arriva dopo e sostituira' solo `SessionService` e la pagina di login |
 | 2026-10-16 | Menu e guardie per permesso (`evento:gestione`...), non per ruolo | Nel backend i permessi sono le entitlement del token, il ruolo dice solo cosa si vede |
 | 2026-10-16 | Errori: ogni risposta di errore diventa `ApiError` (envelope); 401 con sessione = ritorno al login, 0 e 5xx = avviso; 409/422 li mostra la pagina | Un solo modo di leggere errorCode e campo; gli errori di dominio hanno bisogno del contesto del modulo |
+| 2026-10-16 | Il catalogo (`/eventi`, `/eventi/:id`) e' pubblico; la barra mostra "Accedi" a chi non e' entrato; solo `/profilo` e le sezioni di gestione chiedono il login | La specifica vuole la ricerca senza accesso; il backend la espone pubblica |
+| 2026-10-16 | Locale `it` registrato in `app.config.ts` | Senza, date e valuta andavano in errore a runtime (NG0701), visibile solo in un browser vero |
+| 2026-10-16 | Gli scenari e2e creano da soli i propri eventi con titolo unico (`e2e/api.ts`) | Non dipendono dallo stato del database e si possono rilanciare |
 | 2026-10-16 | Diario della tesi del frontend nel repository del frontend, separato da quello del backend | Mahima lo ha chiesto: ogni parte tiene traccia del proprio sviluppo, per il capitolo 3 |
 | 2026-10-16 | Playwright contro il backend vero, non contro finti | Scopo del frontend e' provare le API: un finto nasconderebbe proprio i problemi cercati |
 

@@ -39,6 +39,6 @@ export class Shell {
 
   protected logout(): void {
     this.session.logout();
-    void this.router.navigate(['/login']);
+    void this.router.navigate(['/eventi']);
   }
 }

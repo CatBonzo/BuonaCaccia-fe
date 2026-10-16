@@ -40,6 +40,6 @@ export class Login {
 
   protected enter(user: MockUserResponse): void {
     this.session.login(user);
-    void this.router.navigate(['/']);
+    void this.router.navigate(['/eventi']);
   }
 }

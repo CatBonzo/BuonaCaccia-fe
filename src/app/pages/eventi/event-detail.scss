@@ -1,0 +1,8 @@
+article { max-width: 760px; }
+.subtitle { color: var(--mat-sys-on-surface-variant); }
+.cancelled { color: var(--mat-sys-error); font-weight: 500; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
+dt { font-weight: 500; }
+dd { margin: 0; }
+.error { color: var(--mat-sys-error); }
+.hint { color: var(--mat-sys-on-surface-variant); margin-top: 24px; }

@@ -98,3 +98,9 @@ export const QUESTION_TYPE_LABELS: Record<string, string> = {
   TEXT: 'Testo breve', LONG_TEXT: 'Testo lungo', YES_NO: 'Sì o no', CHOICE: 'Scelta tra opzioni', DATE: 'Data',
 };
 export const DELIVERY_LABELS: Record<string, string> = { ONLINE: 'Online', PAPER: 'Cartaceo' };
+export const LEADER_ACTIONS: Record<string, { type: 'UNIT_LEADER_AUTHORIZATION' | 'GROUP_LEADER_AUTHORIZATION'; approve: boolean }> = {
+  APPROVE_UNIT_LEADER: { type: 'UNIT_LEADER_AUTHORIZATION', approve: true },
+  REJECT_UNIT_LEADER: { type: 'UNIT_LEADER_AUTHORIZATION', approve: false },
+  APPROVE_GROUP_LEADER: { type: 'GROUP_LEADER_AUTHORIZATION', approve: true },
+  REJECT_GROUP_LEADER: { type: 'GROUP_LEADER_AUTHORIZATION', approve: false },
+};

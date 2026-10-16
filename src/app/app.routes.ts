@@ -72,6 +72,20 @@ export const routes: Routes = [
         data: { entitlement: 'pagamento:registrazione' },
         loadComponent: () => import('./pages/segreteria/region-settings').then((m) => m.RegionSettings),
       },
+      {
+        path: 'capi/autorizzazioni',
+        canActivate: [authGuard, entitlementGuard],
+        data: { entitlement: 'iscrizione:self', mode: 'toAuthorize' },
+        loadComponent: () => import('./pages/capi/leader-enrollments').then((m) => m.LeaderEnrollments),
+      },
+      {
+        path: 'capi/iscritti',
+        canActivate: [authGuard, entitlementGuard],
+        data: { entitlement: 'iscrizione:self', mode: 'presented' },
+        loadComponent: () => import('./pages/capi/leader-enrollments').then((m) => m.LeaderEnrollments),
+      },
+      // Il link dell'e-mail: il capo risponde senza accedere.
+      { path: 'autorizza/:token', loadComponent: () => import('./pages/capi/authorization-link').then((m) => m.AuthorizationLink) },
       { path: 'profilo', canActivate: [authGuard], loadComponent: () => import('./pages/home/home').then((m) => m.Home) },
     ],
   },

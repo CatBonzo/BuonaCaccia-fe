@@ -97,6 +97,18 @@
       } @else {
         <p class="hint">{{ labelOf(availabilityLabels, e.availability) }}.</p>
       }
+      @if (session.loggedIn() && session.isLeader() && session.can('iscrizione:self') && e.enrollmentMode !== 'SELF' && canEnroll(e) && e.status !== 'CANCELLED') {
+        <div class="youth">
+          <p>Iscrivi un ragazzo della tua unità con il suo codice socio.</p>
+          <mat-form-field>
+            <mat-label>Codice socio</mat-label>
+            <input matInput name="memberCode" [(ngModel)]="memberCode" data-testid="member-code" />
+          </mat-form-field>
+          <button mat-stroked-button type="button" data-testid="enroll-youth" [disabled]="enrolling() || !memberCode.trim()" (click)="enroll(e, memberCode.trim())">
+            Iscrivi il ragazzo
+          </button>
+        </div>
+      }
       @if (enrollError(); as err) {
         <div class="error" role="alert" data-testid="enroll-error">
           <p>{{ err.message }}</p>

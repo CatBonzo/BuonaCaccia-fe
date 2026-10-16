@@ -110,6 +110,14 @@ Artefatti: ramo 011-amministrazione, pages/amministrazione/*, pages/segreteria/r
 Problemi: (1) durante i test il backend locale si e' spento (Docker sparito), ripristinato con lo script di riavvio; (2) tipi e schede non si possono cancellare, quindi ogni scenario crea un codice nuovo.
 Spunto: una schermata di configurazione e' il modo piu' rapido per scoprire se i campi del contratto sono davvero sufficienti per usare il sistema senza chiamate manuali.
 
+[2026-10-16] Capi (F5): il flusso a tre persone, ragazzo, capo e link dell'e-mail
+Cosa: elenco delle autorizzazioni da dare (autorizza o nega con motivo), elenco dei ragazzi iscritti dal capo, iscrizione di un ragazzo con il codice socio dal dettaglio evento, pagina pubblica del link ricevuto per e-mail.
+Chi: Claude, come fase F5 del planner; la scelta di mostrare le voci ai soli capi e' stata presa da Claude (da confermare con Mahima).
+Paradigma: SDD e test-first: 4 scenari e2e contro il backend vero, compreso il link letto dall'e-mail in Mailpit; le azioni mostrate seguono `availableActions`, non regole copiate.
+Artefatti: ramo 010-capi, pages/capi/*, e2e/capi.spec.ts.
+Problemi: (1) il primo scenario di iscrizione di un ragazzo falliva perche' l'evento era solo per iscrizioni personali: il frontend ora non offre il pulsante su quegli eventi; (2) il token non dice chi e' capo, serve il censimento.
+Spunto: il link dell'e-mail funziona senza modifiche al backend perche' il contratto (indirizzo `/autorizza/:token`) era gia' definito: il contratto scritto prima ha evitato un attrito.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

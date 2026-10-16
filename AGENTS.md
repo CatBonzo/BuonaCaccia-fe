@@ -54,6 +54,11 @@ Frontend del progetto di tesi "Buona Caccia" (iscrizioni agli eventi AGESCI). Il
 | 2026-10-16 | Il tipo di evento si disattiva, non si cancella; l'editor dei requisiti e degli adempimenti predefiniti ripete il contratto (tipo, descrizione, codice e consegna dei documenti) senza regole proprie | Il backend e' l'arbitro dei valori validi, la pagina mostra i suoi errori. Tipi di file e dimensione massima dei documenti restano quelli di default del backend: non si cambiano da qui |
 | 2026-10-16 | Nella scheda, una domanda senza id ne riceve uno (`d1`, `d2`...) al salvataggio; quelle esistenti tengono il proprio | Le risposte gia' date sono legate all'id: cambiarlo le perderebbe |
 | 2026-10-16 | Coordinate di pagamento (`/segreteria/coordinate`, permesso `pagamento:registrazione`): la segreteria modifica la propria regione, l'amministrazione sceglie regione o Nazionale | Il backend consente alla segreteria solo la propria regione (FR-016); il frontend non mostra il selettore a chi ne ha una sola |
+| 2026-10-16 | Capi: voci di menu "Autorizzazioni da dare" e "Ragazzi che ho iscritto" solo se il censimento dice `memberType = LEADER` (`SessionService.isLeader`) | Il token non dice se una persona e' capo: lo dice il censimento che il login mock restituisce. Il permesso `iscrizione:self` resta necessario, ma non basta a distinguere un capo da un ragazzo |
+| 2026-10-16 | Un solo componente (`LeaderEnrollments`) per le due liste dei capi, scelto dal dato di rotta `mode` | Le due liste hanno la stessa forma (iscrizioni con adempimenti e azioni): cambia solo la chiamata |
+| 2026-10-16 | Autorizza/Nega seguono `availableActions` (APPROVE_/REJECT_UNIT_LEADER...) e non una regola copiata nel frontend | Il backend sa se il capo e' capo unita', capo gruppo o entrambi; il frontend mostra cio' che puo' fare |
+| 2026-10-16 | Il link dell'e-mail porta a `/autorizza/:token`, pagina pubblica senza accesso | E' l'indirizzo che il backend scrive nelle e-mail (`link-base-url`); il token e' monouso e il backend risponde con errore al secondo uso |
+| 2026-10-16 | "Iscrivi un ragazzo" compare nel dettaglio evento solo ai capi e solo se l'evento non e' `SELF` | L'evento solo personale rifiuta le iscrizioni dei capi: meglio non offrire un pulsante che dara' sempre errore |
 
 ## 4. Registro dei contratti
 

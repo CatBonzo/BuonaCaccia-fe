@@ -13,12 +13,16 @@ interface MenuItem {
   icon: string;
   /** Permesso richiesto, nella forma breve; senza, la voce e' per tutti. */
   entitlement?: string;
+  /** Solo per chi e' capo nel censimento. */
+  leader?: boolean;
 }
 
 /** Tutte le voci del menu: compaiono solo se il token ha il permesso. Le pagine arrivano con le fasi F1-F5. */
 const MENU: MenuItem[] = [
   { label: 'Eventi', path: '/eventi', icon: 'event' },
   { label: 'Le mie iscrizioni', path: '/iscrizioni', icon: 'how_to_reg', entitlement: 'iscrizione:self' },
+  { label: 'Autorizzazioni da dare', path: '/capi/autorizzazioni', icon: 'verified_user', entitlement: 'iscrizione:self', leader: true },
+  { label: 'Ragazzi che ho iscritto', path: '/capi/iscritti', icon: 'groups', entitlement: 'iscrizione:self', leader: true },
   { label: 'Iscrizioni da gestire', path: '/segreteria/iscrizioni', icon: 'inbox', entitlement: 'iscrizione:gestione' },
   { label: 'Documenti da validare', path: '/segreteria/documenti', icon: 'fact_check', entitlement: 'iscrizione:gestione' },
   { label: 'Gestione eventi', path: '/segreteria/eventi', icon: 'edit_calendar', entitlement: 'evento:gestione' },
@@ -38,7 +42,7 @@ export class Shell {
   protected readonly session = inject(SessionService);
   private readonly router = inject(Router);
 
-  protected readonly menu = computed(() => MENU.filter((item) => !item.entitlement || this.session.can(item.entitlement)));
+  protected readonly menu = computed(() => MENU.filter((item) => (!item.entitlement || this.session.can(item.entitlement)) && (!item.leader || this.session.isLeader())));
 
   protected logout(): void {
     this.session.logout();

@@ -23,6 +23,16 @@ export const routes: Routes = [
         data: { entitlement: 'iscrizione:self' },
         loadComponent: () => import('./pages/iscrizioni/form-page').then((m) => m.FormPage),
       },
+      {
+        path: 'segreteria/eventi',
+        canActivate: [authGuard, entitlementGuard],
+        data: { entitlement: 'evento:gestione' },
+        children: [
+          { path: '', loadComponent: () => import('./pages/segreteria/event-manage-list').then((m) => m.EventManageList) },
+          { path: 'nuovo', loadComponent: () => import('./pages/segreteria/event-form').then((m) => m.EventForm) },
+          { path: ':id/modifica', loadComponent: () => import('./pages/segreteria/event-form').then((m) => m.EventForm) },
+        ],
+      },
       { path: 'profilo', canActivate: [authGuard], loadComponent: () => import('./pages/home/home').then((m) => m.Home) },
     ],
   },

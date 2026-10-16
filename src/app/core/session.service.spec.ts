@@ -45,4 +45,12 @@ describe('SessionService', () => {
     expect(reloaded.loggedIn()).toBe(false);
     expect(sessionStorage.getItem('buonacaccia.session')).toBeNull();
   });
+
+  it('ricava la regione della segreteria da isMemberOf', () => {
+    const s = TestBed.inject(SessionService);
+    s.login(segreteria);
+    expect(s.regionCode()).toBe('PIE');
+    s.login({ ...segreteria, authentication: { ...segreteria.authentication!, isMemberOf: 'agesci:socio:true' } });
+    expect(s.regionCode()).toBe('');
+  });
 });

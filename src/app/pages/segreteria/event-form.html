@@ -1,0 +1,123 @@
+<a mat-button routerLink="/segreteria/eventi">← Gestione eventi</a>
+<h1>{{ editing() ? 'Modifica evento' : 'Nuovo evento' }}</h1>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p class="error" role="alert" data-testid="form-error">{{ message }}</p>
+}
+@if (editing() && current()?.status !== 'DRAFT' && current()) {
+  <p class="hint">L'evento è già pubblicato: tipo, livello, regione, requisiti e adempimenti non si cambiano.</p>
+}
+
+<form class="grid" (ngSubmit)="save()">
+  <mat-form-field>
+    <mat-label>Tipo di evento</mat-label>
+    <mat-select name="typeCode" [(ngModel)]="f.typeCode" [disabled]="editing()" data-testid="f-type">
+      @for (t of types(); track t.code) {
+        <mat-option [value]="t.code">{{ t.name }}</mat-option>
+      }
+    </mat-select>
+    @if (err('typeCode'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Livello</mat-label>
+    <mat-select name="level" [(ngModel)]="f.level" [disabled]="editing()" data-testid="f-level">
+      @for (l of levels; track l[0]) {
+        @if (l[0] !== 'NATIONAL' || canNational()) {
+          <mat-option [value]="l[0]">{{ l[1] }}</mat-option>
+        }
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Regione</mat-label>
+    <mat-select name="region" [(ngModel)]="f.region" [disabled]="editing()" data-testid="f-region">
+      <mat-option value="">—</mat-option>
+      @for (r of regions(); track r.code) {
+        <mat-option [value]="r.code">{{ r.name }}</mat-option>
+      }
+    </mat-select>
+    @if (err('region'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+
+  @if (f.level === 'ZONE') {
+    <mat-form-field>
+      <mat-label>Zona</mat-label>
+      <input matInput name="zone" [(ngModel)]="f.zone" />
+      @if (err('zone'); as m) { <mat-error>{{ m }}</mat-error> }
+    </mat-form-field>
+  }
+
+  <mat-form-field class="wide">
+    <mat-label>Titolo</mat-label>
+    <input matInput name="title" [(ngModel)]="f.title" data-testid="f-title" />
+    @if (err('title'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+
+  <mat-form-field class="wide">
+    <mat-label>Descrizione</mat-label>
+    <textarea matInput rows="3" name="description" [(ngModel)]="f.description"></textarea>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Luogo</mat-label>
+    <input matInput name="location" [(ngModel)]="f.location" data-testid="f-location" />
+    @if (err('location'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Provincia (sigla)</mat-label>
+    <input matInput name="province" maxlength="2" [(ngModel)]="f.province" data-testid="f-province" />
+    @if (err('province'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Inizio</mat-label>
+    <input matInput type="date" name="startDate" [(ngModel)]="f.startDate" data-testid="f-start" />
+    @if (err('startDate'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Fine</mat-label>
+    <input matInput type="date" name="endDate" [(ngModel)]="f.endDate" data-testid="f-end" />
+    @if (err('endDate'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Apertura iscrizioni</mat-label>
+    <input matInput type="date" name="registrationOpenDate" [(ngModel)]="f.registrationOpenDate" data-testid="f-open" />
+    @if (err('registrationOpenDate'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Chiusura iscrizioni</mat-label>
+    <input matInput type="date" name="registrationCloseDate" [(ngModel)]="f.registrationCloseDate" data-testid="f-close" />
+    @if (err('registrationCloseDate'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Posti</mat-label>
+    <input matInput type="number" min="1" name="seats" [(ngModel)]="f.seats" data-testid="f-seats" />
+    @if (err('seats'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Quota (€)</mat-label>
+    <input matInput type="number" min="0" step="0.01" name="fee" [(ngModel)]="f.fee" data-testid="f-fee" />
+    @if (err('fee'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Chi può iscrivere</mat-label>
+    <mat-select name="enrollmentMode" [(ngModel)]="f.enrollmentMode" data-testid="f-mode">
+      <mat-option value="SELF">Il socio da solo</mat-option>
+      <mat-option value="BY_LEADER">Il capo unità</mat-option>
+      <mat-option value="BOTH">Entrambi</mat-option>
+    </mat-select>
+    @if (err('enrollmentMode'); as m) { <mat-error>{{ m }}</mat-error> }
+  </mat-form-field>
+
+  <div class="actions wide">
+    <button mat-flat-button type="submit" [disabled]="saving()" data-testid="save-event">{{ editing() ? 'Salva le modifiche' : 'Crea la bozza' }}</button>
+    <a mat-button routerLink="/segreteria/eventi">Annulla</a>
+  </div>
+</form>

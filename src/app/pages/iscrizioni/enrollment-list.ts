@@ -8,6 +8,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Api } from '../../api/api';
+import { DocumentsPanel } from './documents-panel';
 import { enrollmentMine } from '../../api/fn/enrollments/enrollment-mine';
 import { enrollmentWithdraw } from '../../api/fn/enrollments/enrollment-withdraw';
 import { EnrollmentDto } from '../../api/models';
@@ -21,7 +22,7 @@ const PAGE_SIZE = 10;
 /** Le iscrizioni del socio: stato, posizione, scadenza, cosa manca e ritiro. */
 @Component({
   selector: 'app-enrollment-list',
-  imports: [CurrencyPipe, DatePipe, RouterLink, MatButtonModule, MatCardModule, MatChipsModule, MatPaginatorModule, MatProgressBarModule],
+  imports: [CurrencyPipe, DatePipe, RouterLink, DocumentsPanel, MatButtonModule, MatCardModule, MatChipsModule, MatPaginatorModule, MatProgressBarModule],
   templateUrl: './enrollment-list.html',
   styleUrl: './enrollment-list.scss',
 })
@@ -50,6 +51,18 @@ export class EnrollmentList {
 
   protected onPage(event: PageEvent): void {
     this.load(event.pageIndex);
+  }
+
+  protected hasDocuments(enrollment: EnrollmentDto): boolean {
+    return !!enrollment.active && (enrollment.obligations ?? []).some((o) => o.type === 'DOCUMENT' && o.status !== 'NOT_REQUIRED' && o.code);
+  }
+
+  protected hasForm(enrollment: EnrollmentDto): boolean {
+    return !!enrollment.active && (enrollment.obligations ?? []).some((o) => o.type === 'ELECTRONIC_FORM' && o.status !== 'NOT_REQUIRED');
+  }
+
+  protected reload(): void {
+    this.load(this.pageIndex());
   }
 
   protected canWithdraw(enrollment: EnrollmentDto): boolean {

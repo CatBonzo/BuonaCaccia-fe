@@ -51,3 +51,63 @@ export async function enrollVia(request: APIRequestContext, username: string, ev
   const headers = { Authorization: `Bearer ${await tokenOf(request, username)}` };
   return request.post(`${API}/api/v1/events/${eventId}/enrollments`, { headers, data: {} });
 }
+
+/** Modello di scheda per il tipo ROSS: due domande obbligatorie e una facoltativa riservata. */
+export async function setRoverFormTemplate(request: APIRequestContext): Promise<void> {
+  const headers = { Authorization: `Bearer ${await tokenOf(request, 'amministratore')}` };
+  const q = (id: string, text: string, type: string, required: boolean, sensitive = false) => ({ id, text, type, required, sensitive });
+  await request.put(`${API}/api/v1/event-types/ROSS/form-template`, {
+    headers,
+    data: {
+      sections: [
+        {
+          title: 'Su di te',
+          questions: [
+            q('fede', 'Cosa ti aspetti dalla route?', 'LONG_TEXT', true),
+            q('allergie', 'Allergie', 'TEXT', false, true),
+            q('ok', 'Hai letto il regolamento?', 'YES_NO', true),
+          ],
+        },
+      ],
+    },
+  });
+}
+
+/** Evento gratuito per rover che chiede una scheda sanitaria (PDF online) e la scheda elettronica. */
+export async function publishEventWithPaperwork(request: APIRequestContext, tag: string) {
+  await setRoverFormTemplate(request);
+  return publishEvent(request, tag, {
+    typeCode: 'ROSS',
+    fee: 0,
+    obligations: [
+      {
+        type: 'DOCUMENT', code: 'SCHEDA_SANITARIA', description: 'Scheda sanitaria', delivery: 'ONLINE',
+        allowedMimeTypes: ['application/pdf'], maxSizeBytes: 1048576,
+      },
+      { type: 'ELECTRONIC_FORM', description: 'Scheda elettronica' },
+    ],
+  });
+}
+
+export async function enrollId(request: APIRequestContext, username: string, eventId: string): Promise<string> {
+  const response = await enrollVia(request, username, eventId);
+  return (await response.json()).payload.id;
+}
+
+/** Un PDF minimo ma riconosciuto dal backend (che guarda i primi byte, non l'estensione). */
+export const TINY_PDF = Buffer.from('%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n');
+
+export async function rejectLatestDocument(request: APIRequestContext, enrollmentId: string, reason: string): Promise<void> {
+  const headers = { Authorization: `Bearer ${await tokenOf(request, 'segreteria')}` };
+  const docs = (await (await request.get(`${API}/api/v1/enrollments/${enrollmentId}/documents`, { headers })).json()).payload as {
+    id: string;
+    status: string;
+  }[];
+  const open = docs.find((d) => d.status === 'UPLOADED')!;
+  await request.post(`${API}/api/v1/documents/${open.id}/reject`, { headers, data: { reason } });
+}
+
+export async function reopenForm(request: APIRequestContext, enrollmentId: string, reason: string): Promise<void> {
+  const headers = { Authorization: `Bearer ${await tokenOf(request, 'segreteria')}` };
+  await request.post(`${API}/api/v1/enrollments/${enrollmentId}/form/reopen`, { headers, data: { reason } });
+}

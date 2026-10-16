@@ -53,6 +53,13 @@
           </ul>
         }
 
+        @if (hasDocuments(e)) {
+          <app-documents-panel [enrollment]="e" (changed)="reload()" />
+        }
+        @if (hasForm(e)) {
+          <p><a mat-stroked-button [routerLink]="['/iscrizioni', e.id, 'scheda']" data-testid="open-form">Compila la scheda</a></p>
+        }
+
         @if (e.active && e.paymentInfo?.iban && e.payment) {
           <p data-testid="payment">
             Quota {{ e.payment.fee | currency: 'EUR' : 'symbol' : '1.0-2' }}, versati {{ e.payment.paid | currency: 'EUR' : 'symbol' : '1.0-2' }},

@@ -1,0 +1,8 @@
+.section { max-width: 760px; margin: 16px 0; }
+.full { width: 100%; }
+.question { margin-bottom: 8px; }
+.label { margin: 8px 0 4px; }
+.hint { color: var(--mat-sys-on-surface-variant); font-size: 13px; margin: 0 0 8px; }
+.error { color: var(--mat-sys-error); }
+.reopened { color: var(--mat-sys-tertiary); font-weight: 500; }
+.actions { display: flex; gap: 8px; margin: 16px 0; }

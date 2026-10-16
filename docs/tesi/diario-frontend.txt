@@ -126,6 +126,14 @@ Artefatti: ramo 012-elimina-evento, pages/segreteria/event-manage-list, e2e/elim
 Problemi: i tre scenari nuovi passano al primo colpo perche' la regola sta tutta nel backend; ma con le azioni calcolate per ogni evento l'elenco risponde piu' lentamente e tre test vecchi sono falliti: cliccavano il menu degli eventi prima che l'elenco arrivasse, e il menu non si apre se e' vuoto. Corretto con un aiuto condiviso (e2e/choose-event.ts) che riprova ad aprirlo.
 Spunto: stessa lezione di availableActions: quando il backend dice cosa si puo' fare, aggiungere una funzione costa una riga nella pagina.
 
+[2026-10-16] Una veste nuova: tema, menu e catalogo con le skill di design
+Cosa: tema verde con caratteri nuovi e tema scuro, menu a gruppi che sul telefono diventa un cassetto, catalogo eventi come agenda per mese, pagina di accesso a elenco.
+Chi: Mahima ha installato le skill di design per il frontend e ha chiesto di curare UI e UX; Claude ha guardato le schermate com'erano (con i dati veri), ha proposto la direzione e l'ha costruita; la scelta finale resta di Mahima.
+Paradigma: AI-assisted con una skill come guida di metodo (piano di design prima del codice, controllo contro i luoghi comuni, schermate guardate a ogni passo) e code harness: i test e2e esistenti hanno tenuto fermo il comportamento mentre cambiava l'aspetto.
+Artefatti: styles.scss, shell (ts, html, scss), event-list (ts, html, scss), login, e2e/aspetto.spec.ts; ramo 014-ui-tema-e-catalogo.
+Problemi: i test cercavano le schede con `mat-card`: spostando il catalogo su una lista hanno dovuto cambiare due selettori. Lo zero barrato del carattere Atkinson non si puo' spegnere (e' nel disegno delle cifre): accettato, serve alla leggibilita'. Sul telefono il menu restava fisso e tagliava il contenuto: trovato guardando le schermate, non con i test.
+Spunto: i test funzionali non vedono un menu tagliato o una data a capo; guardare le schermate a 390 px e in tema scuro e' un controllo che i test non sostituiscono.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

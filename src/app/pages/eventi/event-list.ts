@@ -1,10 +1,9 @@
 import { DatePipe, CurrencyPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -19,11 +18,25 @@ import { AVAILABILITY_LABELS, CATEGORY_LABELS, SORT_OPTIONS, STATUS_LABELS, labe
 
 const PAGE_SIZE = 12;
 
+interface MonthGroup {
+  label: string;
+  events: EventDto[];
+}
+
+const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+
+/** Stato dei posti in tre toni: aperto, quasi pieno, chiuso. Serve a colorare il segno a sinistra della riga. */
+export function seatTone(availability: string | undefined): 'ok' | 'warn' | 'closed' {
+  if (availability === 'OPEN') return 'ok';
+  if (availability === 'LIMITED' || availability === 'HEAVY_OVERBOOKING') return 'warn';
+  return 'closed';
+}
+
 /** Catalogo pubblico: cerca per testo, regione, categoria, disponibilita' e date, con ordinamento e pagine. */
 @Component({
   selector: 'app-event-list',
   imports: [
-    DatePipe, CurrencyPipe, FormsModule, RouterLink, MatButtonModule, MatCardModule, MatChipsModule,
+    DatePipe, CurrencyPipe, FormsModule, RouterLink, MatButtonModule, MatIconModule,
     MatFormFieldModule, MatInputModule, MatPaginatorModule, MatProgressBarModule, MatSelectModule,
   ],
   templateUrl: './event-list.html',
@@ -39,6 +52,22 @@ export class EventList {
 
   protected readonly events = signal<EventDto[]>([]);
   protected readonly total = signal(0);
+  protected readonly moreFilters = signal(false);
+
+  /** Con l'ordine per data gli eventi si raggruppano per mese, come in un'agenda; altrimenti restano in elenco. */
+  protected readonly groups = computed<MonthGroup[]>(() => {
+    const list = this.events();
+    if (!this.sort.startsWith('startDate')) return [{ label: '', events: list }];
+    const groups: MonthGroup[] = [];
+    for (const event of list) {
+      const [year, month] = (event.startDate ?? '').split('-').map(Number);
+      const label = `${MONTHS[(month ?? 1) - 1]} ${year}`;
+      const last = groups[groups.length - 1];
+      if (last?.label === label) last.events.push(event);
+      else groups.push({ label, events: [event] });
+    }
+    return groups;
+  });
   protected readonly pageIndex = signal(0);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -53,6 +82,24 @@ export class EventList {
   protected readonly pageSize = PAGE_SIZE;
 
   protected readonly labelOf = label;
+  protected readonly tone = seatTone;
+
+  /** Giorni dell'evento ("10–12" o "10") per il blocco della data. */
+  protected days(event: EventDto): string {
+    const start = Number((event.startDate ?? '').slice(8, 10));
+    const end = Number((event.endDate ?? '').slice(8, 10));
+    const sameMonth = (event.startDate ?? '').slice(0, 7) === (event.endDate ?? '').slice(0, 7);
+    if (event.startDate === event.endDate) return String(start);
+    return sameMonth ? `${start}–${end}` : `${start}`;
+  }
+
+  protected monthShort(event: EventDto): string {
+    return MONTHS[Number((event.startDate ?? '').slice(5, 7)) - 1]?.slice(0, 3) ?? '';
+  }
+
+  protected activeFilters(): number {
+    return [this.availability, this.startFrom, this.startTo].filter(Boolean).length;
+  }
   protected readonly categoryLabels = CATEGORY_LABELS;
   protected readonly availabilityLabels = AVAILABILITY_LABELS;
   protected readonly statusLabels = STATUS_LABELS;

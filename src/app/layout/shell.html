@@ -1,25 +1,43 @@
-<mat-toolbar color="primary">
-  <span class="brand">Buona Caccia</span>
+<header class="top">
+  @if (narrow() && hasMenu()) {
+    <button mat-icon-button type="button" aria-label="Apri il menu" (click)="nav.toggle()" data-testid="menu-toggle">
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
+  <a class="brand" routerLink="/eventi">Buona Caccia</a>
   <span class="spacer"></span>
+  <button
+    mat-icon-button
+    type="button"
+    class="theme"
+    (click)="cycleTheme()"
+    [attr.aria-label]="theme() === null ? 'Tema: come il sistema. Cambia' : theme() === 'light' ? 'Tema: chiaro. Cambia' : 'Tema: scuro. Cambia'"
+    data-testid="theme"
+  >
+    <mat-icon>{{ theme() === null ? 'brightness_auto' : theme() === 'light' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
   @if (session.loggedIn()) {
     <a mat-button routerLink="/profilo" class="who" data-testid="who">{{ session.fullName() }}</a>
     <button mat-button type="button" data-testid="logout" (click)="logout()">Esci</button>
   } @else {
-    <a mat-button routerLink="/login" data-testid="login">Accedi</a>
+    <a mat-flat-button routerLink="/login" data-testid="login">Accedi</a>
   }
-</mat-toolbar>
+</header>
 <mat-sidenav-container class="container">
-  <mat-sidenav mode="side" opened class="nav">
-    <mat-nav-list>
+  <mat-sidenav #nav [mode]="narrow() ? 'over' : 'side'" [opened]="!narrow() && hasMenu()" [class.hidden]="!hasMenu()" class="nav" [attr.aria-label]="'Menu principale'">
+    <nav>
       @for (item of menu(); track item.path) {
-        <a mat-list-item [routerLink]="item.path" routerLinkActive="active">
-          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-          <span matListItemTitle>{{ item.label }}</span>
+        @if (item.groupStart) {
+          <p class="group">{{ item.group }}</p>
+        }
+        <a class="item" [routerLink]="item.path" routerLinkActive="active" ariaCurrentWhenActive="page">
+          <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
         </a>
       }
-    </mat-nav-list>
+    </nav>
   </mat-sidenav>
   <mat-sidenav-content class="content">
-    <router-outlet />
+    <main><router-outlet /></main>
   </mat-sidenav-content>
 </mat-sidenav-container>

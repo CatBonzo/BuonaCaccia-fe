@@ -73,6 +73,15 @@
         @if (can(e, 'CANCEL')) {
           <button mat-button type="button" data-testid="cancel" (click)="startCancel(e)">Annulla l'evento</button>
         }
+        @if (can(e, 'DELETE')) {
+          @if (deleting() === e.id) {
+            <span class="confirm">Eliminare l'evento? Non si torna indietro.</span>
+            <button mat-flat-button type="button" data-testid="confirm-delete" (click)="remove(e)">Sì, elimina</button>
+            <button mat-button type="button" (click)="deleting.set(null)">No</button>
+          } @else {
+            <button mat-button type="button" data-testid="delete" (click)="deleting.set(e.id!)">Elimina</button>
+          }
+        }
       </mat-card-actions>
       @if (cancelling() === e.id) {
         <div class="cancel-box">

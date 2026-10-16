@@ -110,6 +110,14 @@ Artefatti: ramo 010-capi, pages/capi/*, e2e/capi.spec.ts.
 Problemi: (1) il primo scenario di iscrizione di un ragazzo falliva perche' l'evento era solo per iscrizioni personali: il frontend ora non offre il pulsante su quegli eventi; (2) il token non dice chi e' capo, serve il censimento.
 Spunto: il link dell'e-mail funziona senza modifiche al backend perche' il contratto (indirizzo `/autorizza/:token`) era gia' definito: il contratto scritto prima ha evitato un attrito.
 
+[2026-10-16] Eliminare un evento dalla gestione eventi
+Cosa: pulsante Elimina con conferma sulle bozze e sugli eventi senza iscrizioni; con iscrizioni resta solo Annulla.
+Chi: Mahima ha chiesto l'eliminazione per segreteria e amministrazione; Claude ha fatto prima il backend (PR 12) e poi la pagina.
+Paradigma: contract-first con ciclo di ritorno: il backend aggiunge l'azione DELETE a availableActions, il client viene rigenerato (api:sync) e la pagina si limita a leggere l'elenco delle azioni.
+Artefatti: ramo 012-elimina-evento, pages/segreteria/event-manage-list, e2e/eliminazione-eventi.spec.ts, client rigenerato.
+Problemi: i tre scenari nuovi passano al primo colpo perche' la regola sta tutta nel backend; ma con le azioni calcolate per ogni evento l'elenco risponde piu' lentamente e tre test vecchi sono falliti: cliccavano il menu degli eventi prima che l'elenco arrivasse, e il menu non si apre se e' vuoto. Corretto con un aiuto condiviso (e2e/choose-event.ts) che riprova ad aprirlo.
+Spunto: stessa lezione di availableActions: quando il backend dice cosa si puo' fare, aggiungere una funzione costa una riga nella pagina.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

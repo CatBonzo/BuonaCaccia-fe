@@ -159,3 +159,18 @@ export async function enrollYouth(request: APIRequestContext, leader: string, ev
   const headers = { Authorization: `Bearer ${await tokenOf(request, leader)}` };
   return request.post(`${API}/api/v1/events/${eventId}/enrollments`, { headers, data: { memberCode } });
 }
+
+/** Una bozza di evento del Piemonte con titolo unico, non pubblicata. */
+export async function createDraft(request: APIRequestContext, tag: string): Promise<{ id: string; title: string }> {
+  const headers = { Authorization: `Bearer ${await tokenOf(request, 'segreteria')}` };
+  const title = `Campo ${tag}`;
+  const created = await request.post(`${API}/api/v1/events`, {
+    headers,
+    data: {
+      typeCode: 'ROSS', title, description: 'Bozza di prova', level: 'REGIONAL', region: 'PIE', enrollmentMode: 'SELF',
+      location: 'Pian del Re', province: 'CN', startDate: '2027-03-10', endDate: '2027-03-12',
+      registrationOpenDate: '2026-10-01', registrationCloseDate: '2027-03-01', seats: 10, fee: 0,
+    },
+  });
+  return { id: (await created.json()).payload.id, title };
+}

@@ -1,11 +1,7 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { TINY_PDF, enrollId, publishEvent, setRoverFormTemplate, uploadPdf, withdrawAll } from './api';
+import { chooseEvent } from './choose-event';
 import { loginAs } from './login';
-
-async function chooseEvent(page: Page, title: string) {
-  await page.getByTestId('event').click();
-  await page.getByRole('option', { name: new RegExp(title) }).click();
-}
 
 /** Evento gratuito con una scheda sanitaria online e un modulo da consegnare in segreteria. */
 function publishWithDocuments(request: Parameters<typeof publishEvent>[0], tag: string) {

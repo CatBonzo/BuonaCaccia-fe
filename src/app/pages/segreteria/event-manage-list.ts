@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Api } from '../../api/api';
 import { eventCancel } from '../../api/fn/events/event-cancel';
+import { eventDelete } from '../../api/fn/events/event-delete';
 import { eventCloseRegistrations } from '../../api/fn/events/event-close-registrations';
 import { eventManaged, EventManaged$Params } from '../../api/fn/events/event-managed';
 import { eventPublish } from '../../api/fn/events/event-publish';
@@ -59,6 +60,8 @@ export class EventManageList {
   /** Evento per cui si sta scrivendo il motivo dell'annullamento. */
   protected readonly cancelling = signal<string | null>(null);
   protected reason = '';
+  /** Evento per cui si chiede conferma dell'eliminazione. */
+  protected readonly deleting = signal<string | null>(null);
 
   constructor() {
     this.load(0);
@@ -98,11 +101,16 @@ export class EventManageList {
     this.act(this.api.invoke(eventCancel, { id: e.id!, body: { reason: this.reason.trim(), version: e.version! } }), 'Evento annullato.');
   }
 
+  protected remove(e: EventDto): void {
+    this.act(this.api.invoke(eventDelete, { id: e.id! }), 'Evento eliminato.');
+  }
+
   private act(request: Promise<unknown>, success: string): void {
     this.error.set(null);
     request.then(
       () => {
         this.cancelling.set(null);
+        this.deleting.set(null);
         this.snackBar.open(success, 'Chiudi', { duration: 4000 });
         this.load(this.pageIndex());
       },

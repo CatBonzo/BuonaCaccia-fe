@@ -24,6 +24,7 @@ export type { ApiResponseRefundDto } from './models/api-response-refund-dto';
 export type { ApiResponseRefundPageDto } from './models/api-response-refund-page-dto';
 export type { ApiResponseRegionSettingsDto } from './models/api-response-region-settings-dto';
 export type { ApiResponseUserProfileDto } from './models/api-response-user-profile-dto';
+export type { ApiResponseVoid } from './models/api-response-void';
 export type { Authentication } from './models/authentication';
 export type { AuthorizationLinkDto } from './models/authorization-link-dto';
 export type { CancelDto } from './models/cancel-dto';

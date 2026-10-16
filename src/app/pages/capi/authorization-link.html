@@ -1,0 +1,49 @@
+<section class="page">
+  @if (loading()) {
+    <p>Un momento…</p>
+  }
+  @if (error(); as message) {
+    <p class="error" role="alert" data-testid="link-error">{{ message }}</p>
+  }
+
+  @if (outcome(); as o) {
+    <mat-card appearance="outlined" data-testid="link-outcome">
+      <mat-card-header><mat-card-title>{{ o.decision === 'APPROVED' ? 'Autorizzazione data' : 'Autorizzazione negata' }}</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <p>Grazie, la tua scelta è stata registrata per l'iscrizione {{ o.enrollmentNumber }}. Il link non si può più usare.</p>
+      </mat-card-content>
+    </mat-card>
+  } @else if (link(); as l) {
+    <mat-card appearance="outlined" data-testid="link-card">
+      <mat-card-header>
+        <mat-card-title>{{ labelOf(obligationLabels, l.obligationType) }}</mat-card-title>
+        <mat-card-subtitle>{{ l.leaderName }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          <strong>{{ l.participantName }}</strong> chiede di partecipare a <strong>{{ l.eventTitle }}</strong>
+          ({{ l.location }}, dal {{ l.startDate | date: 'd MMMM y' }} al {{ l.endDate | date: 'd MMMM y' }}).
+        </p>
+        @if (l.presenterName && l.presenterName !== l.participantName) {
+          <p>L'iscrizione è stata fatta da {{ l.presenterName }}.</p>
+        }
+        <p>Rispondi entro il {{ l.deadline | date: "d MMMM y 'alle' HH:mm" }}.</p>
+        @if (rejecting()) {
+          <mat-form-field>
+            <mat-label>Motivo</mat-label>
+            <textarea matInput rows="2" name="reason" [(ngModel)]="reason" data-testid="link-reason"></textarea>
+          </mat-form-field>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        @if (rejecting()) {
+          <button mat-flat-button type="button" data-testid="link-confirm-reject" (click)="reject()">Conferma: nego</button>
+          <button mat-button type="button" (click)="rejecting.set(false)">Indietro</button>
+        } @else {
+          <button mat-flat-button type="button" data-testid="link-approve" (click)="approve()">Autorizzo</button>
+          <button mat-button type="button" data-testid="link-reject" (click)="rejecting.set(true)">Non autorizzo</button>
+        }
+      </mat-card-actions>
+    </mat-card>
+  }
+</section>

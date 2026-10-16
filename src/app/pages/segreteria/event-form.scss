@@ -1,0 +1,6 @@
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0 16px; max-width: 900px; }
+.wide { grid-column: 1 / -1; }
+.actions { display: flex; gap: 8px; margin: 8px 0 24px; }
+.hint { color: var(--mat-sys-on-surface-variant); }
+.error { color: var(--mat-sys-error); }
+.warning { color: var(--mat-sys-tertiary, #8a5a00); margin: 0 0 8px; }

@@ -1,0 +1,85 @@
+<div class="head">
+  <h1>Gestione eventi</h1>
+  <a mat-flat-button routerLink="/segreteria/eventi/nuovo" data-testid="new-event">Nuovo evento</a>
+</div>
+
+<form class="filters" (ngSubmit)="filter()">
+<mat-form-field>
+  <mat-label>Cerca nel titolo</mat-label>
+  <input matInput name="q" [(ngModel)]="q" data-testid="q" />
+</mat-form-field>
+<mat-form-field>
+  <mat-label>Ordina per</mat-label>
+  <mat-select name="sort" [(ngModel)]="sort" (selectionChange)="filter()" data-testid="sort">
+    @for (o of sorts; track o[0]) {
+      <mat-option [value]="o[0]">{{ o[1] }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+<mat-form-field>
+  <mat-label>Stato</mat-label>
+  <mat-select name="status" [(ngModel)]="status" (selectionChange)="filter()" data-testid="status-filter">
+    <mat-option value="">Tutti</mat-option>
+    @for (s of statuses; track s[0]) {
+      <mat-option [value]="s[0]">{{ s[1] }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+<button mat-flat-button type="submit" data-testid="apply">Cerca</button>
+</form>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p class="error" role="alert" data-testid="manage-error">{{ message }}</p>
+}
+@if (!loading() && events().length === 0) {
+  <p data-testid="empty">Nessun evento.</p>
+}
+
+<div class="list">
+  @for (e of events(); track e.id) {
+    <mat-card appearance="outlined" [attr.data-event]="e.title">
+      <mat-card-header>
+        <mat-card-title>{{ e.title || '(senza titolo)' }}</mat-card-title>
+        <mat-card-subtitle>{{ e.code }} · {{ e.typeName }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set><mat-chip data-testid="event-status">{{ labelOf(statusLabels, e.status) }}</mat-chip></mat-chip-set>
+        @if (e.startDate) {
+          <p>{{ e.startDate | date: 'd MMM y' }} – {{ e.endDate | date: 'd MMM y' }} · {{ e.location }}</p>
+        }
+        @if (e.status !== 'DRAFT') {
+          <p>Iscritti: {{ e.enrolledCount }} su {{ e.seats }}</p>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        @if (can(e, 'EDIT')) {
+          <a mat-button [routerLink]="['/segreteria/eventi', e.id, 'modifica']" data-testid="edit">Modifica</a>
+        }
+        @if (can(e, 'PUBLISH')) {
+          <button mat-button type="button" data-testid="publish" (click)="publish(e)">Pubblica</button>
+        }
+        @if (can(e, 'CLOSE_REGISTRATIONS')) {
+          <button mat-button type="button" data-testid="close" (click)="close(e)">Chiudi le iscrizioni</button>
+        }
+        @if (can(e, 'CANCEL')) {
+          <button mat-button type="button" data-testid="cancel" (click)="startCancel(e)">Annulla l'evento</button>
+        }
+      </mat-card-actions>
+      @if (cancelling() === e.id) {
+        <div class="cancel-box">
+          <mat-form-field class="full">
+            <mat-label>Motivo dell'annullamento (lo ricevono tutti gli iscritti)</mat-label>
+            <textarea matInput rows="2" name="reason" [(ngModel)]="reason" data-testid="cancel-reason"></textarea>
+          </mat-form-field>
+          <button mat-flat-button type="button" data-testid="confirm-cancel" (click)="cancel(e)">Conferma l'annullamento</button>
+          <button mat-button type="button" (click)="cancelling.set(null)">Non annullare</button>
+        </div>
+      }
+    </mat-card>
+  }
+</div>
+
+<mat-paginator [length]="total()" [pageSize]="pageSize" [pageIndex]="pageIndex()" [hidePageSize]="true" (page)="onPage($event)" aria-label="Pagine degli eventi" />

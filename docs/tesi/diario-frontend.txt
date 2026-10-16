@@ -46,6 +46,30 @@ Artefatti: pages/iscrizioni (documents-panel, form-page), core/document-download
 Problemi: (1) il contratto descrive il contenuto di un documento come testo JSON, quindi il client generato non scarica un file: il download usa HttpClient con risposta Blob, fuori dal client generato; (2) la scheda elettronica e i documenti stanno nella PR 7, non ancora unita: per provare il frontend ho avviato il backend con quel ramo unito in locale; (3) gli errori sulle risposte della scheda arrivano con chiave answers.<id>, da mappare alle singole domande.
 Spunto: il client generato copre bene i dati ma non i file: dove il contratto e' povero, il frontend deve aggirarlo e lasciare traccia nel registro dei contratti.
 
+[2026-10-16] Gestione eventi della segreteria (F4a): il frontend copia una regola che dovrebbe stare nel backend
+Cosa: elenco degli eventi gestiti con filtro per stato; creazione e modifica di una bozza; pubblica, chiudi le iscrizioni, annulla con motivo. La regione della bozza si ricava dall'appartenenza della segreteria (agesci:PIE:segreteria).
+Chi: Mahima ha deciso la fase e di dividere F4 in due PR; Claude ha progettato ed eseguito.
+Paradigma: SDD (contratto OpenAPI come fonte), AI-assisted, loop engineering: scenario e2e scritto contro il backend vero, corretto tre volte finche' non ha descritto il comportamento reale.
+Artefatti: ramo 005-gestione-eventi, PR di F4a (vedi commit).
+Problemi: (1) gli eventi non hanno availableActions, quindi i pulsanti si decidono dallo stato; (2) l'elenco gestito non si puo' cercare ne' ordinare, il test deve sfogliare le pagine; (3) la bozza accetta date invertite e solo la pubblicazione le rifiuta: il test aspettava un errore al salvataggio e il comportamento reale era un altro.
+Spunto: un test scritto in base a cio' che ci si aspetta dal backend e' una domanda; la risposta e' il comportamento reale. Qui il frontend ha mostrato tre lacune del contratto senza che nessuno le cercasse.
+
+[2026-10-16] Il ciclo si chiude: due attriti di F4a tornano corretti dal backend
+Cosa: Mahima ha chiesto di correggere nel backend i primi due attriti di F4a. Il backend ora manda le azioni possibili di ogni evento e permette di cercare e ordinare l'elenco gestito; il frontend ha buttato la regola copiata e legge l'elenco.
+Chi: Mahima ha deciso; Claude ha eseguito su backend (PR 10) e frontend (stessa PR 5).
+Paradigma: contract-first con ciclo di ritorno; loop engineering: il registro dei contratti ha prodotto la correzione, il client rigenerato e i test e2e hanno confermato che il comportamento non e' cambiato.
+Artefatti: backend ramo 010-eventi-azioni-ricerca; frontend event-manage-list (can(), q, sort), e2e che cerca per titolo.
+Problemi: nessuno; il test che sfogliava le pagine e' diventato una ricerca per titolo, piu' corta e piu' stabile.
+Spunto: toglie codice dal frontend invece di aggiungerne: e' il segno che la correzione era nel posto giusto.
+
+[2026-10-16] Avviso sulle date nel modulo evento: una domanda di Mahima diventa una funzione
+Cosa: dopo la spiegazione del comportamento della bozza (si salva anche con date incoerenti, la pubblicazione le rifiuta) Mahima ha chiesto di tenere un avviso: il modulo ora segnala subito date in ordine sbagliato, senza impedire di salvare la bozza.
+Chi: Mahima ha deciso; Claude ha eseguito.
+Paradigma: AI-assisted, con la persona che usa il prodotto a guidare il comportamento; le regole dell'avviso copiano quelle del backend, che resta l'arbitro.
+Artefatti: event-form (dateWarnings), e2e/gestione-eventi.spec.ts.
+Problemi: la regola e' scritta due volte (backend e frontend): va tenuta allineata. Accettato perche' l'avviso e' solo un aiuto.
+Spunto: spiegare una scelta a chi non e' tecnico ha fatto emergere un dubbio di usabilita' che i test non avrebbero mai trovato.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

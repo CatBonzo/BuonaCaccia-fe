@@ -35,6 +35,11 @@ Frontend del progetto di tesi "Buona Caccia" (iscrizioni agli eventi AGESCI). Il
 | 2026-10-16 | Gli errori della scheda arrivano con chiave `answers.<id>` e si mostrano sotto la domanda giusta | La persona vede subito cosa correggere |
 | 2026-10-16 | Diario della tesi del frontend nel repository del frontend, separato da quello del backend | Mahima lo ha chiesto: ogni parte tiene traccia del proprio sviluppo, per il capitolo 3 |
 | 2026-10-16 | Playwright contro il backend vero, non contro finti | Scopo del frontend e' provare le API: un finto nasconderebbe proprio i problemi cercati |
+| 2026-10-16 | ~~I pulsanti dell'evento si deducevano dallo stato~~ Superata: i pulsanti Modifica, Pubblica, Chiudi iscrizioni, Annulla dipendono da `availableActions` dell'evento (`can()` in `event-manage-list.ts`) | Il backend ora le calcola (PR 10 del backend): la regola vive in un posto solo, come per le iscrizioni |
+| 2026-10-16 | L'elenco gestito si cerca per titolo (`q`) e si ordina (`sort`, di default i piu' recenti) | Parametri aggiunti al backend (PR 10); i test trovano la scheda cercando il titolo, senza sfogliare le pagine |
+| 2026-10-16 | La regione di una nuova bozza viene da `SessionService.regionCode()`, letta da `isMemberOf` (`agesci:PIE:segreteria`) | Nessuna claim `region` dedicata (scelta di Mahima); la segreteria crea solo per la sua regione |
+| 2026-10-16 | Il modulo evento non tocca requisiti, adempimenti e referenti: li rimanda come li ha ricevuti | Arrivano dal tipo di evento e dopo la pubblicazione sono congelati; cosi' non si cambiano per sbaglio |
+| 2026-10-16 | Il modulo evento avvisa subito delle date incoerenti (`dateWarnings()`), ma la bozza si salva comunque | Mahima: "l'avviso teniamolo". Le regole sono le stesse del backend (rientro dopo la partenza, chiusura dopo l'apertura, chiusura entro la partenza); il backend resta l'arbitro alla pubblicazione |
 
 ## 4. Registro dei contratti
 
@@ -48,6 +53,9 @@ Attriti trovati nel contratto del backend durante lo sviluppo del frontend.
 | 2026-10-16 | L'errore 422 dei requisiti porta un elenco di motivi, gli altri un solo campo | Gestito nel frontend (`ApiError.details`); da documentare nel contratto |
 | 2026-10-16 | `GET /documents/{id}/content` e' descritto come testo JSON, non come file binario | Aperto: dichiarare `application/octet-stream` nel backend; per ora download aggirato nel frontend |
 | 2026-10-16 | I campi dell'OpenAPI sono quasi tutti opzionali (`?`) anche quando la risposta li ha sempre | Aperto: da valutare `@Schema(requiredMode)` sui DTO quando le pagine lo richiederanno |
+| 2026-10-16 | Gli eventi non hanno `availableActions` (a differenza delle iscrizioni) | Corretto nel backend, PR 10 |
+| 2026-10-16 | L'elenco `GET /events/managed` non ha ricerca per titolo ne' ordinamento: i nuovi eventi finiscono in pagine lontane | Corretto nel backend, PR 10 (`q`, `sort`, default piu' recenti) |
+| 2026-10-16 | Una bozza accetta dati incompleti o incoerenti (date invertite), la pubblicazione li rifiuta | Voluto (bozza = lavoro in corso); il frontend mostra il motivo al momento della pubblicazione |
 
 ## 5. Fasi
 

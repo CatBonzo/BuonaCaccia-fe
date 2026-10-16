@@ -11,16 +11,20 @@ import { ApiResponseEventPageDto } from '../../models/api-response-event-page-dt
 
 export interface EventManaged$Params {
   status?: 'DRAFT' | 'PUBLISHED' | 'REGISTRATION_OPEN' | 'REGISTRATION_CLOSED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  q?: string;
   page?: number;
   size?: number;
+  sort?: string;
 }
 
 export function eventManaged(http: HttpClient, rootUrl: string, params?: EventManaged$Params, context?: HttpContext): Observable<StrictHttpResponse<ApiResponseEventPageDto>> {
   const rb = new RequestBuilder(rootUrl, eventManaged.PATH, 'get');
   if (params) {
     rb.query('status', params.status, {});
+    rb.query('q', params.q, {});
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
+    rb.query('sort', params.sort, {});
   }
 
   return http.request(

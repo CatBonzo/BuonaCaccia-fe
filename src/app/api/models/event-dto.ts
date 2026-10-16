@@ -6,6 +6,7 @@ import { ObligationDto } from '../models/obligation-dto';
 import { RequirementsDto } from '../models/requirements-dto';
 export interface EventDto {
   availability?: 'NOT_YET_OPEN' | 'OPEN' | 'LIMITED' | 'HEAVY_OVERBOOKING' | 'CLOSED';
+  availableActions?: Array<'EDIT' | 'PUBLISH' | 'CLOSE_REGISTRATIONS' | 'CANCEL'>;
   cancellationReason?: string;
   cancelledAt?: string;
   category?: 'LC' | 'EG' | 'RS' | 'LEADER_TRAINING' | 'ASSOCIATION';

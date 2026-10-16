@@ -21,6 +21,12 @@ export class SessionService {
     (this.current()?.authentication?.entitlement ?? []).map((e) => e.replace(ENTITLEMENT_PREFIX, '')),
   );
 
+  /** Regione della segreteria, dal permesso `agesci:PIE:segreteria` in `isMemberOf`; vuota per chi non e' di segreteria. */
+  readonly regionCode = computed(() => {
+    const match = /^agesci:([A-Z]{3}):segreteria$/.exec(this.current()?.authentication?.isMemberOf ?? '');
+    return match ? match[1] : '';
+  });
+
   login(user: MockUserResponse): void {
     this.current.set(user);
     try {

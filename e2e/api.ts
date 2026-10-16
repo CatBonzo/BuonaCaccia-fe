@@ -111,3 +111,12 @@ export async function reopenForm(request: APIRequestContext, enrollmentId: strin
   const headers = { Authorization: `Bearer ${await tokenOf(request, 'segreteria')}` };
   await request.post(`${API}/api/v1/enrollments/${enrollmentId}/form/reopen`, { headers, data: { reason } });
 }
+
+/** Il socio carica un PDF per l'adempimento indicato, come farebbe dalla pagina delle iscrizioni. */
+export async function uploadPdf(request: APIRequestContext, username: string, enrollmentId: string, code: string): Promise<void> {
+  const headers = { Authorization: `Bearer ${await tokenOf(request, username)}` };
+  await request.post(`${API}/api/v1/enrollments/${enrollmentId}/obligations/${code}/document`, {
+    headers,
+    multipart: { file: { name: 'scheda.pdf', mimeType: 'application/pdf', buffer: TINY_PDF } },
+  });
+}

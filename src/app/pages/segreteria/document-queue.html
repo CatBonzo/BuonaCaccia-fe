@@ -1,0 +1,69 @@
+<h1>Documenti da validare</h1>
+
+<div class="filters">
+<mat-form-field class="event">
+  <mat-label>Evento</mat-label>
+  <mat-select name="eventId" [(ngModel)]="eventId" (selectionChange)="filter()" data-testid="event">
+    <mat-option value="">Tutti gli eventi</mat-option>
+    @for (e of events(); track e.id) {
+      <mat-option [value]="e.id">{{ e.title }} ({{ e.code }})</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+<mat-form-field>
+  <mat-label>Stato</mat-label>
+  <mat-select name="status" [(ngModel)]="status" (selectionChange)="filter()" data-testid="status-filter">
+    <mat-option value="">Tutti</mat-option>
+    @for (s of statuses; track s[0]) {
+      <mat-option [value]="s[0]">{{ s[1] }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+</div>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p class="error" role="alert" data-testid="queue-error">{{ message }}</p>
+}
+@if (!loading() && documents().length === 0) {
+  <p data-testid="empty">Nessun documento con questo stato.</p>
+}
+
+<div class="list">
+  @for (d of documents(); track d.id) {
+    <mat-card appearance="outlined" [attr.data-document]="d.id">
+      <mat-card-header>
+        <mat-card-title>{{ d.code }}</mat-card-title>
+        <mat-card-subtitle>{{ d.enrollmentNumber }} · {{ d.eventCode }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set><mat-chip data-testid="doc-status">{{ labelOf(statusLabels, d.status) }}</mat-chip></mat-chip-set>
+        <p>{{ d.originalName }} · {{ size(d.sizeBytes) }} · caricato il {{ d.uploadedAt | date: 'd MMM y HH:mm' }}</p>
+        @if (d.status === 'REJECTED' && d.rejectionReason) {
+          <p data-testid="doc-rejection">Rifiutato: {{ d.rejectionReason }}</p>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button type="button" data-testid="open" (click)="open(d)">Scarica</button>
+        @if (d.status === 'UPLOADED') {
+          <button mat-button type="button" data-testid="validate" (click)="validate(d)">Valida</button>
+          <button mat-button type="button" data-testid="reject" (click)="startReject(d)">Rifiuta</button>
+        }
+      </mat-card-actions>
+      @if (rejecting() === d.id) {
+        <div class="reject-box">
+          <mat-form-field class="full">
+            <mat-label>Motivo del rifiuto (lo riceve il socio)</mat-label>
+            <textarea matInput rows="2" name="reason" [(ngModel)]="reason" data-testid="reject-reason"></textarea>
+          </mat-form-field>
+          <button mat-flat-button type="button" data-testid="confirm-reject" (click)="reject(d)">Conferma il rifiuto</button>
+          <button mat-button type="button" (click)="rejecting.set(null)">Non rifiutare</button>
+        </div>
+      }
+    </mat-card>
+  }
+</div>
+
+<mat-paginator [length]="total()" [pageSize]="pageSize" [pageIndex]="pageIndex()" [hidePageSize]="true" (page)="onPage($event)" aria-label="Pagine dei documenti" />

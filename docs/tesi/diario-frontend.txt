@@ -70,6 +70,14 @@ Artefatti: event-form (dateWarnings), e2e/gestione-eventi.spec.ts.
 Problemi: la regola e' scritta due volte (backend e frontend): va tenuta allineata. Accettato perche' l'avviso e' solo un aiuto.
 Spunto: spiegare una scelta a chi non e' tecnico ha fatto emergere un dubbio di usabilita' che i test non avrebbero mai trovato.
 
+[2026-10-16] Segreteria (F4b): lavorare con il contratto com'e', senza inventare azioni
+Cosa: due schermate per la segreteria: le iscrizioni di un evento (filtri per stato e per lista d'attesa, adempimenti da segnare come fatti) e la coda dei documenti (scarica, valida, rifiuta con motivo, filtro per evento).
+Chi: Mahima ha approvato il piano di F4 in due parti e ha unito le PR precedenti; Claude ha progettato ed eseguito.
+Paradigma: contract-first, SDD: il client generato dice quali azioni esistono; loop engineering: ogni scenario e2e e' stato scritto contro il backend vero e corretto sul comportamento reale (testo delle etichette, attesa del filtro).
+Artefatti: ramo 006-segreteria-iscrizioni, pages/segreteria (enrollment-manage, document-queue), e2e/segreteria-iscrizioni.spec.ts.
+Problemi: (1) la segreteria non ha un'azione per rifiutare un adempimento: l'endpoint e' dei capi; (2) il test sulla coda ha avuto una corsa: il clic partiva prima che il filtro per evento fosse applicato, risolto aspettando che resti una sola scheda.
+Spunto: dove il backend non offre un'azione il frontend non deve inventarla: lo si annota nel registro e si decide con la persona se serve.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

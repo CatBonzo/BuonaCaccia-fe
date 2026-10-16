@@ -40,6 +40,9 @@ Frontend del progetto di tesi "Buona Caccia" (iscrizioni agli eventi AGESCI). Il
 | 2026-10-16 | La regione di una nuova bozza viene da `SessionService.regionCode()`, letta da `isMemberOf` (`agesci:PIE:segreteria`) | Nessuna claim `region` dedicata (scelta di Mahima); la segreteria crea solo per la sua regione |
 | 2026-10-16 | Il modulo evento non tocca requisiti, adempimenti e referenti: li rimanda come li ha ricevuti | Arrivano dal tipo di evento e dopo la pubblicazione sono congelati; cosi' non si cambiano per sbaglio |
 | 2026-10-16 | Il modulo evento avvisa subito delle date incoerenti (`dateWarnings()`), ma la bozza si salva comunque | Mahima: "l'avviso teniamolo". Le regole sono le stesse del backend (rientro dopo la partenza, chiusura dopo l'apertura, chiusura entro la partenza); il backend resta l'arbitro alla pubblicazione |
+| 2026-10-16 | Iscrizioni da gestire: si sceglie un evento (non bozza) e si vedono le sue iscrizioni con filtri stato e posto; "Segna come fatto" compare solo se `availableActions` contiene `SATISFY` e l'adempimento e' da fare | La regola di chi puo' agire resta nel backend. Il pagamento e' escluso: ha la sua schermata (F4c) perche' va registrato con importo e data |
+| 2026-10-16 | La segreteria non puo' rifiutare un adempimento dalla schermata iscrizioni | L'endpoint `reject` dell'adempimento e' dei capi (autorizzazioni); la segreteria rifiuta i documenti dalla coda e annulla/riapre altrove. Non ho inventato un'azione che il backend non offre |
+| 2026-10-16 | Coda documenti con filtro per evento e stato (di default "caricato, in attesa"); il rifiuto richiede il motivo, che il socio riceve | Il backend ordina dal piu' vecchio e senza filtro per evento la coda di una regione e' lunga da scorrere; il motivo e' gia' obbligatorio nel contratto, qui lo si chiede prima di inviare |
 
 ## 4. Registro dei contratti
 
@@ -56,6 +59,7 @@ Attriti trovati nel contratto del backend durante lo sviluppo del frontend.
 | 2026-10-16 | Gli eventi non hanno `availableActions` (a differenza delle iscrizioni) | Corretto nel backend, PR 10 |
 | 2026-10-16 | L'elenco `GET /events/managed` non ha ricerca per titolo ne' ordinamento: i nuovi eventi finiscono in pagine lontane | Corretto nel backend, PR 10 (`q`, `sort`, default piu' recenti) |
 | 2026-10-16 | Una bozza accetta dati incompleti o incoerenti (date invertite), la pubblicazione li rifiuta | Voluto (bozza = lavoro in corso); il frontend mostra il motivo al momento della pubblicazione |
+| 2026-10-16 | La segreteria non ha un'azione per rifiutare un adempimento di un'iscrizione (l'endpoint reject e' dei capi) | Aperto: chiedere a Mahima se serve (es. rifiutare per documento cartaceo non valido) |
 
 ## 5. Fasi
 

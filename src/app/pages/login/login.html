@@ -1,0 +1,25 @@
+<main class="login">
+  <h1>Buona Caccia</h1>
+  <p class="hint">Accesso di prova: scegli chi vuoi essere.</p>
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+  <div class="users">
+    @for (user of users(); track user.username) {
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>{{ user.firstName }} {{ user.lastName }}</mat-card-title>
+          <mat-card-subtitle>{{ user.label }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-actions>
+          <button mat-flat-button type="button" [attr.data-user]="user.username" (click)="enter(user)">
+            Entra come {{ user.username }}
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    }
+  </div>
+</main>

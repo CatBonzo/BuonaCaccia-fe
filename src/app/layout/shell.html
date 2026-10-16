@@ -1,0 +1,21 @@
+<mat-toolbar color="primary">
+  <span class="brand">Buona Caccia</span>
+  <span class="spacer"></span>
+  <span class="who" data-testid="who">{{ session.fullName() }}</span>
+  <button mat-button type="button" data-testid="logout" (click)="logout()">Esci</button>
+</mat-toolbar>
+<mat-sidenav-container class="container">
+  <mat-sidenav mode="side" opened class="nav">
+    <mat-nav-list>
+      @for (item of menu(); track item.path) {
+        <a mat-list-item [routerLink]="item.path" routerLinkActive="active">
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content class="content">
+    <router-outlet />
+  </mat-sidenav-content>
+</mat-sidenav-container>

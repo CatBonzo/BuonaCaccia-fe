@@ -1,0 +1,7 @@
+:host { display: flex; flex-direction: column; height: 100vh; }
+.spacer { flex: 1; }
+.who { margin-right: 12px; font-size: 14px; }
+.container { flex: 1; }
+.nav { width: 260px; }
+.content { padding: 16px; }
+@media (max-width: 720px) { .nav { width: 200px; } .who { display: none; } }

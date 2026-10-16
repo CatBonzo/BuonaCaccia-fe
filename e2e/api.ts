@@ -140,3 +140,22 @@ export async function payAndWithdraw(request: APIRequestContext, username: strin
     headers: { Authorization: `Bearer ${await tokenOf(request, username)}` },
   });
 }
+
+/** Il token del link di autorizzazione che il capo riceve per e-mail (Mailpit), per l'iscrizione indicata. */
+export async function authorizationToken(request: APIRequestContext, to: string, enrollmentNumber: string): Promise<string> {
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const list = await (await request.get(`http://localhost:8025/api/v1/search?query=${encodeURIComponent(`to:${to} ${enrollmentNumber}`)}`)).json();
+    for (const m of list.messages ?? []) {
+      const body = (await (await request.get(`http://localhost:8025/api/v1/message/${m.ID}`)).json()).Text as string;
+      const match = /\/autorizza\/([A-Za-z0-9_-]+)/.exec(body);
+      if (match) return match[1];
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error(`Nessuna e-mail di autorizzazione per ${enrollmentNumber}`);
+}
+
+export async function enrollYouth(request: APIRequestContext, leader: string, eventId: string, memberCode: string) {
+  const headers = { Authorization: `Bearer ${await tokenOf(request, leader)}` };
+  return request.post(`${API}/api/v1/events/${eventId}/enrollments`, { headers, data: { memberCode } });
+}

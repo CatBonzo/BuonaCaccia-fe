@@ -1,0 +1,8 @@
+.list { display: grid; gap: 16px; margin: 16px 0; max-width: 820px; }
+.obligations { list-style: none; padding: 0; margin: 12px 0; }
+.obligations li { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 4px 0; }
+.obligations .state { margin-left: auto; font-weight: 500; }
+.obligations .done .state { color: var(--mat-sys-primary); }
+.note { flex-basis: 100%; color: var(--mat-sys-error); font-size: 14px; }
+.form { display: flex; flex-direction: column; max-width: 420px; }
+.error { color: var(--mat-sys-error); }

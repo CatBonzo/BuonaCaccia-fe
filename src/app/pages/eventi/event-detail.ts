@@ -1,6 +1,9 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject, input, signal, effect } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -18,7 +21,7 @@ import { AVAILABILITY_LABELS, CATEGORY_LABELS, LEVEL_LABELS, OBLIGATION_LABELS, 
 /** Dettaglio di un evento: date, quota, posti, requisiti, adempimenti e referenti. */
 @Component({
   selector: 'app-event-detail',
-  imports: [CurrencyPipe, DatePipe, RouterLink, MatButtonModule, MatCardModule, MatChipsModule, MatListModule, MatProgressBarModule],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, CurrencyPipe, DatePipe, RouterLink, MatButtonModule, MatCardModule, MatChipsModule, MatListModule, MatProgressBarModule],
   templateUrl: './event-detail.html',
   styleUrl: './event-detail.scss',
 })
@@ -59,14 +62,17 @@ export class EventDetail {
     return event.availability === 'OPEN' || event.availability === 'LIMITED' || event.availability === 'HEAVY_OVERBOOKING';
   }
 
-  protected enroll(event: EventDto): void {
+  /** Codice socio del ragazzo che un capo iscrive come presentatore. */
+  protected memberCode = '';
+
+  protected enroll(event: EventDto, memberCode?: string): void {
     this.enrolling.set(true);
     this.enrollError.set(null);
-    this.api.invoke(eventEnrollmentEnroll, { eventId: event.id!, body: {} }).then(
+    this.api.invoke(eventEnrollmentEnroll, { eventId: event.id!, body: memberCode ? { memberCode } : {} }).then(
       (response) => {
         const waiting = response.payload?.position === 'WAITING';
         this.snackBar.open(waiting ? 'Sei in lista d\u2019attesa.' : 'Iscrizione registrata: completa gli adempimenti.', 'Chiudi', { duration: 6000 });
-        void this.router.navigate(['/iscrizioni']);
+        void this.router.navigate([memberCode ? '/capi/iscritti' : '/iscrizioni']);
       },
       (e: ApiError) => {
         this.enrolling.set(false);

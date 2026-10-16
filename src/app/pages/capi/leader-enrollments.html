@@ -1,0 +1,81 @@
+<h1>{{ mode() === 'toAuthorize' ? 'Autorizzazioni da dare' : 'Ragazzi che ho iscritto' }}</h1>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p class="error" role="alert" data-testid="leader-error">{{ message }}</p>
+}
+@if (!loading() && enrollments().length === 0) {
+  <p data-testid="empty">
+    @if (mode() === 'toAuthorize') {
+      Nessuna autorizzazione in attesa.
+    } @else {
+      Non hai ancora iscritto nessun ragazzo. Dal dettaglio di un evento puoi farlo con il suo codice socio.
+    }
+  </p>
+}
+
+<div class="list">
+  @for (e of enrollments(); track e.id) {
+    <mat-card appearance="outlined" [attr.data-enrollment]="e.number">
+      <mat-card-header>
+        <mat-card-title>{{ e.participantName }}</mat-card-title>
+        <mat-card-subtitle>{{ e.eventTitle }} · {{ e.number }} · dal {{ e.eventStartDate | date: 'd MMMM y' }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set><mat-chip data-testid="status">{{ labelOf(statusLabels, e.status) }}</mat-chip></mat-chip-set>
+        @if (e.active && e.deadline) {
+          <p>Scade il <strong>{{ e.deadline | date: "d MMMM y 'alle' HH:mm" }}</strong>.</p>
+        }
+        <ul class="obligations">
+          @for (o of e.obligations; track $index) {
+            @if (o.status !== 'NOT_REQUIRED') {
+              <li [class.done]="o.status === 'SATISFIED'">
+                <span>{{ o.description || labelOf(obligationLabels, o.type) }}</span>
+                <span class="state">{{ labelOf(obligationStatusLabels, o.status) }}</span>
+                @if (o.status === 'REJECTED' && o.note) {
+                  <span class="note">{{ o.note }}</span>
+                }
+              </li>
+            }
+          }
+        </ul>
+
+        @if (rejecting() === e.id) {
+          <div class="form">
+            <mat-form-field>
+              <mat-label>Motivo</mat-label>
+              <textarea matInput rows="2" name="reason" [(ngModel)]="reason" data-testid="reject-reason"></textarea>
+            </mat-form-field>
+            @for (a of leaderActions(e, false); track a.action) {
+              <button mat-flat-button type="button" data-testid="confirm-reject" (click)="reject(e, a.type)">Conferma: nega</button>
+            }
+            <button mat-button type="button" (click)="rejecting.set(null)">Indietro</button>
+          </div>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button [routerLink]="['/eventi', e.eventId]">Vedi l'evento</a>
+        @if (rejecting() !== e.id) {
+          @for (a of leaderActions(e, true); track a.action) {
+            <button mat-flat-button type="button" data-testid="approve" (click)="approve(e, a.type)">Autorizza</button>
+          }
+          @if (leaderActions(e, false).length) {
+            <button mat-button type="button" data-testid="reject" (click)="startReject(e)">Nega</button>
+          }
+          @if (canWithdraw(e)) {
+            @if (confirming() === e.id) {
+              <button mat-flat-button type="button" data-testid="confirm-withdraw" (click)="withdraw(e)">Sì, ritira</button>
+              <button mat-button type="button" (click)="confirming.set(null)">No</button>
+            } @else {
+              <button mat-button type="button" data-testid="withdraw" (click)="confirming.set(e.id!)">Ritira l'iscrizione</button>
+            }
+          }
+        }
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>
+
+<mat-paginator [length]="total()" [pageSize]="pageSize" [pageIndex]="pageIndex()" [hidePageSize]="true" (page)="onPage($event)" aria-label="Pagine delle iscrizioni" />

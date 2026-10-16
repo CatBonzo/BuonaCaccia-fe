@@ -91,3 +91,10 @@ export const REFUND_STATUS_LABELS: Record<string, string> = {
   ISSUED: 'Emesso',
   REJECTED: 'Rifiutato',
 };
+
+export const LEADER_ACTIONS: Record<string, { type: 'UNIT_LEADER_AUTHORIZATION' | 'GROUP_LEADER_AUTHORIZATION'; approve: boolean }> = {
+  APPROVE_UNIT_LEADER: { type: 'UNIT_LEADER_AUTHORIZATION', approve: true },
+  REJECT_UNIT_LEADER: { type: 'UNIT_LEADER_AUTHORIZATION', approve: false },
+  APPROVE_GROUP_LEADER: { type: 'GROUP_LEADER_AUTHORIZATION', approve: true },
+  REJECT_GROUP_LEADER: { type: 'GROUP_LEADER_AUTHORIZATION', approve: false },
+};

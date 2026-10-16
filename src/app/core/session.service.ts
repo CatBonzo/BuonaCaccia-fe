@@ -27,6 +27,9 @@ export class SessionService {
     return match ? match[1] : '';
   });
 
+  /** Chi e' capo nel censimento: puo' autorizzare e iscrivere ragazzi della propria unita'. */
+  readonly isLeader = computed(() => this.current()?.census?.memberType === 'LEADER');
+
   login(user: MockUserResponse): void {
     this.current.set(user);
     try {

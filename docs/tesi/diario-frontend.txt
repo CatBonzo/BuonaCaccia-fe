@@ -132,6 +132,7 @@ Chi: Mahima ha installato le skill di design per il frontend e ha chiesto di cur
 Paradigma: AI-assisted con una skill come guida di metodo (piano di design prima del codice, controllo contro i luoghi comuni, schermate guardate a ogni passo) e code harness: i test e2e esistenti hanno tenuto fermo il comportamento mentre cambiava l'aspetto.
 Artefatti: styles.scss, shell (ts, html, scss), event-list (ts, html, scss), login, e2e/aspetto.spec.ts; ramo 014-ui-tema-e-catalogo.
 Problemi: i test cercavano le schede con `mat-card`: spostando il catalogo su una lista hanno dovuto cambiare due selettori. Lo zero barrato del carattere Atkinson non si puo' spegnere (e' nel disegno delle cifre): accettato, serve alla leggibilita'. Sul telefono il menu restava fisso e tagliava il contenuto: trovato guardando le schermate, non con i test.
+Seguito: Mahima ha detto "sito accattivante": la prima versione era giudicata troppo sobria. Aggiunta una testata con le curve di livello e i colori delle branche sulla data degli eventi. Lezione: "curare la UI" e "accattivante" sono richieste diverse, la seconda vuole un rischio estetico in piu' e si e' capito solo dopo la prima consegna.
 Spunto: i test funzionali non vedono un menu tagliato o una data a capo; guardare le schermate a 390 px e in tema scuro e' un controllo che i test non sostituiscono.
 
 2. NOTE APERTE PER IL CAPITOLO 3

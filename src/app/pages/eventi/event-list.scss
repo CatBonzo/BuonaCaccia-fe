@@ -1,3 +1,37 @@
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 36px 32px 28px;
+  margin-bottom: 8px;
+  border-radius: 20px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  --mat-form-field-filled-container-color: var(--mat-sys-surface-container-lowest);
+}
+// Le curve di livello di una carta topografica: il sentiero che porta all'evento. E' una maschera, cosi' prende il colore del tema.
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--mat-sys-primary);
+  opacity: 0.3;
+  -webkit-mask: url('/contour.svg') center / cover no-repeat;
+  mask: url('/contour.svg') center / cover no-repeat;
+  animation: contour-in 900ms ease-out both;
+}
+@keyframes contour-in { from { opacity: 0; transform: scale(1.04); } to { opacity: 0.3; transform: none; } }
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.6rem, 7vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: inherit;
+}
+.lead { margin: 12px 0 24px; max-width: 34ch; font: var(--mat-sys-title-large); }
+.hero .actions .mat-mdc-button { color: var(--mat-sys-on-primary-container); }
+
 .filters {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
@@ -37,7 +71,7 @@
 .event {
   position: relative;
   display: grid;
-  grid-template-columns: 72px 1fr minmax(160px, 220px);
+  grid-template-columns: 92px 1fr minmax(160px, 220px);
   gap: 8px 20px;
   padding: 18px 12px 18px 20px;
   border-bottom: 1px solid var(--bc-line);
@@ -59,9 +93,25 @@
 .event[data-tone='closed']::before { background: var(--bc-closed); opacity: 0.45; }
 .event:hover { background: var(--mat-sys-surface-container-low); }
 
-.when { display: flex; flex-direction: column; align-items: center; line-height: 1; padding-top: 2px; }
-.day { font: var(--mat-sys-headline-medium); font-weight: 700; font-family: var(--mat-sys-brand-font, inherit); letter-spacing: -0.03em; }
-.mon { margin-top: 4px; font: var(--mat-sys-label-large); color: var(--mat-sys-on-surface-variant); }
+.when {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 10px 4px;
+  border-radius: 12px;
+  align-self: start;
+  background: var(--cat-bg);
+  color: var(--cat);
+}
+.event[data-cat='lc'] { --cat: var(--bc-cat-lc); --cat-bg: var(--bc-cat-lc-bg); }
+.event[data-cat='eg'] { --cat: var(--bc-cat-eg); --cat-bg: var(--bc-cat-eg-bg); }
+.event[data-cat='rs'] { --cat: var(--bc-cat-rs); --cat-bg: var(--bc-cat-rs-bg); }
+.event[data-cat='leader'] { --cat: var(--bc-cat-leader); --cat-bg: var(--bc-cat-leader-bg); }
+.event[data-cat='assoc'] { --cat: var(--bc-cat-assoc); --cat-bg: var(--bc-cat-assoc-bg); }
+.day { white-space: nowrap; font: var(--mat-sys-headline-medium); font-weight: 700; font-family: var(--mat-sys-brand-font, inherit); letter-spacing: -0.03em; }
+.mon { margin-top: 4px; font: var(--mat-sys-label-large); color: inherit; }
 
 .info p, .state p { margin: 0; }
 .title { margin: 0; font: var(--mat-sys-title-large); font-weight: 700; letter-spacing: -0.01em; }
@@ -81,9 +131,10 @@
 .event[data-tone='closed'] .seats { color: var(--mat-sys-on-surface-variant); }
 .seats.cancelled { color: var(--mat-sys-error); }
 .fee { margin-top: 6px; font: var(--mat-sys-title-medium); font-weight: 700; }
-.cat { margin-top: 2px; font: var(--mat-sys-body-small); color: var(--mat-sys-on-surface-variant); }
+.cat { margin-top: 2px; font: var(--mat-sys-label-medium); color: var(--cat); }
 
 @media (max-width: 720px) {
+  .hero { padding: 24px 16px 20px; border-radius: 16px; }
   .filters { grid-template-columns: 1fr 1fr; }
   .filters .wide { grid-column: 1 / -1; }
   .sort { width: 170px; }

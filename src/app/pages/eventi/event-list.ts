@@ -84,6 +84,11 @@ export class EventList {
   protected readonly labelOf = label;
   protected readonly tone = seatTone;
 
+  /** La branca in minuscolo breve, per scegliere il colore della data nello stile. */
+  protected catKey(category: string | undefined): string {
+    return { LC: 'lc', EG: 'eg', RS: 'rs', LEADER_TRAINING: 'leader', ASSOCIATION: 'assoc' }[category ?? ''] ?? 'assoc';
+  }
+
   /** Giorni dell'evento ("10–12" o "10") per il blocco della data. */
   protected days(event: EventDto): string {
     const start = Number((event.startDate ?? '').slice(8, 10));

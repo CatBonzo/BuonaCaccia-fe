@@ -74,6 +74,19 @@ html {
   --bc-warn: light-dark(#8a5300, #e8b65a);
   --bc-closed: light-dark(#6f8076, #8a9b90);
   --bc-line: var(--mat-sys-outline-variant);
+
+  // I colori delle branche AGESCI, ripresi dalle uniformi: giallo lupetti e coccinelle, verde esploratori e guide,
+  // rosso rover e scolte; azzurro per la formazione capi e viola per le iniziative dell'associazione.
+  --bc-cat-lc: light-dark(#7a5a00, #f2cf63);
+  --bc-cat-lc-bg: light-dark(#fcefb4, #3a3010);
+  --bc-cat-eg: light-dark(#1b5e45, #8fd1b0);
+  --bc-cat-eg-bg: light-dark(#cfe9da, #1f4a38);
+  --bc-cat-rs: light-dark(#9c2a1f, #f2a59c);
+  --bc-cat-rs-bg: light-dark(#f8d9d4, #4a1d18);
+  --bc-cat-leader: light-dark(#2a5f9e, #a5c8f2);
+  --bc-cat-leader-bg: light-dark(#d6e4f6, #23405f);
+  --bc-cat-assoc: light-dark(#5b4b8a, #c4b8ea);
+  --bc-cat-assoc-bg: light-dark(#e4def3, #2e2650);
 }
 
 html[data-theme='light'] { color-scheme: light; }

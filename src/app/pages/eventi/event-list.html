@@ -1,4 +1,6 @@
-<h1>Eventi</h1>
+<section class="hero">
+  <h1>Buona caccia!</h1>
+  <p class="lead">Campi, route e momenti di formazione: trova il prossimo e iscriviti.</p>
 
 <form class="filters" (ngSubmit)="apply()">
   <mat-form-field class="wide" subscriptSizing="dynamic">
@@ -53,6 +55,7 @@
     <button mat-button type="button" (click)="reset()">Azzera filtri</button>
   </div>
 </form>
+</section>
 
 @if (loading()) {
   <mat-progress-bar mode="indeterminate" />
@@ -90,7 +93,7 @@
     }
     <ul class="events">
       @for (event of group.events; track event.id) {
-        <li class="event" [attr.data-event]="event.code" [attr.data-tone]="tone(event.availability)">
+        <li class="event" [attr.data-event]="event.code" [attr.data-tone]="tone(event.availability)" [attr.data-cat]="catKey(event.category)">
           <div class="when" aria-hidden="true">
             <span class="day">{{ days(event) }}</span>
             <span class="mon">{{ monthShort(event) }}</span>

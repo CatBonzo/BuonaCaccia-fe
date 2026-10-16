@@ -28,6 +28,7 @@ const MENU: MenuItem[] = [
   { label: 'Gestione eventi', path: '/segreteria/eventi', icon: 'edit_calendar', entitlement: 'evento:gestione' },
   { label: 'Pagamenti', path: '/segreteria/pagamenti', icon: 'payments', entitlement: 'pagamento:registrazione' },
   { label: 'Rimborsi', path: '/segreteria/rimborsi', icon: 'currency_exchange', entitlement: 'pagamento:registrazione' },
+  { label: 'Coordinate di pagamento', path: '/segreteria/coordinate', icon: 'account_balance', entitlement: 'pagamento:registrazione' },
   { label: 'Tipi di evento', path: '/amministrazione/tipi-evento', icon: 'category', entitlement: 'tipoevento:gestione' },
 ];
 

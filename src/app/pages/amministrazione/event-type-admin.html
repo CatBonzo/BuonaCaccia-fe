@@ -1,0 +1,148 @@
+<h1>Tipi di evento</h1>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as err) {
+  <div class="error" role="alert" data-testid="type-error">
+    <p>{{ err.message }}</p>
+    @if (err.details.length) {
+      <ul>
+        @for (d of err.details; track $index) {
+          <li>{{ d.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+}
+
+@if (editing(); as t) {
+  <mat-card appearance="outlined" class="editor" data-testid="type-editor">
+    <mat-card-header><mat-card-title>{{ isNew ? 'Nuovo tipo di evento' : 'Modifica ' + t.name }}</mat-card-title></mat-card-header>
+    <mat-card-content class="fields">
+      <mat-form-field>
+        <mat-label>Codice</mat-label>
+        <input matInput name="code" [(ngModel)]="t.code" [disabled]="!isNew" data-testid="type-code" />
+        <mat-hint>Lettere maiuscole, non si cambia dopo la creazione.</mat-hint>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Nome</mat-label>
+        <input matInput name="name" [(ngModel)]="t.name" data-testid="type-name" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Categoria</mat-label>
+        <mat-select name="category" [(ngModel)]="t.category" data-testid="type-category">
+          @for (c of categories; track c[0]) {
+            <mat-option [value]="c[0]">{{ c[1] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-checkbox name="application" [(ngModel)]="t.application">È una candidatura</mat-checkbox>
+
+      <h2>Requisiti di base</h2>
+      <mat-form-field>
+        <mat-label>Età minima</mat-label>
+        <input matInput type="number" name="minAge" [(ngModel)]="req().minAge" data-testid="type-min-age" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Età massima</mat-label>
+        <input matInput type="number" name="maxAge" [(ngModel)]="req().maxAge" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Massimo per gruppo</mat-label>
+        <input matInput type="number" name="maxPerGroup" [(ngModel)]="req().maxPerGroup" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Branche ammesse</mat-label>
+        <mat-select name="branches" multiple [(ngModel)]="req().branches">
+          @for (b of branches; track b[0]) {
+            <mat-option [value]="b[0]">{{ b[1] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Chi può iscriversi</mat-label>
+        <mat-select name="memberTypes" multiple [(ngModel)]="req().memberTypes">
+          @for (m of memberTypes; track m[0]) {
+            <mat-option [value]="m[0]">{{ m[1] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-checkbox name="oneActive" [(ngModel)]="req().oneActivePerType">Una sola iscrizione attiva per persona</mat-checkbox>
+
+      <h2>Adempimenti previsti</h2>
+      @for (o of t.defaultObligations; track $index) {
+        <div class="obligation" data-testid="type-obligation">
+          <mat-form-field>
+            <mat-label>Tipo</mat-label>
+            <mat-select name="otype{{ $index }}" [(ngModel)]="o.type">
+              @for (ot of obligationTypes; track ot[0]) {
+                <mat-option [value]="ot[0]">{{ ot[1] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Descrizione</mat-label>
+            <input matInput name="odesc{{ $index }}" [(ngModel)]="o.description" />
+          </mat-form-field>
+          @if (isDocument(o)) {
+            <mat-form-field>
+              <mat-label>Codice del documento</mat-label>
+              <input matInput name="ocode{{ $index }}" [(ngModel)]="o.code" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Consegna</mat-label>
+              <mat-select name="odel{{ $index }}" [(ngModel)]="o.delivery">
+                @for (d of deliveries; track d[0]) {
+                  <mat-option [value]="d[0]">{{ d[1] }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          }
+          <button mat-button type="button" (click)="removeObligation($index)">Togli</button>
+        </div>
+      }
+      <p><button mat-stroked-button type="button" data-testid="add-obligation" (click)="addObligation()">Aggiungi un adempimento</button></p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-flat-button type="button" data-testid="type-save" (click)="save()">Salva</button>
+      <button mat-button type="button" (click)="editing.set(null)">Annulla</button>
+    </mat-card-actions>
+  </mat-card>
+} @else {
+  <p><button mat-flat-button type="button" data-testid="type-new" (click)="startNew()">Nuovo tipo</button></p>
+}
+
+<div class="list">
+  @for (t of types(); track t.code) {
+    <mat-card appearance="outlined" [attr.data-type]="t.code">
+      <mat-card-header>
+        <mat-card-title>{{ t.name }}</mat-card-title>
+        <mat-card-subtitle>{{ t.code }} · {{ labelOf(categoryLabels, t.category) }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-set>
+          <mat-chip data-testid="type-status">{{ t.active ? 'Attivo' : 'Disattivato' }}</mat-chip>
+          @if (t.application) {
+            <mat-chip>Candidatura</mat-chip>
+          }
+        </mat-chip-set>
+        @if (t.defaultObligations?.length) {
+          <p>Adempimenti: {{ t.defaultObligations!.length }}</p>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button type="button" data-testid="type-edit" (click)="startEdit(t)">Modifica</button>
+        <a mat-button [routerLink]="['/amministrazione/tipi-evento', t.code, 'scheda']" data-testid="type-form">Scheda</a>
+        @if (t.active) {
+          @if (confirming() === t.code) {
+            <button mat-flat-button type="button" data-testid="type-confirm-deactivate" (click)="deactivate(t)">Sì, disattiva</button>
+            <button mat-button type="button" (click)="confirming.set(null)">No</button>
+          } @else {
+            <button mat-button type="button" data-testid="type-deactivate" (click)="confirming.set(t.code)">Disattiva</button>
+          }
+        }
+      </mat-card-actions>
+    </mat-card>
+  }
+</div>

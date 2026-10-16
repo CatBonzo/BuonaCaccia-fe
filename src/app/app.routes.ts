@@ -58,6 +58,21 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/segreteria/refund-queue').then((m) => m.RefundQueue),
       },
       {
+        path: 'amministrazione/tipi-evento',
+        canActivate: [authGuard, entitlementGuard],
+        data: { entitlement: 'tipoevento:gestione' },
+        children: [
+          { path: '', loadComponent: () => import('./pages/amministrazione/event-type-admin').then((m) => m.EventTypeAdmin) },
+          { path: ':code/scheda', loadComponent: () => import('./pages/amministrazione/form-template-admin').then((m) => m.FormTemplateAdmin) },
+        ],
+      },
+      {
+        path: 'segreteria/coordinate',
+        canActivate: [authGuard, entitlementGuard],
+        data: { entitlement: 'pagamento:registrazione' },
+        loadComponent: () => import('./pages/segreteria/region-settings').then((m) => m.RegionSettings),
+      },
+      {
         path: 'capi/autorizzazioni',
         canActivate: [authGuard, entitlementGuard],
         data: { entitlement: 'iscrizione:self', mode: 'toAuthorize' },

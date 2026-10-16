@@ -1,0 +1,5 @@
+.list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin: 16px 0; }
+.editor { margin-bottom: 16px; max-width: 760px; }
+.fields { display: flex; flex-direction: column; }
+.obligation { display: flex; flex-wrap: wrap; gap: 0 12px; align-items: baseline; }
+.error { color: var(--mat-sys-error); }

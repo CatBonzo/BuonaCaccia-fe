@@ -102,6 +102,14 @@ Artefatti: core/file-download.ts (ora solo il salvataggio), core/document-downlo
 Problemi: nessuno: il codice aggirante e' stato sostituito, non si e' aggiunto altro.
 Spunto: il frontend e' diventato piu' corto dopo la correzione: e' la misura che il contratto e' migliorato.
 
+[2026-10-16] Amministrazione: tipi di evento, schede e coordinate di pagamento
+Cosa: tre schermate che prima esistevano solo come chiamate al backend: tipi di evento (crea, modifica con requisiti e adempimenti, disattiva), editor del modello di scheda per tipo, coordinate di pagamento per regione.
+Chi: Mahima ha scelto di fare l'amministrazione dopo i capi; Claude ha deciso il perimetro (cosa si puo' modificare dalla pagina) e ha scritto codice e test.
+Paradigma: SDD e test-first: tre scenari e2e contro il backend vero (crea e disattiva un tipo, scrive una scheda e la ritrova dopo il ricaricamento, la segreteria salva l'IBAN); le regole restano al backend e la pagina ne mostra gli errori.
+Artefatti: ramo 011-amministrazione, pages/amministrazione/*, pages/segreteria/region-settings, e2e/amministrazione.spec.ts.
+Problemi: (1) durante i test il backend locale si e' spento (Docker sparito), ripristinato con lo script di riavvio; (2) tipi e schede non si possono cancellare, quindi ogni scenario crea un codice nuovo.
+Spunto: una schermata di configurazione e' il modo piu' rapido per scoprire se i campi del contratto sono davvero sufficienti per usare il sistema senza chiamate manuali.
+
 [2026-10-16] Capi (F5): il flusso a tre persone, ragazzo, capo e link dell'e-mail
 Cosa: elenco delle autorizzazioni da dare (autorizza o nega con motivo), elenco dei ragazzi iscritti dal capo, iscrizione di un ragazzo con il codice socio dal dettaglio evento, pagina pubblica del link ricevuto per e-mail.
 Chi: Claude, come fase F5 del planner; la scelta di mostrare le voci ai soli capi e' stata presa da Claude (da confermare con Mahima).

@@ -1,0 +1,5 @@
+.section { margin: 16px 0; max-width: 820px; }
+.title { width: 100%; }
+.question { display: flex; flex-wrap: wrap; gap: 0 12px; align-items: baseline; padding: 8px 0; border-top: 1px solid var(--mat-sys-outline-variant); }
+.text { flex: 1 1 280px; }
+.error { color: var(--mat-sys-error); }

@@ -1,0 +1,64 @@
+<h1>Scheda del tipo {{ code() }}</h1>
+<p><a routerLink="/amministrazione/tipi-evento">← Tipi di evento</a></p>
+
+@if (error(); as err) {
+  <div class="error" role="alert" data-testid="template-error">
+    <p>{{ err.message }}</p>
+    @if (err.details.length) {
+      <ul>
+        @for (d of err.details; track $index) {
+          <li>{{ d.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+}
+
+@if (sections().length === 0) {
+  <p data-testid="template-empty">Questo tipo non ha ancora una scheda.</p>
+}
+
+@for (s of sections(); track $index; let si = $index) {
+  <mat-card appearance="outlined" class="section" data-testid="template-section">
+    <mat-card-content>
+      <mat-form-field class="title">
+        <mat-label>Titolo della sezione</mat-label>
+        <input matInput name="title{{ si }}" [(ngModel)]="s.title" data-testid="section-title" />
+      </mat-form-field>
+      @for (q of s.questions; track $index; let qi = $index) {
+        <div class="question" data-testid="template-question">
+          <mat-form-field class="text">
+            <mat-label>Domanda</mat-label>
+            <input matInput name="qtext{{ si }}-{{ qi }}" [(ngModel)]="q.text" data-testid="question-text" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Tipo</mat-label>
+            <mat-select name="qtype{{ si }}-{{ qi }}" [(ngModel)]="q.type" data-testid="question-type">
+              @for (t of questionTypes; track t[0]) {
+                <mat-option [value]="t[0]">{{ t[1] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-checkbox name="qreq{{ si }}-{{ qi }}" [(ngModel)]="q.required" data-testid="question-required">Obbligatoria</mat-checkbox>
+          <mat-checkbox name="qsens{{ si }}-{{ qi }}" [(ngModel)]="q.sensitive" data-testid="question-sensitive">Riservata</mat-checkbox>
+          @if (q.type === 'CHOICE') {
+            <mat-form-field class="text">
+              <mat-label>Opzioni (una per riga)</mat-label>
+              <textarea matInput rows="3" name="qopt{{ si }}-{{ qi }}" [ngModel]="optionsText(q)" (ngModelChange)="setOptions(q, $event)"></textarea>
+            </mat-form-field>
+          }
+          <button mat-button type="button" (click)="removeQuestion(s, qi)">Togli</button>
+        </div>
+      }
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-stroked-button type="button" data-testid="add-question" (click)="addQuestion(s)">Aggiungi una domanda</button>
+      <button mat-button type="button" (click)="removeSection(si)">Togli la sezione</button>
+    </mat-card-actions>
+  </mat-card>
+}
+
+<p>
+  <button mat-stroked-button type="button" data-testid="add-section" (click)="addSection()">Aggiungi una sezione</button>
+  <button mat-flat-button type="button" data-testid="template-save" (click)="save()">Salva la scheda</button>
+</p>

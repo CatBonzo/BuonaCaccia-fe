@@ -1,0 +1,52 @@
+<h1>Coordinate di pagamento</h1>
+
+@if (!session.regionCode()) {
+  <mat-form-field>
+    <mat-label>Regione</mat-label>
+    <mat-select name="key" [(ngModel)]="key" (selectionChange)="load()" data-testid="region">
+      @for (r of regions(); track r.code) {
+        <mat-option [value]="r.code">{{ r.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+}
+
+@if (error(); as err) {
+  <div class="error" role="alert" data-testid="settings-error">
+    <p>{{ err.message }}</p>
+    @if (err.details.length) {
+      <ul>
+        @for (d of err.details; track $index) {
+          <li>{{ d.message }}</li>
+        }
+      </ul>
+    }
+  </div>
+}
+
+@if (settings(); as s) {
+  <p>Il socio vede queste coordinate quando deve fare un bonifico per un evento della regione.</p>
+  <div class="form">
+    <mat-form-field>
+      <mat-label>Intestatario</mat-label>
+      <input matInput name="holder" [(ngModel)]="s.holder" data-testid="holder" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>IBAN</mat-label>
+      <input matInput name="iban" [(ngModel)]="s.iban" data-testid="iban" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>E-mail per i contatti</mat-label>
+      <input matInput name="contactEmail" [(ngModel)]="s.contactEmail" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Telefono</mat-label>
+      <input matInput name="contactPhone" [(ngModel)]="s.contactPhone" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Orari della segreteria</mat-label>
+      <input matInput name="hours" [(ngModel)]="s.hours" />
+    </mat-form-field>
+    <div><button mat-flat-button type="button" data-testid="settings-save" (click)="save()">Salva</button></div>
+  </div>
+}

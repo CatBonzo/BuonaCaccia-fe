@@ -44,11 +44,12 @@ Frontend del progetto di tesi "Buona Caccia" (iscrizioni agli eventi AGESCI). Il
 | 2026-10-16 | La segreteria non puo' rifiutare un adempimento dalla schermata iscrizioni | L'endpoint `reject` dell'adempimento e' dei capi (autorizzazioni); la segreteria rifiuta i documenti dalla coda e annulla/riapre altrove. Non ho inventato un'azione che il backend non offre |
 | 2026-10-16 | Coda documenti con filtro per evento e stato (di default "caricato, in attesa"); il rifiuto richiede il motivo, che il socio riceve | Il backend ordina dal piu' vecchio e senza filtro per evento la coda di una regione e' lunga da scorrere; il motivo e' gia' obbligatorio nel contratto, qui lo si chiede prima di inviare |
 | 2026-10-16 | Pagamenti: si sceglie un evento a pagamento; si vedono i totali (incassato, rimborsato, da rimborsare, annullato), le iscrizioni con residuo, i pagamenti registrati e il CSV | La segreteria riconcilia per evento. I rimborsi hanno una coda propria (prossima PR) |
-| 2026-10-16 | "Da incassare" si ricava dall'elenco iscrizioni (attive, con posto, residuo > 0), non dal campo `outstanding` della riconciliazione | `outstanding` non porta l'id dell'iscrizione, che serve per registrare il bonifico (vedi registro dei contratti) |
+| 2026-10-16 | "Da incassare" viene dal campo `outstanding` della riconciliazione (una sola chiamata) | ~~Prima si leggeva l'elenco iscrizioni perche' `outstanding` non aveva l'id~~ Superata: il backend ora porta `enrollmentId` (PR 11 del backend) |
 | 2026-10-16 | Il blocco "il pagamento si abilita dopo l'autorizzazione del capo" non e' copiato nel frontend: si mostra l'errore del backend (409 40910) | La regola vive nel servizio; copiarla vorrebbe dire tenerla allineata in due posti |
 | 2026-10-16 | `FileDownload` (core/file-download.ts) scarica qualunque file come Blob; `DocumentDownload` lo usa | Il CSV ha lo stesso problema dei documenti: il contratto lo descrive come testo JSON |
 | 2026-10-16 | Coda rimborsi (`/segreteria/rimborsi`, permesso `pagamento:registrazione`): filtri evento e stato (di default "Da lavorare"), azioni prendi in carico / segna emesso (data, riferimento facoltativo) / rifiuta con motivo | Sono i tre passi che offre il backend; il motivo del rifiuto e' obbligatorio anche nella schermata per non aspettare l'errore. Le azioni mostrate seguono lo stato del rimborso, il backend resta l'arbitro |
 | 2026-10-16 | I menu degli eventi nelle pagine della segreteria sono ordinati dai piu' recenti (`createdAt,desc`), non per titolo | Con piu' di 100 eventi (capita nei dati di prova) quelli nuovi finivano oltre il limite e non si potevano scegliere; i recenti sono anche quelli che si cercano di solito |
+| 2026-10-16 | Documenti e CSV si scaricano con il client generato (restituisce un Blob); `FileDownload.save` lo offre al browser | ~~Prima si usava HttpClient a mano perche' il contratto li descriveva come testo JSON~~ Superata: il backend li dichiara come file (PR 11 del backend) |
 
 ## 4. Registro dei contratti
 
@@ -60,14 +61,14 @@ Attriti trovati nel contratto del backend durante lo sviluppo del frontend.
 | 2026-10-16 | Operazioni OpenAPI chiamate `get_1`, `update_2`: client illeggibile | Corretto nel backend, nomi `controller_metodo` |
 | 2026-10-16 | `availableActions` e' un elenco di stringhe senza valori elencati nel contratto (WITHDRAW, SATISFY, APPROVE_*...) | Aperto: valutare un enum nel DTO del backend, cosi' il client generato li conosce |
 | 2026-10-16 | L'errore 422 dei requisiti porta un elenco di motivi, gli altri un solo campo | Gestito nel frontend (`ApiError.details`); da documentare nel contratto |
-| 2026-10-16 | `GET /documents/{id}/content` e' descritto come testo JSON, non come file binario | Aperto: dichiarare `application/octet-stream` nel backend; per ora download aggirato nel frontend |
+| 2026-10-16 | `GET /documents/{id}/content` e' descritto come testo JSON, non come file binario | Corretto nel backend, PR 11 (`application/octet-stream`) |
 | 2026-10-16 | I campi dell'OpenAPI sono quasi tutti opzionali (`?`) anche quando la risposta li ha sempre | Aperto: da valutare `@Schema(requiredMode)` sui DTO quando le pagine lo richiederanno |
 | 2026-10-16 | Gli eventi non hanno `availableActions` (a differenza delle iscrizioni) | Corretto nel backend, PR 10 |
 | 2026-10-16 | L'elenco `GET /events/managed` non ha ricerca per titolo ne' ordinamento: i nuovi eventi finiscono in pagine lontane | Corretto nel backend, PR 10 (`q`, `sort`, default piu' recenti) |
 | 2026-10-16 | Una bozza accetta dati incompleti o incoerenti (date invertite), la pubblicazione li rifiuta | Voluto (bozza = lavoro in corso); il frontend mostra il motivo al momento della pubblicazione |
 | 2026-10-16 | La segreteria non ha un'azione per rifiutare un adempimento di un'iscrizione (l'endpoint reject e' dei capi) | Aperto: chiedere a Mahima se serve (es. rifiutare per documento cartaceo non valido) |
-| 2026-10-16 | `GET /events/{id}/reconciliation/export` e' descritto come testo JSON, non come file CSV | Aperto, come per i documenti: dichiarare `text/csv` nel backend; per ora download come Blob |
-| 2026-10-16 | `outstanding` nella riconciliazione ha numero e nome ma non l'id dell'iscrizione | Aperto: aggiungere `enrollmentId` toglierebbe la seconda chiamata che il frontend fa per registrare un bonifico |
+| 2026-10-16 | `GET /events/{id}/reconciliation/export` e' descritto come testo JSON, non come file CSV | Corretto nel backend, PR 11 (`text/csv`, formato binario) |
+| 2026-10-16 | `outstanding` nella riconciliazione ha numero e nome ma non l'id dell'iscrizione | Corretto nel backend, PR 11 (`enrollmentId`) |
 
 ## 5. Fasi
 

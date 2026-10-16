@@ -91,3 +91,10 @@ export const REFUND_STATUS_LABELS: Record<string, string> = {
   ISSUED: 'Emesso',
   REJECTED: 'Rifiutato',
 };
+
+export const BRANCH_LABELS: Record<string, string> = { LC: 'Lupetti e coccinelle', EG: 'Esploratori e guide', RS: 'Rover e scolte', CO: 'Comunità capi' };
+export const MEMBER_TYPE_LABELS: Record<string, string> = { YOUTH: 'Ragazzi', LEADER: 'Capi' };
+export const QUESTION_TYPE_LABELS: Record<string, string> = {
+  TEXT: 'Testo breve', LONG_TEXT: 'Testo lungo', YES_NO: 'Sì o no', CHOICE: 'Scelta tra opzioni', DATE: 'Data',
+};
+export const DELIVERY_LABELS: Record<string, string> = { ONLINE: 'Online', PAPER: 'Cartaceo' };

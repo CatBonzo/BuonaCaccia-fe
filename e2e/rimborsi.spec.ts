@@ -1,11 +1,7 @@
-import { expect, Page, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { payAndWithdraw, publishEvent, withdrawAll } from './api';
+import { chooseEvent } from './choose-event';
 import { loginAs } from './login';
-
-async function chooseEvent(page: Page, title: string) {
-  await page.getByTestId('event').click();
-  await page.getByRole('option', { name: new RegExp(title) }).click();
-}
 
 test.describe('rimborsi della segreteria', () => {
   test.beforeEach(async ({ request }) => withdrawAll(request, 'rover'));

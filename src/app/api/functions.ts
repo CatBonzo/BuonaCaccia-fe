@@ -9,6 +9,8 @@ export type { EventGet$Params as EventGet$Params } from './fn/events/event-get';
 export { eventGet as eventGet } from './fn/events/event-get';
 export type { EventUpdate$Params as EventUpdate$Params } from './fn/events/event-update';
 export { eventUpdate as eventUpdate } from './fn/events/event-update';
+export type { EventDelete$Params as EventDelete$Params } from './fn/events/event-delete';
+export { eventDelete as eventDelete } from './fn/events/event-delete';
 export type { EventSearch$Params as EventSearch$Params } from './fn/events/event-search';
 export { eventSearch as eventSearch } from './fn/events/event-search';
 export type { EventCreate$Params as EventCreate$Params } from './fn/events/event-create';

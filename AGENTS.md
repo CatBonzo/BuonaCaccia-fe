@@ -59,6 +59,7 @@ Frontend del progetto di tesi "Buona Caccia" (iscrizioni agli eventi AGESCI). Il
 | 2026-10-16 | Autorizza/Nega seguono `availableActions` (APPROVE_/REJECT_UNIT_LEADER...) e non una regola copiata nel frontend | Il backend sa se il capo e' capo unita', capo gruppo o entrambi; il frontend mostra cio' che puo' fare |
 | 2026-10-16 | Il link dell'e-mail porta a `/autorizza/:token`, pagina pubblica senza accesso | E' l'indirizzo che il backend scrive nelle e-mail (`link-base-url`); il token e' monouso e il backend risponde con errore al secondo uso |
 | 2026-10-16 | "Iscrivi un ragazzo" compare nel dettaglio evento solo ai capi e solo se l'evento non e' `SELF` | L'evento solo personale rifiuta le iscrizioni dei capi: meglio non offrire un pulsante che dara' sempre errore |
+| 2026-10-16 | Gestione eventi: pulsante "Elimina" (con conferma in linea) quando `availableActions` contiene `DELETE`; per un evento con iscrizioni compare solo "Annulla l'evento" | Mahima (2026-10-16) ha chiesto di poter eliminare bozze ed eventi creati. La regola (solo senza iscrizioni) e' del backend (PR 12) e arriva come azione, il frontend non la ricalcola. Client rigenerato con `api:sync` |
 
 ## 4. Registro dei contratti
 

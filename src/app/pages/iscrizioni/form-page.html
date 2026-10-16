@@ -1,0 +1,82 @@
+<a mat-button routerLink="/iscrizioni">← Le mie iscrizioni</a>
+<h1>Scheda</h1>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p class="error" role="alert" data-testid="form-error">{{ message }}</p>
+}
+
+@if (form(); as f) {
+  @if (f.status === 'SUBMITTED') {
+    <p data-testid="form-status">Scheda inviata il {{ f.submittedAt | date: "d MMMM y 'alle' HH:mm" }}. Non si può più modificare.</p>
+  } @else {
+    @if (f.reopenReason) {
+      <p class="reopened" role="status" data-testid="reopen-reason">La segreteria ha riaperto la scheda: {{ f.reopenReason }}</p>
+    }
+    <p data-testid="form-status">Bozza: puoi salvare e tornare più tardi.</p>
+  }
+
+  @for (section of f.sections; track $index) {
+    <mat-card appearance="outlined" class="section">
+      <mat-card-header><mat-card-title>{{ section.title }}</mat-card-title></mat-card-header>
+      <mat-card-content>
+        @for (q of section.questions; track q.id) {
+          <div class="question" [attr.data-question]="q.id">
+            @switch (q.type) {
+              @case ('LONG_TEXT') {
+                <mat-form-field class="full">
+                  <mat-label>{{ q.text }}{{ q.required ? ' *' : '' }}</mat-label>
+                  <textarea matInput rows="4" [name]="q.id!" [ngModel]="answers()[q.id!] ?? ''" (ngModelChange)="setAnswer(q.id!, $event)" [disabled]="readOnly()"></textarea>
+                </mat-form-field>
+              }
+              @case ('YES_NO') {
+                <p class="label">{{ q.text }}{{ q.required ? ' *' : '' }}</p>
+                <mat-radio-group [name]="q.id!" [ngModel]="answers()[q.id!] ?? ''" (ngModelChange)="setAnswer(q.id!, $event)" [disabled]="readOnly()">
+                  <mat-radio-button value="true">Sì</mat-radio-button>
+                  <mat-radio-button value="false">No</mat-radio-button>
+                </mat-radio-group>
+              }
+              @case ('CHOICE') {
+                <mat-form-field class="full">
+                  <mat-label>{{ q.text }}{{ q.required ? ' *' : '' }}</mat-label>
+                  <mat-select [name]="q.id!" [ngModel]="answers()[q.id!] ?? ''" (ngModelChange)="setAnswer(q.id!, $event)" [disabled]="readOnly()">
+                    @for (option of q.options; track option) {
+                      <mat-option [value]="option">{{ option }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              }
+              @case ('DATE') {
+                <mat-form-field class="full">
+                  <mat-label>{{ q.text }}{{ q.required ? ' *' : '' }}</mat-label>
+                  <input matInput type="date" [name]="q.id!" [ngModel]="answers()[q.id!] ?? ''" (ngModelChange)="setAnswer(q.id!, $event)" [disabled]="readOnly()" />
+                </mat-form-field>
+              }
+              @default {
+                <mat-form-field class="full">
+                  <mat-label>{{ q.text }}{{ q.required ? ' *' : '' }}</mat-label>
+                  <input matInput [name]="q.id!" [ngModel]="answers()[q.id!] ?? ''" (ngModelChange)="setAnswer(q.id!, $event)" [disabled]="readOnly()" />
+                </mat-form-field>
+              }
+            }
+            @if (q.sensitive) {
+              <p class="hint">Dato riservato: lo vede solo la segreteria dell'evento.</p>
+            }
+            @if (fieldErrors()[q.id!]; as message) {
+              <p class="error" role="alert" [attr.data-testid]="'error-' + q.id">{{ message }}</p>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (!readOnly()) {
+    <div class="actions">
+      <button mat-button type="button" data-testid="save-form" [disabled]="saving()" (click)="save()">Salva bozza</button>
+      <button mat-flat-button type="button" data-testid="submit-form" [disabled]="saving()" (click)="submit()">Invia la scheda</button>
+    </div>
+  }
+}

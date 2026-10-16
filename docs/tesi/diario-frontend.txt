@@ -38,6 +38,14 @@ Artefatti: pages/iscrizioni, azione Iscriviti in pages/eventi/event-detail, ApiE
 Problemi: (1) l'errore dei requisiti (422) porta un elenco di motivi nel payload, mentre gli altri errori portano un solo campo: ApiError ora legge entrambe le forme; (2) nel contratto OpenAPI le azioni disponibili sono semplici stringhe, senza elenco dei valori possibili: il frontend deve conoscerle a parte (annotato nel registro dei contratti).
 Spunto: spostare nel backend la decisione "cosa puo' fare questa persona adesso" evita che le regole vivano in due posti e si contraddicano.
 
+[2026-10-16] Documenti e scheda del socio (F3): il contratto non dice tutto
+Cosa: dalla pagina delle iscrizioni il socio carica i documenti richiesti (stato dell'ultimo file, motivo dell'eventuale rifiuto, nuovo caricamento, download) e compila la scheda elettronica a piu' riprese: bozza salvata, errori sotto ogni domanda, invio, e riapertura da parte della segreteria con il motivo.
+Chi: Claude, su richiesta di Mahima.
+Paradigma: contract-first con i suoi limiti e test end-to-end che attraversano piu' ruoli: il socio carica, la segreteria rifiuta (via API), il socio vede il motivo e ricarica.
+Artefatti: pages/iscrizioni (documents-panel, form-page), core/document-download.ts, e2e/adempimenti.spec.ts.
+Problemi: (1) il contratto descrive il contenuto di un documento come testo JSON, quindi il client generato non scarica un file: il download usa HttpClient con risposta Blob, fuori dal client generato; (2) la scheda elettronica e i documenti stanno nella PR 7, non ancora unita: per provare il frontend ho avviato il backend con quel ramo unito in locale; (3) gli errori sulle risposte della scheda arrivano con chiave answers.<id>, da mappare alle singole domande.
+Spunto: il client generato copre bene i dati ma non i file: dove il contratto e' povero, il frontend deve aggirarlo e lasciare traccia nel registro dei contratti.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

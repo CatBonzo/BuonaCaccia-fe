@@ -70,3 +70,17 @@ export const CLOSING_REASON_LABELS: Record<string, string> = {
   EVENT_CANCELLED: 'Evento annullato',
   SEATS_EXHAUSTED: 'Posti esauriti',
 };
+
+export const DOCUMENT_STATUS_LABELS: Record<string, string> = {
+  UPLOADED: 'Caricato, in attesa di verifica',
+  VALIDATED: 'Approvato',
+  REJECTED: 'Rifiutato: caricane un altro',
+  REPLACED: 'Sostituito',
+};
+
+export const FORM_STATUS_LABELS: Record<string, string> = { DRAFT: 'Bozza', SUBMITTED: 'Inviata' };
+
+export function formatBytes(bytes: number | undefined): string {
+  if (!bytes) return '';
+  return bytes >= 1048576 ? `${(bytes / 1048576).toFixed(bytes % 1048576 ? 1 : 0)} MB` : `${Math.round(bytes / 1024)} KB`;
+}

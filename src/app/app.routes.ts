@@ -17,6 +17,12 @@ export const routes: Routes = [
         data: { entitlement: 'iscrizione:self' },
         loadComponent: () => import('./pages/iscrizioni/enrollment-list').then((m) => m.EnrollmentList),
       },
+      {
+        path: 'iscrizioni/:id/scheda',
+        canActivate: [authGuard, entitlementGuard],
+        data: { entitlement: 'iscrizione:self' },
+        loadComponent: () => import('./pages/iscrizioni/form-page').then((m) => m.FormPage),
+      },
       { path: 'profilo', canActivate: [authGuard], loadComponent: () => import('./pages/home/home').then((m) => m.Home) },
     ],
   },

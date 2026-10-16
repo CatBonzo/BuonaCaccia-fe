@@ -1,0 +1,31 @@
+@for (o of requirements(); track o.code) {
+  <section class="doc" [attr.data-document]="o.code">
+    <h3>{{ o.description || o.code }}</h3>
+    @if (o.maxSizeBytes) {
+      <p class="rule">Formati ammessi: PDF, JPEG o PNG, fino a {{ formatBytes(o.maxSizeBytes) }}.</p>
+    }
+
+    @if (current(o.code!); as doc) {
+      <p data-testid="doc-status">
+        <strong>{{ doc.originalName }}</strong> · {{ labelOf(statusLabels, doc.status) }}
+        <span class="when">({{ doc.uploadedAt | date: 'd MMM, HH:mm' }})</span>
+      </p>
+      @if (doc.status === 'REJECTED' && doc.rejectionReason) {
+        <p class="rejected" role="alert" data-testid="doc-rejection">Motivo: {{ doc.rejectionReason }}</p>
+      }
+      <button mat-button type="button" (click)="download(doc)">Scarica</button>
+    } @else {
+      <p>Nessun documento caricato.</p>
+    }
+
+    @if (canUpload(o)) {
+      <input #file type="file" hidden [accept]="accept(o)" [attr.data-testid]="'file-' + o.code" (change)="onFile(o, file)" />
+      <button mat-flat-button type="button" [disabled]="uploading() === o.code" (click)="file.click()" [attr.data-testid]="'upload-' + o.code">
+        {{ current(o.code!) ? 'Carica un altro file' : 'Carica il file' }}
+      </button>
+    }
+    @if (errors()[o.code!]; as message) {
+      <p class="rejected" role="alert" data-testid="doc-error">{{ message }}</p>
+    }
+  </section>
+}

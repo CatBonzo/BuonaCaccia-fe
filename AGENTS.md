@@ -30,6 +30,9 @@ Frontend del progetto di tesi "Buona Caccia" (iscrizioni agli eventi AGESCI). Il
 | 2026-10-16 | Gli scenari e2e creano da soli i propri eventi con titolo unico (`e2e/api.ts`) | Non dipendono dallo stato del database e si possono rilanciare |
 | 2026-10-16 | Il pulsante Ritira dipende da `availableActions` della risposta, non da regole copiate nel frontend | Le regole di ritiro (data di partenza, chi e' titolare) vivono nel backend; NFR-12 |
 | 2026-10-16 | Conferma del ritiro in linea nella scheda, senza finestra di dialogo | Piu' semplice e accessibile su telefono; il ritiro e' reversibile solo rifacendo l'iscrizione, quindi la conferma resta |
+| 2026-10-16 | Il download dei documenti usa HttpClient con risposta Blob (`core/document-download.ts`), non il client generato | Il contratto dichiara il contenuto come testo JSON: il client generato non puo' scaricare un file |
+| 2026-10-16 | La scheda si invia salvando prima le risposte a schermo | Cosi' un invio non perde quanto scritto dopo l'ultimo salvataggio |
+| 2026-10-16 | Gli errori della scheda arrivano con chiave `answers.<id>` e si mostrano sotto la domanda giusta | La persona vede subito cosa correggere |
 | 2026-10-16 | Diario della tesi del frontend nel repository del frontend, separato da quello del backend | Mahima lo ha chiesto: ogni parte tiene traccia del proprio sviluppo, per il capitolo 3 |
 | 2026-10-16 | Playwright contro il backend vero, non contro finti | Scopo del frontend e' provare le API: un finto nasconderebbe proprio i problemi cercati |
 
@@ -43,6 +46,7 @@ Attriti trovati nel contratto del backend durante lo sviluppo del frontend.
 | 2026-10-16 | Operazioni OpenAPI chiamate `get_1`, `update_2`: client illeggibile | Corretto nel backend, nomi `controller_metodo` |
 | 2026-10-16 | `availableActions` e' un elenco di stringhe senza valori elencati nel contratto (WITHDRAW, SATISFY, APPROVE_*...) | Aperto: valutare un enum nel DTO del backend, cosi' il client generato li conosce |
 | 2026-10-16 | L'errore 422 dei requisiti porta un elenco di motivi, gli altri un solo campo | Gestito nel frontend (`ApiError.details`); da documentare nel contratto |
+| 2026-10-16 | `GET /documents/{id}/content` e' descritto come testo JSON, non come file binario | Aperto: dichiarare `application/octet-stream` nel backend; per ora download aggirato nel frontend |
 | 2026-10-16 | I campi dell'OpenAPI sono quasi tutti opzionali (`?`) anche quando la risposta li ha sempre | Aperto: da valutare `@Schema(requiredMode)` sui DTO quando le pagine lo richiederanno |
 
 ## 5. Fasi

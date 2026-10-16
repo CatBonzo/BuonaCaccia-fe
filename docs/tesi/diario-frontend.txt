@@ -86,6 +86,14 @@ Artefatti: ramo 007-segreteria-pagamenti, pages/segreteria/payments, core/file-d
 Problemi: (1) il CSV e' descritto come testo JSON (stesso problema dei documenti); (2) il riepilogo non porta l'id delle iscrizioni con residuo, quindi servono due chiamate.
 Spunto: due difetti dello stesso tipo (file descritti come JSON) in due schermate diverse: segnale che conviene correggerli una volta nel backend, non aggirarli ogni volta.
 
+[2026-10-16] Gli aggiramenti spariscono: i file dal client generato
+Cosa: Mahima ha chiesto di correggere nel backend la gestione dei file ("dobbiamo gestire i file"). Documenti e CSV sono ora dichiarati come file e il riepilogo dei pagamenti porta l'id delle iscrizioni; il frontend scarica con il client generato e ha una chiamata in meno.
+Chi: Mahima ha deciso; Claude ha eseguito su backend (PR 11) e frontend (PR 7).
+Paradigma: contract-first con ciclo di ritorno e loop engineering: il registro dei contratti ha portato alla correzione, il client rigenerato e gli stessi test e2e hanno confermato che il comportamento e' invariato.
+Artefatti: core/file-download.ts (ora solo il salvataggio), core/document-download.ts, pages/segreteria/payments (usa outstanding).
+Problemi: nessuno: il codice aggirante e' stato sostituito, non si e' aggiunto altro.
+Spunto: il frontend e' diventato piu' corto dopo la correzione: e' la misura che il contratto e' migliorato.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

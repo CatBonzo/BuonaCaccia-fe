@@ -33,15 +33,15 @@
     <p data-testid="nothing-owed">Nessuna iscrizione con un residuo da pagare.</p>
   }
   <div class="list">
-    @for (e of owing(); track e.id) {
-      <mat-card appearance="outlined" [attr.data-enrollment]="e.number">
+    @for (o of owing(); track o.enrollmentId) {
+      <mat-card appearance="outlined" [attr.data-enrollment]="o.enrollmentNumber">
         <mat-card-header>
-          <mat-card-title>{{ e.participantName }}</mat-card-title>
-          <mat-card-subtitle>{{ e.number }}</mat-card-subtitle>
+          <mat-card-title>{{ o.participantName }}</mat-card-title>
+          <mat-card-subtitle>{{ o.enrollmentNumber }}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <p data-testid="owed">Pagato {{ e.payment?.paid | currency: 'EUR' }} su {{ e.payment?.fee | currency: 'EUR' }}, residuo {{ e.payment?.due | currency: 'EUR' }}.</p>
-          @if (registering() === e.id) {
+          <p data-testid="owed">Pagato {{ o.paid | currency: 'EUR' }} su {{ o.fee | currency: 'EUR' }}, residuo {{ o.due | currency: 'EUR' }}.</p>
+          @if (registering() === o.enrollmentId) {
             <div class="form">
               <mat-form-field>
                 <mat-label>Importo (€)</mat-label>
@@ -55,14 +55,14 @@
                 <mat-label>Riferimento del bonifico</mat-label>
                 <input matInput name="reference" [(ngModel)]="reference" data-testid="reference" />
               </mat-form-field>
-              <button mat-flat-button type="button" data-testid="confirm-register" (click)="register(e)">Registra</button>
+              <button mat-flat-button type="button" data-testid="confirm-register" (click)="register(o)">Registra</button>
               <button mat-button type="button" (click)="registering.set(null)">Non registrare</button>
             </div>
           }
         </mat-card-content>
-        @if (registering() !== e.id) {
+        @if (registering() !== o.enrollmentId) {
           <mat-card-actions>
-            <button mat-button type="button" data-testid="register" (click)="startRegister(e)">Registra bonifico</button>
+            <button mat-button type="button" data-testid="register" (click)="startRegister(o)">Registra bonifico</button>
           </mat-card-actions>
         }
       </mat-card>

@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Api } from '../../api/api';
 import { mockAuthFindAll } from '../../api/functions';
@@ -12,7 +11,7 @@ import { SessionService } from '../../core/session.service';
 /** Accesso di prova: si sceglie uno degli utenti finti del backend. Sara' sostituito da Keycloak. */
 @Component({
   selector: 'app-login',
-  imports: [MatCardModule, MatButtonModule, MatProgressBarModule],
+  imports: [MatButtonModule, MatProgressBarModule],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -24,6 +23,11 @@ export class Login {
   protected readonly users = signal<MockUserResponse[]>([]);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
+
+  /** Le iniziali nel tondo: aiutano a riconoscere a colpo d'occhio chi e' chi nell'elenco. */
+  protected initials(user: MockUserResponse): string {
+    return `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase();
+  }
 
   constructor() {
     this.api.invoke(mockAuthFindAll).then(

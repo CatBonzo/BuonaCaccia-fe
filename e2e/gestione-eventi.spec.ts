@@ -61,7 +61,7 @@ test.describe('gestione eventi della segreteria', () => {
     await page.goto('/eventi');
     await page.getByTestId('q').fill(title);
     await page.getByTestId('apply').click();
-    await expect(page.locator('mat-card', { hasText: title })).toBeVisible();
+    await expect(page.locator('.event', { hasText: title })).toBeVisible();
 
     await page.goto('/segreteria/eventi');
     const again = await findCard(page, title);

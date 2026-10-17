@@ -12,7 +12,7 @@ test.describe('catalogo eventi', () => {
     await expect(page.locator('.event')).toHaveCount(1);
     await expect(page.locator('.event')).toContainText(event.title);
 
-    await page.getByRole('link', { name: 'Dettaglio' }).click();
+    await page.getByRole('link', { name: event.title }).click();
     await expect(page.getByTestId('title')).toHaveText(event.title);
     await expect(page.getByTestId('seats')).toContainText('10 liberi su 10');
     await expect(page.getByText('Quota di partecipazione')).toBeVisible();

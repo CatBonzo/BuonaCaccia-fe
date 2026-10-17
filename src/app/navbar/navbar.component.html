@@ -4,9 +4,12 @@
       <i class="fa-solid fa-bars" aria-hidden="true"></i>
     </button>
   }
-  @if (!menu.hasMenu() || menu.narrow()) {
-    <a class="brand" routerLink="/eventi"><i class="fa-solid fa-compass" aria-hidden="true"></i> Buona Caccia</a>
-  }
+  <a class="brand" routerLink="/eventi"><i class="fa-solid fa-compass" aria-hidden="true"></i> Buona Caccia</a>
+  <nav class="links" aria-label="Navigazione del sito">
+    @for (link of links; track link.path) {
+      <a [routerLink]="link.path" [routerLinkActive]="link.path === '/' ? '' : 'active'" ariaCurrentWhenActive="page" [attr.data-testid]="'nav-' + link.id">{{ link.label }}</a>
+    }
+  </nav>
   <span class="spacer"></span>
   <button
     mat-icon-button
@@ -22,6 +25,6 @@
     <a mat-button routerLink="/profilo" class="who" data-testid="who"><i class="fa-solid fa-user" aria-hidden="true"></i> {{ session.fullName() }}</a>
     <button mat-button type="button" data-testid="logout" (click)="logout()">Esci</button>
   } @else {
-    <a mat-flat-button routerLink="/login" data-testid="login">Accedi</a>
+    <a mat-flat-button routerLink="/login" class="login" data-testid="login"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi</a>
   }
 </header>

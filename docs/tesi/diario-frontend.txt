@@ -151,6 +151,14 @@ Artefatti: ramo 016-primeng-fondamenta (prova, non unita), ramo 016-look-riferim
 Problemi: PrimeNG 22 mostra "Invalid PrimeUI License" senza chiave; l'avviso si accorge solo guardando la schermata, i test passavano. Inoltre la PR 14 era stata unita nel ramo della PR 13 dopo che questo era gia' in feature: la struttura non era arrivata in feature, ricuperata con la PR 15.
 Spunto: una libreria "gratuita" va controllata anche nella licenza, non solo nel prezzo; e con PR impilate conviene unire dal fondo della pila verso l'alto, o riportare la base su feature prima di unire.
 
+[2026-10-17] La barra in alto per tutti: Home, Iscrizioni, Aiuto, Info e Accedi
+Cosa: la barra mostra sempre quattro collegamenti e, a destra, Accedi (o il nome e Esci); nascono le pagine pubbliche Aiuto e Info; il marchio passa dal menu laterale alla barra.
+Chi: Mahima ha chiesto che anche chi non e' registrato possa navigare e ha indicato una barra di riferimento con un'immagine; Claude ha deciso il layout perche' il sito dell'immagine non era raggiungibile dalla rete dell'ambiente, e l'ha scritto nella tabella delle decisioni.
+Paradigma: AI-assisted con riferimento visivo non disponibile (si lavora sul testo della richiesta e si dichiara l'ipotesi) e code harness con e2e nuovi per la barra.
+Artefatti: ramo 017-navbar; navbar, aiuto, info, app.routes.ts, e2e/aspetto.spec.ts.
+Problemi: il server di sviluppo ha compilato a meta' (rotte aggiunte prima dei file) e non si e' ripreso: i test sembravano rotti, bastava riavviarlo. Un test dei rimborsi e' fallito una volta con dati rimasti da una corsa interrotta e poi e' passato.
+Spunto: quando un test fallisce in modo strano, prima controllare che il server di prova serva il codice vero; e un riferimento che non si riesce a vedere va dichiarato come ipotesi, non ignorato.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

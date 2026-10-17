@@ -8,6 +8,8 @@ export const routes: Routes = [
       { path: 'login', loadComponent: () => import('./login/login.component').then((m) => m.LoginComponent) },
       { path: '', pathMatch: 'full', redirectTo: 'eventi' },
       // Il catalogo e' pubblico: si cerca e si legge senza accedere.
+      { path: 'aiuto', loadComponent: () => import('./aiuto/aiuto.component').then((m) => m.AiutoComponent) },
+      { path: 'info', loadComponent: () => import('./info/info.component').then((m) => m.InfoComponent) },
       { path: 'eventi', loadComponent: () => import('./eventi/eventi.component').then((m) => m.EventiComponent) },
       { path: 'eventi/:id', loadComponent: () => import('./evento-dettaglio/evento-dettaglio.component').then((m) => m.EventoDettaglioComponent) },
       {

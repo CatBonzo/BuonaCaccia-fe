@@ -1,5 +1,4 @@
 <nav aria-label="Menu principale">
-  <p class="brand"><i class="fa-solid fa-compass" aria-hidden="true"></i> Buona Caccia</p>
   @for (item of menu.items(); track item.path) {
     @if (item.groupStart) {
       <p class="group">{{ item.group }}</p>

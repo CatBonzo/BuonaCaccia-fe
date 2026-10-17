@@ -16,6 +16,8 @@ test.describe('rimborsi della segreteria', () => {
     await chooseEvent(page, event.title);
 
     const card = page.locator('mat-card[data-refund]');
+    // Finche' il filtro per evento non e' applicato l'elenco mostra i rimborsi di tutti gli eventi.
+    await expect(card).toHaveCount(1);
     await expect(card.getByTestId('refund-status')).toContainText('Da lavorare');
     await expect(card).toContainText('50,00');
     await card.getByTestId('take').click();
@@ -42,6 +44,7 @@ test.describe('rimborsi della segreteria', () => {
     await chooseEvent(page, event.title);
 
     const card = page.locator('mat-card[data-refund]');
+    await expect(card).toHaveCount(1);
     await card.getByTestId('reject').click();
     await card.getByTestId('confirm-reject').click();
     await expect(page.getByTestId('refund-error')).toContainText('motivo');

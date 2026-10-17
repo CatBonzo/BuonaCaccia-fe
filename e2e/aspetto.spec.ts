@@ -35,4 +35,41 @@ test.describe('aspetto e menu', () => {
     await page.getByTestId('theme').click();
     await expect(html).not.toHaveAttribute('data-theme', /.+/);
   });
+
+  test('la barra in alto mostra Home, Eventi, Aiuto e Info anche a chi non ha fatto l’accesso, con Accedi a destra', async ({ page }) => {
+    await page.goto('/eventi');
+    const links = page.getByRole('navigation', { name: 'Navigazione del sito' });
+    for (const name of ['Home', 'Eventi', 'Aiuto', 'Info']) {
+      await expect(links.getByRole('link', { name, exact: true })).toBeVisible();
+    }
+    const info = await links.getByRole('link', { name: 'Info', exact: true }).boundingBox();
+    const login = await page.getByTestId('login').boundingBox();
+    expect(login!.x).toBeGreaterThan(info!.x + info!.width);
+
+    await links.getByRole('link', { name: 'Aiuto', exact: true }).click();
+    await expect(page).toHaveURL(/\/aiuto$/);
+    await expect(page.getByRole('heading', { name: 'Come funziona?' })).toBeVisible();
+    await expect(links.getByRole('link', { name: 'Aiuto', exact: true })).toHaveAttribute('aria-current', 'page');
+
+    await links.getByRole('link', { name: 'Info', exact: true }).click();
+    await expect(page).toHaveURL(/\/info$/);
+    await expect(page.getByRole('heading', { name: /Che cos'è Buona Caccia/ })).toBeVisible();
+
+    await links.getByRole('link', { name: 'Eventi', exact: true }).click();
+    await expect(page).toHaveURL(/\/eventi$/);
+    await expect(links.getByRole('link', { name: 'Eventi', exact: true })).toHaveAttribute('aria-current', 'page');
+
+    await links.getByRole('link', { name: 'Home', exact: true }).click();
+    await expect(page).toHaveURL(/\/eventi$/);
+  });
+
+  test('chi è entrato vede le stesse voci nella barra e il suo nome a destra', async ({ page }) => {
+    await loginAs(page, 'socio');
+    const links = page.getByRole('navigation', { name: 'Navigazione del sito' });
+    await expect(links.getByRole('link', { name: 'Eventi', exact: true })).toBeVisible();
+    await page.getByRole('link', { name: 'Le mie iscrizioni' }).click();
+    await expect(page).toHaveURL(/\/iscrizioni$/);
+    await expect(page.getByTestId('who')).toBeVisible();
+    await expect(page.getByTestId('login')).toHaveCount(0);
+  });
 });

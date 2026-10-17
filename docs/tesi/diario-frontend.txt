@@ -183,6 +183,14 @@ Artefatti: ramo 020-icone-navbar, navbar.component.{ts,html,scss}.
 Problemi: Accedi aveva gia' un'icona nel codice; l'ho allineata con le altre (spazio uguale) e ho aggiunto Esci.
 Spunto: icone decorative con aria-hidden non cambiano i nomi accessibili, quindi i test restano uguali.
 
+[2026-10-17] Menu laterale a icone che si apre al passaggio
+Cosa: sul computer il menu laterale e' una fascia di sole icone; passandoci sopra o con la tastiera si apre sopra la pagina. Sul telefono non cambia.
+Chi: Mahima l'ha chiesto; Claude ha deciso di farlo solo in CSS (larghezza 72/264 px, scritte a larghezza zero) e di aprirlo sopra i contenuti, non spingendoli.
+Paradigma: AI-assisted con code harness: i 43 e2e (che cliccano le voci del menu) e le immagini della pagina chiusa e aperta hanno confermato il risultato.
+Artefatti: ramo 021-sidebar-icone; app.component.scss, sidebar.component.scss.
+Problemi: i test cliccano al centro della voce; se la voce fosse rimasta larga 240 px con il menu chiuso, il clic sarebbe finito sulla pagina. Con le scritte a larghezza zero la voce sta dentro la fascia e i test passano senza modifiche. Il Docker e il backend erano spenti e ho dovuto riavviarli per provare davvero.
+Spunto: una funzione di sola grafica cambia anche dove si "clicca": conviene provarla con i test che usano il mouse, non solo guardarla.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

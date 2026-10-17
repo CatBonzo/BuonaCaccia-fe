@@ -19,6 +19,7 @@ nav { display: flex; flex-direction: column; gap: 2px; padding: 20px 12px 24px; 
   font-weight: 500;
   border-left: 3px solid transparent;
 }
+.item span { max-width: 200px; overflow: hidden; white-space: nowrap; transition: max-width 0.18s ease, opacity 0.18s ease; }
 .item .fa-solid { font-size: 1.05rem; width: 1.2rem; text-align: center; }
 .item:hover { background: rgb(255 255 255 / 0.08); color: #ffffff; }
 .item.active {
@@ -38,3 +39,13 @@ nav { display: flex; flex-direction: column; gap: 2px; padding: 20px 12px 24px; 
 }
 .who strong { color: #ffffff; font-size: 0.95rem; }
 :focus-visible { outline-color: #ffffff; }
+
+// Menu chiuso a fascia (solo computer, vedi app.component.scss): restano le icone, le scritte rientrano.
+@media (min-width: 901px) {
+  :host-context(.nav:not(:hover):not(:focus-within)) {
+    .item span { max-width: 0; opacity: 0; }
+    .item { gap: 0; }
+    .group { visibility: hidden; height: 1px; margin: 14px 12px 6px; border-top: 1px solid rgb(255 255 255 / 0.15); }
+    .who { visibility: hidden; }
+  }
+}

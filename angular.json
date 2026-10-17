@@ -30,7 +30,9 @@
               }
             ],
             "styles": [
-              "@fontsource-variable/bricolage-grotesque/wdth.css",
+              "@fontsource-variable/fraunces/wght.css",
+              "node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css",
+              "node_modules/@fortawesome/fontawesome-free/css/solid.min.css",
               "@fontsource/atkinson-hyperlegible-next/400.css",
               "@fontsource/atkinson-hyperlegible-next/500.css",
               "@fontsource/atkinson-hyperlegible-next/700.css",
@@ -42,7 +44,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "600kB",
+                  "maximumWarning": "700kB",
                   "maximumError": "1MB"
                 },
                 {

@@ -3,9 +3,10 @@
 .container { flex: 1; background: var(--mat-sys-surface); }
 .nav {
   width: 264px;
-  padding: 12px 12px 24px;
-  background: var(--mat-sys-surface);
-  border-right: 1px solid var(--bc-line);
+  padding: 0;
+  background: var(--bc-navy);
+  border-right: 0;
+  color: #e6eaf3;
   --mat-sidenav-container-shape: 0;
 }
 .nav.hidden { display: none; }

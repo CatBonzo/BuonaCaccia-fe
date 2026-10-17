@@ -1,7 +1,7 @@
 <form class="filters" (ngSubmit)="apply()">
   <mat-form-field class="wide" subscriptSizing="dynamic">
     <mat-label>Cerca</mat-label>
-    <mat-icon matIconPrefix aria-hidden="true">search</mat-icon>
+    <i matIconPrefix class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
     <input matInput name="q" [(ngModel)]="q" placeholder="Titolo, luogo, tipo" data-testid="q" />
   </mat-form-field>
   <mat-form-field subscriptSizing="dynamic">

@@ -1,10 +1,12 @@
 <header class="top">
   @if (menu.narrow() && menu.hasMenu()) {
     <button mat-icon-button type="button" aria-label="Apri il menu" (click)="menuToggle.emit()" data-testid="menu-toggle">
-      <mat-icon>menu</mat-icon>
+      <i class="fa-solid fa-bars" aria-hidden="true"></i>
     </button>
   }
-  <a class="brand" routerLink="/eventi">Buona Caccia</a>
+  @if (!menu.hasMenu() || menu.narrow()) {
+    <a class="brand" routerLink="/eventi"><i class="fa-solid fa-compass" aria-hidden="true"></i> Buona Caccia</a>
+  }
   <span class="spacer"></span>
   <button
     mat-icon-button
@@ -14,10 +16,10 @@
     [attr.aria-label]="themes.theme() === null ? 'Tema: come il sistema. Cambia' : themes.theme() === 'light' ? 'Tema: chiaro. Cambia' : 'Tema: scuro. Cambia'"
     data-testid="theme"
   >
-    <mat-icon>{{ themes.theme() === null ? 'brightness_auto' : themes.theme() === 'light' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    <i class="fa-solid" [class]="themes.theme() === null ? 'fa-circle-half-stroke' : themes.theme() === 'light' ? 'fa-sun' : 'fa-moon'" aria-hidden="true"></i>
   </button>
   @if (session.loggedIn()) {
-    <a mat-button routerLink="/profilo" class="who" data-testid="who">{{ session.fullName() }}</a>
+    <a mat-button routerLink="/profilo" class="who" data-testid="who"><i class="fa-solid fa-user" aria-hidden="true"></i> {{ session.fullName() }}</a>
     <button mat-button type="button" data-testid="logout" (click)="logout()">Esci</button>
   } @else {
     <a mat-flat-button routerLink="/login" data-testid="login">Accedi</a>

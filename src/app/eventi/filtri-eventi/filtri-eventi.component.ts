@@ -2,7 +2,6 @@ import { Component, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RegionDto } from '../../api/models';
@@ -21,7 +20,7 @@ export interface FiltriEventi {
 /** La barra di ricerca del catalogo: testo, regione e categoria sempre in vista, il resto sotto "Altri filtri". */
 @Component({
   selector: 'app-filtri-eventi',
-  imports: [FormsModule, MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule],
+  imports: [FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   templateUrl: './filtri-eventi.component.html',
   styleUrl: './filtri-eventi.component.scss',
 })

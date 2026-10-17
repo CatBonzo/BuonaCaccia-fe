@@ -25,7 +25,9 @@ describe('EventoCardComponent', () => {
 
   it('mostra tipo, titolo, luogo, regione per esteso, posti e quota', async () => {
     const el = await crea(evento);
-    expect(el.querySelector('.type')?.textContent).toBe('ROSS');
+    expect(el.querySelector('.type')?.textContent).toBe('Route');
+    expect(el.querySelector('.cat')?.textContent).toBe('Rover e Scolte');
+    expect(el.querySelector('.level')?.textContent).toBe('Regionale · Piemonte');
     expect(el.querySelector('.title a')?.textContent).toBe('Route di prova');
     expect(el.textContent).toContain('Pian del Re (CN)');
     expect(el.textContent).toContain('Piemonte');
@@ -38,6 +40,8 @@ describe('EventoCardComponent', () => {
   it('per un evento nazionale scrive "Nazionale" e a posti finiti lo dice', async () => {
     const el = await crea({ ...evento, level: 'NATIONAL', enrolledCount: 30, availability: 'CLOSED' } as unknown as EventDto);
     expect(el.querySelector('.sub')?.textContent).toBe('Nazionale');
+    expect(el.querySelector('.level')?.textContent).toBe('Nazionale');
+    expect(el.classList).toContain('off');
     expect(el.textContent).toContain('Posti esauriti');
   });
 

@@ -43,3 +43,11 @@ test.describe('home ed eventi con le carte', () => {
     }
   });
 });
+
+test('ogni carta ha i badge del tipo di evento, della tipologia e del livello', async ({ page }) => {
+  await page.goto('/eventi');
+  const card = page.locator('.event').first();
+  await expect(card.getByTestId('tag-type')).not.toBeEmpty();
+  await expect(card.getByTestId('tag-category')).not.toBeEmpty();
+  await expect(card.getByTestId('tag-level')).not.toBeEmpty();
+});

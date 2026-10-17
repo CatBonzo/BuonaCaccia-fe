@@ -35,3 +35,29 @@ test('il token arriva al backend: /users/me risponde con il profilo', async ({ p
   expect(response.status()).toBe(200);
   expect((await response.json()).payload.username).toBe('amministratore');
 });
+
+test('il login con email e password di prova', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByTestId('email').fill('nessuno@esempio.it');
+  await page.getByTestId('password').fill('qualunque');
+  await page.getByTestId('submit').click();
+  await expect(page.getByTestId('form-error')).toContainText('Non trovo questo utente');
+
+  await page.getByTestId('email').fill('socio@buonacaccia.local');
+  await page.getByTestId('password').fill('');
+  await page.getByTestId('submit').click();
+  await expect(page.getByTestId('form-error')).toContainText('Scrivi email e password');
+
+  await page.getByTestId('password').fill('qualunque');
+  await page.getByTestId('submit').click();
+  await expect(page).toHaveURL(/\/eventi$/);
+  await expect(page.getByTestId('who')).toBeVisible();
+});
+
+test('password dimenticata, registrazione e Google sono finte ma rispondono', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByTestId('forgot').click();
+  await expect(page.getByRole('status')).toContainText('non e\' disponibile');
+  await page.getByTestId('google').click();
+  await expect(page.getByTestId('who')).toBeVisible();
+});

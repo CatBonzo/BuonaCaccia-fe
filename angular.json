@@ -33,6 +33,7 @@
               "@fontsource-variable/fraunces/wght.css",
               "node_modules/@fortawesome/fontawesome-free/css/fontawesome.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/solid.min.css",
+              "node_modules/@fortawesome/fontawesome-free/css/brands.min.css",
               "@fontsource/atkinson-hyperlegible-next/400.css",
               "@fontsource/atkinson-hyperlegible-next/500.css",
               "@fontsource/atkinson-hyperlegible-next/700.css",

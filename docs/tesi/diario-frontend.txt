@@ -191,6 +191,14 @@ Artefatti: ramo 021-sidebar-icone; app.component.scss, sidebar.component.scss.
 Problemi: i test cliccano al centro della voce; se la voce fosse rimasta larga 240 px con il menu chiuso, il clic sarebbe finito sulla pagina. Con le scritte a larghezza zero la voce sta dentro la fascia e i test passano senza modifiche. Il Docker e il backend erano spenti e ho dovuto riavviarli per provare davvero.
 Spunto: una funzione di sola grafica cambia anche dove si "clicca": conviene provarla con i test che usano il mouse, non solo guardarla.
 
+[2026-10-17] Pagina di accesso con email e password, sempre mockata
+Cosa: la pagina di accesso ha un modulo email + password (come nella foto di Mahima) con "Password dimenticata?", Accedi, Accedi con Google e Registrati; sotto resta l'elenco degli utenti di prova.
+Chi: Mahima ha dato la foto e la regola "sempre mockato"; Claude ha deciso come finge ogni parte: email di un utente di prova + password libera, Google entra come il socio, le altre due funzioni dicono che non esistono nell'accesso di prova.
+Paradigma: AI-assisted partendo da un'immagine di riferimento; code harness: 2 nuovi e2e (credenziali sbagliate, password vuota, accesso riuscito, Google, funzioni non disponibili) e gli altri 43 invariati.
+Artefatti: ramo 022-login-mock; login.component.{ts,html,scss}, e2e/accesso.spec.ts, angular.json (icone dei marchi per Google).
+Problemi: il backend non ha un accesso con password, quindi il controllo dell'email sta sul frontend; l'ho scritto nella pagina e in AGENTS.md. Docker e backend erano di nuovo spenti.
+Spunto: un finto va dichiarato come finto (anche nella pagina), e va tenuto in un punto solo cosi' Keycloak lo sostituisce senza toccare il resto.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

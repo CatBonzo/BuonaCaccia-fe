@@ -1,15 +1,5 @@
 :host { display: block; color: #e6eaf3; }
 nav { display: flex; flex-direction: column; gap: 2px; padding: 20px 12px 24px; position: sticky; top: 0; }
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 8px 12px;
-  font: 700 1.35rem/1.2 var(--mat-sys-brand-font, serif);
-  letter-spacing: -0.01em;
-  color: #ffffff;
-}
-.brand .fa-solid { color: var(--bc-accent); font-size: 1.4rem; }
 .group {
   margin: 20px 12px 6px;
   font-size: 0.75rem;

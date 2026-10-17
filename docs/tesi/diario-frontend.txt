@@ -191,6 +191,14 @@ Artefatti: ramo 021-sidebar-icone; app.component.scss, sidebar.component.scss.
 Problemi: i test cliccano al centro della voce; se la voce fosse rimasta larga 240 px con il menu chiuso, il clic sarebbe finito sulla pagina. Con le scritte a larghezza zero la voce sta dentro la fascia e i test passano senza modifiche. Il Docker e il backend erano spenti e ho dovuto riavviarli per provare davvero.
 Spunto: una funzione di sola grafica cambia anche dove si "clicca": conviene provarla con i test che usano il mouse, non solo guardarla.
 
+[2026-10-17] Carte evento con testata e badge di tipo e tipologia
+Cosa: la carta evento ha una testata colorata con icona e stato, tre badge (tipo di evento, tipologia, livello), descrizione breve, e si attenua se l'evento e' chiuso o annullato.
+Chi: Mahima ha dato l'immagine di riferimento e chiarito che il "badge" e' il tag che serve nella carta; Claude ha deciso la mappa icone/colori e di aggiungere il livello.
+Paradigma: AI-assisted con riferimento visivo; code harness: unit test della carta aggiornati, un e2e nuovo sui badge e le immagini della pagina controllate.
+Artefatti: ramo 023-carte-evento; evento-card.component.{ts,html,scss,spec.ts}, e2e/home.spec.ts.
+Problemi: l'immagine di riferimento non si scarica dal sandbox (proxy), quindi il disegno segue la descrizione di Mahima e le carte-con-stati piu' comuni. Un e2e del menu su telefono ha fallito una volta sola nella suite completa e passa da solo e alla seconda esecuzione: lo segno come instabile, non l'ho toccato.
+Spunto: quando manca il riferimento visivo conviene dirlo subito e chiedere uno screenshot in chat.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

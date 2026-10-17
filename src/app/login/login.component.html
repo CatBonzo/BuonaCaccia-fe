@@ -1,26 +1,54 @@
 <main class="login">
-  <header>
-    <h1>Accedi</h1>
-    <p class="hint">Accesso di prova: scegli chi vuoi essere.</p>
-  </header>
-  @if (loading()) {
-    <mat-progress-bar mode="indeterminate" />
-  }
-  @if (error(); as message) {
-    <p class="error" role="alert">{{ message }}</p>
-  }
-  <ul class="users">
-    @for (user of users(); track user.username) {
-      <li>
-        <span class="avatar" aria-hidden="true">{{ initials(user) }}</span>
-        <span class="who">
-          <strong>{{ user.firstName }} {{ user.lastName }}</strong>
-          <span>{{ user.label }}</span>
-        </span>
-        <button mat-stroked-button type="button" [attr.data-user]="user.username" (click)="enter(user)">
-          Entra come {{ user.username }}
-        </button>
-      </li>
+  <section class="card" aria-labelledby="login-title">
+    <h1 id="login-title">Bentornato</h1>
+    <p class="hint">Accedi con la tua email per continuare.</p>
+    <p class="mock" role="note"><i class="fa-solid fa-flask" aria-hidden="true"></i> Accesso di prova: usa l'email di un utente dell'elenco, la password è libera.</p>
+
+    <form (submit)="submit($event)" novalidate>
+      <label for="email">Email</label>
+      <input id="email" name="email" type="text" autocomplete="username" [value]="email()" (input)="email.set($any($event.target).value)" data-testid="email" />
+
+      <div class="row">
+        <label for="password">Password</label>
+        <button type="button" class="link" (click)="unavailable('Il recupero della password')" data-testid="forgot">Password dimenticata?</button>
+      </div>
+      <input id="password" name="password" type="password" autocomplete="current-password" [value]="password()" (input)="password.set($any($event.target).value)" data-testid="password" />
+
+      @if (formError(); as message) {
+        <p class="error" role="alert" data-testid="form-error">{{ message }}</p>
+      }
+      <button type="submit" class="primary" data-testid="submit">Accedi</button>
+      <button type="button" class="secondary" (click)="google()" data-testid="google"><i class="fa-brands fa-google" aria-hidden="true"></i> Accedi con Google</button>
+    </form>
+
+    @if (notice(); as message) {
+      <p class="notice" role="status">{{ message }}</p>
     }
-  </ul>
+    <p class="signup">Non hai un account? <button type="button" class="link" (click)="unavailable('La registrazione')" data-testid="signup">Registrati</button></p>
+  </section>
+
+  <section class="demo" aria-labelledby="demo-title">
+    <h2 id="demo-title">Utenti di prova</h2>
+    @if (loading()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+    @if (error(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+    <ul class="users">
+      @for (user of users(); track user.username) {
+        <li>
+          <span class="avatar" aria-hidden="true">{{ initials(user) }}</span>
+          <span class="who">
+            <strong>{{ user.firstName }} {{ user.lastName }}</strong>
+            <span>{{ user.label }}</span>
+          </span>
+          <span class="actions">
+            <button mat-button type="button" (click)="pick(user)" [attr.aria-label]="'Compila con ' + user.email">Compila</button>
+            <button mat-stroked-button type="button" [attr.data-user]="user.username" (click)="enter(user)">Entra come {{ user.username }}</button>
+          </span>
+        </li>
+      }
+    </ul>
+  </section>
 </main>

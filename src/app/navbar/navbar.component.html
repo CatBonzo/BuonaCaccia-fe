@@ -7,7 +7,7 @@
   <a class="brand" routerLink="/eventi"><i class="fa-solid fa-compass" aria-hidden="true"></i> Buona Caccia</a>
   <nav class="links" aria-label="Navigazione del sito">
     @for (link of links; track link.path) {
-      <a [routerLink]="link.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: link.path === '/' }" ariaCurrentWhenActive="page" [attr.data-testid]="'nav-' + link.id">{{ link.label }}</a>
+      <a [routerLink]="link.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: link.path === '/' }" ariaCurrentWhenActive="page" [attr.data-testid]="'nav-' + link.id"><i class="fa-solid" [class]="link.icon" aria-hidden="true"></i> {{ link.label }}</a>
     }
   </nav>
   <span class="spacer"></span>
@@ -23,7 +23,7 @@
   </button>
   @if (session.loggedIn()) {
     <a mat-button routerLink="/profilo" class="who" data-testid="who"><i class="fa-solid fa-user" aria-hidden="true"></i> {{ session.fullName() }}</a>
-    <button mat-button type="button" data-testid="logout" (click)="logout()">Esci</button>
+    <button mat-button type="button" data-testid="logout" (click)="logout()"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Esci</button>
   } @else {
     <a mat-flat-button routerLink="/login" class="login" data-testid="login"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Accedi</a>
   }

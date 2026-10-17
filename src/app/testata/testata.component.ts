@@ -9,11 +9,15 @@ import { Component, computed, input } from '@angular/core';
 export class TestataComponent {
   readonly titolo = input.required<string>();
   readonly introduzione = input<string>('');
+  /** `scura`: blu notte con le curve di livello (Home). `chiara`: titolo blu su carta con la bussola (Eventi). */
+  readonly variante = input<'scura' | 'chiara'>('scura');
+  /** Quante parole in fondo al titolo vanno in arancione. */
+  readonly paroleAccento = input(1);
 
-  /** L'ultima parola del titolo e' l'accento in arancione, come nelle schermate di riferimento. */
-  protected readonly accento = computed(() => this.titolo().split(' ').pop() ?? '');
+  /** Le ultime parole del titolo sono l'accento in arancione, come nelle schermate di riferimento. */
+  protected readonly accento = computed(() => this.titolo().split(' ').slice(-this.paroleAccento()).join(' '));
   protected readonly inizio = computed(() => {
     const parole = this.titolo().split(' ');
-    return parole.length > 1 ? parole.slice(0, -1).join(' ') + ' ' : '';
+    return parole.length > this.paroleAccento() ? parole.slice(0, -this.paroleAccento()).join(' ') + ' ' : '';
   });
 }

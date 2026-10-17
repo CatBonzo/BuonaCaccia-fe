@@ -1,3 +1,13 @@
+// Il pannello dei filtri e' una carta bianca sotto la testata, con un'ombra leggera.
+:host { display: block; margin-top: 24px; }
+.filters {
+  padding: 18px;
+  border: 1px solid var(--bc-line);
+  border-radius: 22px;
+  background: var(--mat-sys-surface-container-low);
+  box-shadow: 0 6px 20px rgb(20 35 74 / 0.08);
+  --mat-form-field-filled-container-color: var(--mat-sys-surface-container);
+}
 .filters {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
@@ -6,8 +16,8 @@
 }
 .filters .wide { grid-column: 1; }
 .actions { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.actions .mat-mdc-button { color: #e6eaf3; }
-// "Cerca" e' il pulsante dell'accento: arancione sul blu notte della testata.
+
+// "Cerca" e' il pulsante dell'accento: arancione.
 .actions .mat-mdc-unelevated-button {
   --mat-button-filled-container-color: var(--bc-accent);
   --mat-button-filled-label-text-color: #1b0c00;

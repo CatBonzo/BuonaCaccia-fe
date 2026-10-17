@@ -11,8 +11,10 @@
 }
 .nav.hidden { display: none; }
 
-.content { padding: 24px 32px 24px; }
-main { max-width: 1100px; margin: 0 auto; }
+.content { display: flex; flex-direction: column; padding: 24px 32px 24px; }
+// Il piede resta in fondo anche con poco contenuto: il contenitore riempie l'altezza e la pagina si prende lo spazio.
+main { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; }
+app-footer { width: 100%; max-width: 1100px; margin: 0 auto; }
 
 @media (max-width: 900px) {
   .content { padding: 16px 16px 16px; }

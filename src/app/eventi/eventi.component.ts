@@ -12,7 +12,7 @@ import { ApiError } from '../core/api-error';
 import { SORT_OPTIONS } from '../core/labels';
 import { StatoVuotoComponent } from '../stato-vuoto/stato-vuoto.component';
 import { TestataComponent } from '../testata/testata.component';
-import { EventoRigaComponent } from './evento-riga/evento-riga.component';
+import { EventoCardComponent } from '../evento-card/evento-card.component';
 import { FiltriEventi, FiltriEventiComponent } from './filtri-eventi/filtri-eventi.component';
 
 const PAGE_SIZE = 12;
@@ -29,7 +29,7 @@ const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'l
   selector: 'app-eventi',
   imports: [
     FormsModule, MatFormFieldModule, MatPaginatorModule, MatProgressBarModule, MatSelectModule,
-    TestataComponent, FiltriEventiComponent, EventoRigaComponent, StatoVuotoComponent,
+    TestataComponent, FiltriEventiComponent, EventoCardComponent, StatoVuotoComponent,
   ],
   templateUrl: './eventi.component.html',
   styleUrl: './eventi.component.scss',

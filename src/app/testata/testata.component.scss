@@ -40,3 +40,31 @@ h1 em { font-style: italic; color: var(--bc-accent); }
 @media (max-width: 720px) {
   section { padding: 24px 16px 20px; border-radius: 18px; }
 }
+
+// Variante chiara: titolo blu su carta, bussola a destra, come nella schermata di riferimento di Mahima.
+section.chiara {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 8px 0 8px;
+  border-radius: 0;
+  background: none;
+  color: var(--mat-sys-on-surface-variant);
+}
+section.chiara::before { display: none; }
+section.chiara { overflow: visible; }
+section.chiara h1 { color: var(--mat-sys-primary); max-width: 16ch; font-size: clamp(2.2rem, 5.5vw, 3.8rem); line-height: 1.05; }
+section.chiara .lead { color: var(--mat-sys-on-surface-variant); }
+.testo { min-width: 0; }
+.bussola { flex: none; width: min(320px, 32vw); filter: drop-shadow(0 12px 22px rgb(20 35 74 / 0.22)); }
+.bussola .fondo { fill: #1f3f73; }
+.bussola .anello { fill: none; stroke: #8aa4db; stroke-width: 1; stroke-dasharray: 3 4; }
+.bussola .anello.fitto { stroke-opacity: 0.6; }
+.bussola .nord { fill: #f2c94c; font: 700 14px var(--mat-sys-brand-font, serif); }
+.bussola .ago { fill: #ffffff; }
+.bussola .ago-punta { fill: var(--bc-accent); }
+.bussola .perno { fill: #1f3f73; stroke: #ffffff; stroke-width: 2; }
+@media (max-width: 720px) {
+  .bussola { display: none; }
+}

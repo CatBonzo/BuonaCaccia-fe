@@ -9,7 +9,7 @@
   font: 700 1.5rem/1.2 var(--mat-sys-brand-font, serif);
   text-transform: capitalize;
 }
-.events { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.events { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
 
 @media (max-width: 720px) {
   .sort { width: 170px; }

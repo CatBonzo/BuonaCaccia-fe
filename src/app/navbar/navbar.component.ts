@@ -18,7 +18,7 @@ export class NavbarComponent {
   protected readonly themes = inject(ThemeService);
   private readonly router = inject(Router);
 
-  /** I collegamenti del sito: sono gli stessi per tutti. "Home" porta alla radice, che oggi apre il catalogo; "Eventi" e' il catalogo. */
+  /** I collegamenti del sito: sono gli stessi per tutti. "Home" e' la pagina iniziale con le carte; "Eventi" e' il catalogo con la ricerca. */
   protected readonly links = [
     { id: 'home', label: 'Home', path: '/' },
     { id: 'eventi', label: 'Eventi', path: '/eventi' },

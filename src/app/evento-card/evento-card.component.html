@@ -1,0 +1,36 @@
+<div class="top">
+  <span class="type">{{ event().typeCode }}</span>
+  <span class="state"><span class="dot" aria-hidden="true"></span>{{ stateText() }}</span>
+</div>
+<h3 class="title">
+  <a [routerLink]="['/eventi', event().id]">{{ event().title }}</a>
+</h3>
+<p class="kind">{{ event().typeName }}</p>
+<dl class="facts">
+  <div>
+    <dt class="visually-hidden">Luogo</dt>
+    <dd>
+      <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+      <span class="main">{{ event().location }}{{ event().province ? ' (' + event().province + ')' : '' }}</span>
+      <span class="sub">{{ area() }}</span>
+    </dd>
+  </div>
+  <div>
+    <dt class="visually-hidden">Date</dt>
+    <dd>
+      <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+      <span class="main">{{ event().startDate | date: 'd MMM y' }}</span>
+      <span class="sub">fino al {{ event().endDate | date: 'd MMM y' }}</span>
+    </dd>
+  </div>
+</dl>
+<div class="seats">
+  <p class="left"><span>{{ seatsText() }}</span><span class="count">{{ event().enrolledCount ?? 0 }}/{{ event().seats }}</span></p>
+  @if (fill() !== null) {
+    <mat-progress-bar class="bar" mode="determinate" [value]="fill()" aria-label="Posti occupati" />
+  }
+</div>
+<div class="bottom">
+  <p class="fee">{{ event().fee | currency: 'EUR' : 'symbol' : '1.0-2' : 'it' }}</p>
+  <span class="more" aria-hidden="true">Dettagli <i class="fa-solid fa-arrow-right"></i></span>
+</div>

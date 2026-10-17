@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" role="img" aria-label="Un fuoco di bivacco">
+  <rect width="480" height="320" fill="#0d1830"/>
+  <g fill="#f2c94c"><circle cx="70" cy="52" r="2.5"/><circle cx="180" cy="30" r="2"/><circle cx="320" cy="64" r="2.5"/><circle cx="420" cy="38" r="2"/><circle cx="250" cy="96" r="1.8"/></g>
+  <ellipse cx="240" cy="290" rx="190" ry="26" fill="#14234a"/>
+  <path d="M240 118 C282 168 296 196 276 232 C264 254 216 254 204 232 C184 196 214 176 224 150 C232 168 236 150 240 118Z" fill="#e8702a"/>
+  <path d="M240 170 C262 198 268 214 256 232 C248 244 232 244 224 232 C214 214 228 200 240 170Z" fill="#f2c94c"/>
+  <path d="M170 270 L316 244" stroke="#6b4a2b" stroke-width="14" stroke-linecap="round"/><path d="M168 246 L312 272" stroke="#4e3520" stroke-width="14" stroke-linecap="round"/>
+  <g fill="#1f3f73"><circle cx="90" cy="248" r="14"/><path d="M72 284 q18 -36 36 0z"/><circle cx="394" cy="244" r="14"/><path d="M376 284 q18 -36 36 0z"/></g>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" role="img" aria-label="Tende in un prato sotto le stelle">
+  <rect width="480" height="320" fill="#14234a"/>
+  <g fill="#f2c94c"><circle cx="60" cy="48" r="2.5"/><circle cx="140" cy="86" r="2"/><circle cx="260" cy="40" r="3"/><circle cx="360" cy="70" r="2"/><circle cx="430" cy="34" r="2.5"/><circle cx="210" cy="110" r="1.8"/></g>
+  <circle cx="390" cy="92" r="26" fill="#f4e7b8"/><circle cx="402" cy="86" r="24" fill="#14234a"/>
+  <path d="M0 230 L90 150 L170 220 L260 130 L360 225 L420 170 L480 215 V320 H0Z" fill="#1f3f73"/>
+  <path d="M0 262 Q120 226 240 258 T480 250 V320 H0Z" fill="#2b5a46"/>
+  <path d="M120 276 L190 196 L260 276Z" fill="#e8702a"/><path d="M190 196 L190 276 L150 276Z" fill="#c4560f"/><path d="M178 276 L190 236 L202 276Z" fill="#14234a"/>
+  <path d="M300 280 L350 224 L400 280Z" fill="#f4e7b8"/><path d="M350 224 L350 280 L322 280Z" fill="#d8c88e"/><path d="M342 280 L350 252 L358 280Z" fill="#14234a"/>
+</svg>

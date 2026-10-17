@@ -1,0 +1,70 @@
+<app-testata titolo="Buona caccia!" introduzione="Campi, route e momenti di formazione: trova il prossimo evento scout e iscriviti.">
+  <div class="cta">
+    <a mat-flat-button routerLink="/eventi" data-testid="cta-eventi">Trova eventi</a>
+    <a mat-button routerLink="/aiuto" class="chiaro">Come funziona</a>
+  </div>
+</app-testata>
+
+<section class="prossimi" aria-labelledby="prossimi-titolo">
+  <div class="head">
+    <h2 id="prossimi-titolo">Prossimi eventi</h2>
+    <a routerLink="/eventi" class="all">Vedi tutti gli eventi <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+  </div>
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+  @if (!loading() && !error() && events().length === 0) {
+    <app-stato-vuoto data-testid="home-empty" icona="fa-compass" titolo="Non ci sono ancora eventi in calendario." suggerimento="Torna a trovarci: la segreteria li pubblica qui." />
+  }
+  <ul class="cards">
+    @for (event of events(); track event.id) {
+      <li app-evento-card [event]="event"></li>
+    }
+  </ul>
+</section>
+
+<section class="storie">
+  <article>
+    <img src="img/campo.svg" width="480" height="320" alt="Tende in un prato sotto le stelle" />
+    <div>
+      <p class="kicker">Campi, route e formazione</p>
+      <h2>Un posto per ogni esperienza</h2>
+      <p>
+        Dai campi di branca alle route, dai momenti di formazione capi agli incontri dell'associazione: gli eventi sono tutti qui,
+        con date, luogo, quota e posti che restano. Puoi iscriverti anche a un evento di un'altra regione.
+      </p>
+    </div>
+  </article>
+  <article class="inverso">
+    <img src="img/sentiero.svg" width="480" height="320" alt="Un sentiero tra le montagne" />
+    <div>
+      <p class="kicker">Iscriversi è semplice</p>
+      <h2>Cerca, iscriviti, completa</h2>
+      <p>
+        Scegli l'evento e iscriviti. Se manca qualche requisito te li elenchiamo tutti insieme. Paghi con bonifico, anche in più rate,
+        e l'iscrizione si completa da sola quando la quota è coperta.
+      </p>
+      <a routerLink="/aiuto" class="all">Leggi come funziona <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </div>
+  </article>
+  <article>
+    <img src="img/fuoco.svg" width="480" height="320" alt="Un fuoco di bivacco" />
+    <div>
+      <p class="kicker">Sempre informato</p>
+      <h2>Tutto per e-mail, senza sorprese</h2>
+      <p>
+        Ti scriviamo quando conferma, promemoria prima della scadenza, pagamenti registrati, modifiche e rifiuti. Se si libera un posto
+        in lista d'attesa lo sai subito.
+      </p>
+    </div>
+  </article>
+</section>
+
+<section class="info" aria-label="In breve">
+  <div><i class="fa-solid fa-building-columns" aria-hidden="true"></i><strong>Bonifico</strong><span>Si paga solo con bonifico, anche a rate.</span></div>
+  <div><i class="fa-solid fa-file-circle-check" aria-hidden="true"></i><strong>Documenti online</strong><span>Carichi i moduli e vedi se sono stati accettati.</span></div>
+  <div><i class="fa-solid fa-envelope" aria-hidden="true"></i><strong>Avvisi per e-mail</strong><span>Conferme, scadenze e novità arrivano a te.</span></div>
+</section>

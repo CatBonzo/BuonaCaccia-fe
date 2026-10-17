@@ -6,7 +6,7 @@ export const routes: Routes = [
     path: '',
     children: [
       { path: 'login', loadComponent: () => import('./login/login.component').then((m) => m.LoginComponent) },
-      { path: '', pathMatch: 'full', redirectTo: 'eventi' },
+      { path: '', pathMatch: 'full', loadComponent: () => import('./home/home.component').then((m) => m.HomeComponent) },
       // Il catalogo e' pubblico: si cerca e si legge senza accedere.
       { path: 'aiuto', loadComponent: () => import('./aiuto/aiuto.component').then((m) => m.AiutoComponent) },
       { path: 'info', loadComponent: () => import('./info/info.component').then((m) => m.InfoComponent) },

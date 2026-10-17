@@ -1,7 +1,7 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { EventDto } from '../../api/models';
 import { AVAILABILITY_LABELS, CATEGORY_LABELS, STATUS_LABELS, label } from '../../core/labels';
 
@@ -22,7 +22,7 @@ export function categoryKey(category: string | undefined): string {
 /** Una riga del catalogo: i giorni a sinistra, titolo e luogo, posti e quota a destra. Tutta la riga porta al dettaglio. */
 @Component({
   selector: 'li[app-evento-riga]',
-  imports: [DatePipe, CurrencyPipe, RouterLink, MatIconModule],
+  imports: [DatePipe, CurrencyPipe, RouterLink, MatProgressBarModule],
   templateUrl: './evento-riga.component.html',
   styleUrl: './evento-riga.component.scss',
   host: {
@@ -37,6 +37,11 @@ export class EventoRigaComponent {
 
   protected readonly tone = computed(() => seatTone(this.event().availability));
   protected readonly cat = computed(() => categoryKey(this.event().category));
+  /** Quanta parte dei posti e' occupata, in percentuale; null se l'evento non ha un numero di posti. */
+  protected readonly fill = computed(() => {
+    const { seats, enrolledCount } = this.event();
+    return seats ? Math.min(100, Math.round(((enrolledCount ?? 0) / seats) * 100)) : null;
+  });
   protected readonly availabilityText = computed(() => label(AVAILABILITY_LABELS, this.event().availability));
   protected readonly categoryText = computed(() => label(CATEGORY_LABELS, this.event().category));
   protected readonly statusText = computed(() => label(STATUS_LABELS, this.event().status));

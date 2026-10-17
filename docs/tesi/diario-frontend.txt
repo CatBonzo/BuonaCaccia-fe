@@ -143,6 +143,14 @@ Artefatti: ramo 015-struttura-componenti; MenuService, ThemeService, navbar, sid
 Problemi: l'elenco degli eventi e' una `ul`, quindi la riga non poteva essere un elemento personalizzato dentro la lista: il componente usa il selettore `li[app-evento-riga]` e resta una vera `li`. Il test della riga ha richiesto di registrare la lingua italiana, come l'app.
 Spunto: uno spostamento di file grande si fa in modo sicuro solo con un controllo automatico che non cambia: qui i test e2e non sono stati toccati, solo i selettori del catalogo.
 
+[2026-10-17] Dalle schermate di riferimento a un nuovo look, e una libreria scartata per la licenza
+Cosa: nuovo aspetto preso da quattro schermate di Mahima (blu notte e arancione, menu scuro, titoli con le grazie, carte con barra dei posti), icone Font Awesome al posto di quelle di Material, PrimeNG provato e tolto.
+Chi: Mahima ha mandato le schermate e suggerito PrimeNG o Font Awesome, poi ha scelto "PrimeNG completo" e, dopo aver visto il problema della licenza, "Material con Font Awesome". Claude ha provato PrimeNG (installazione, tema, shell e catalogo), ha scoperto la chiave e ha riportato la scelta a Mahima con le due strade.
+Paradigma: AI-assisted con una prova rapida prima di impegnare tutte le pagine (vibe coding controllato: un pezzo vero, guardato in schermata) e code harness con i test e2e come rete.
+Artefatti: ramo 016-primeng-fondamenta (prova, non unita), ramo 016-look-riferimento; styles.scss, sidebar, testata, evento-riga, menu.service.
+Problemi: PrimeNG 22 mostra "Invalid PrimeUI License" senza chiave; l'avviso si accorge solo guardando la schermata, i test passavano. Inoltre la PR 14 era stata unita nel ramo della PR 13 dopo che questo era gia' in feature: la struttura non era arrivata in feature, ricuperata con la PR 15.
+Spunto: una libreria "gratuita" va controllata anche nella licenza, non solo nel prezzo; e con PR impilate conviene unire dal fondo della pila verso l'alto, o riportare la base su feature prima di unire.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

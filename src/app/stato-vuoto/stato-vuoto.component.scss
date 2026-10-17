@@ -6,6 +6,7 @@
   padding: 48px 16px;
   color: var(--mat-sys-on-surface-variant);
 }
-mat-icon { font-size: 40px; width: 40px; height: 40px; margin-bottom: 8px; color: var(--mat-sys-primary); }
+.fa-solid { font-size: 2.5rem; margin-bottom: 12px; color: var(--bc-accent); }
 p { margin: 2px 0; }
+.titolo { font: 600 1.15rem/1.3 var(--mat-sys-brand-font, serif); color: var(--mat-sys-primary); }
 .hint { font: var(--mat-sys-body-medium); }

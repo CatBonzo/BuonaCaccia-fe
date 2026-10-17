@@ -1,0 +1,55 @@
+<app-testata titolo="Buona caccia!" introduzione="Campi, route e momenti di formazione: trova il prossimo e iscriviti.">
+  <app-filtri-eventi [regions]="regions()" (cerca)="onFilters($event)" />
+</app-testata>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+}
+
+@if (!loading() && !error() && events().length === 0) {
+  <app-stato-vuoto
+    data-testid="empty"
+    icona="travel_explore"
+    titolo="Nessun evento trovato con questi filtri."
+    suggerimento="Prova a togliere un filtro o a cercare una parola più corta."
+  />
+}
+
+@if (events().length) {
+  <div class="listhead">
+    <p class="count" aria-live="polite">{{ total() }} {{ total() === 1 ? 'evento' : 'eventi' }}</p>
+    <mat-form-field class="sort" subscriptSizing="dynamic">
+      <mat-label>Ordina per</mat-label>
+      <mat-select name="sort" [(ngModel)]="sort" (selectionChange)="onSort()">
+        @for (s of sorts; track s.value) {
+          <mat-option [value]="s.value">{{ s.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+}
+
+@for (group of groups(); track group.label) {
+  <section class="month">
+    @if (group.label) {
+      <h2>{{ group.label }}</h2>
+    }
+    <ul class="events">
+      @for (event of group.events; track event.id) {
+        <li app-evento-riga [event]="event"></li>
+      }
+    </ul>
+  </section>
+}
+
+<mat-paginator
+  [length]="total()"
+  [pageSize]="pageSize"
+  [pageIndex]="pageIndex()"
+  [hidePageSize]="true"
+  (page)="onPage($event)"
+  aria-label="Pagine degli eventi"
+/>

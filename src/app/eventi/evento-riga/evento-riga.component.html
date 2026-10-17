@@ -1,0 +1,27 @@
+<div class="when" aria-hidden="true">
+  <span class="day">{{ days() }}</span>
+  <span class="mon">{{ month() }}</span>
+</div>
+<div class="info">
+  <h3 class="title">
+    <a [routerLink]="['/eventi', event().id]">{{ event().title }}</a>
+  </h3>
+  <p class="kind">{{ event().typeName }}</p>
+  <p class="where">
+    <mat-icon aria-hidden="true">place</mat-icon>
+    {{ event().location }}, {{ event().region }}
+  </p>
+  <p class="dates">
+    <span class="visually-hidden">Dal </span>{{ event().startDate | date: 'd MMM y' }}
+    <span class="visually-hidden"> al </span><span aria-hidden="true">–</span>
+    {{ event().endDate | date: 'd MMM y' }}
+  </p>
+</div>
+<div class="state">
+  <p class="seats">{{ availabilityText() }}</p>
+  @if (event().status === 'CANCELLED') {
+    <p class="seats cancelled">{{ statusText() }}</p>
+  }
+  <p class="fee">{{ event().fee | currency: 'EUR' : 'symbol' : '1.0-2' : 'it' }}</p>
+  <p class="cat">{{ categoryText() }}</p>
+</div>

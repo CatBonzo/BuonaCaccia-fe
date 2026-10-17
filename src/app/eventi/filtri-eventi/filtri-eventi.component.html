@@ -1,0 +1,53 @@
+<form class="filters" (ngSubmit)="apply()">
+  <mat-form-field class="wide" subscriptSizing="dynamic">
+    <mat-label>Cerca</mat-label>
+    <mat-icon matIconPrefix aria-hidden="true">search</mat-icon>
+    <input matInput name="q" [(ngModel)]="q" placeholder="Titolo, luogo, tipo" data-testid="q" />
+  </mat-form-field>
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>Regione</mat-label>
+    <mat-select name="region" [(ngModel)]="region" data-testid="region">
+      <mat-option value="">Tutte</mat-option>
+      @for (r of regions(); track r.code) {
+        <mat-option [value]="r.code">{{ r.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>Categoria</mat-label>
+    <mat-select name="category" [(ngModel)]="category" data-testid="category">
+      <mat-option value="">Tutte</mat-option>
+      @for (c of categories; track c[0]) {
+        <mat-option [value]="c[0]">{{ c[1] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (moreFilters()) {
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Disponibilità</mat-label>
+      <mat-select name="availability" [(ngModel)]="availability">
+        <mat-option value="">Tutte</mat-option>
+        @for (a of availabilities; track a[0]) {
+          <mat-option [value]="a[0]">{{ a[1] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Dal</mat-label>
+      <input matInput type="date" name="startFrom" [(ngModel)]="startFrom" />
+    </mat-form-field>
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Al</mat-label>
+      <input matInput type="date" name="startTo" [(ngModel)]="startTo" />
+    </mat-form-field>
+  }
+
+  <div class="actions">
+    <button mat-flat-button type="submit" data-testid="apply">Cerca</button>
+    <button mat-button type="button" (click)="moreFilters.set(!moreFilters())" [attr.aria-expanded]="moreFilters()">
+      {{ moreFilters() ? 'Meno filtri' : 'Altri filtri' }}{{ !moreFilters() && activeFilters() ? ' (' + activeFilters() + ')' : '' }}
+    </button>
+    <button mat-button type="button" (click)="reset()">Azzera filtri</button>
+  </div>
+</form>

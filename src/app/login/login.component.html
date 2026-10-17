@@ -1,0 +1,26 @@
+<main class="login">
+  <header>
+    <h1>Accedi</h1>
+    <p class="hint">Accesso di prova: scegli chi vuoi essere.</p>
+  </header>
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+  <ul class="users">
+    @for (user of users(); track user.username) {
+      <li>
+        <span class="avatar" aria-hidden="true">{{ initials(user) }}</span>
+        <span class="who">
+          <strong>{{ user.firstName }} {{ user.lastName }}</strong>
+          <span>{{ user.label }}</span>
+        </span>
+        <button mat-stroked-button type="button" [attr.data-user]="user.username" (click)="enter(user)">
+          Entra come {{ user.username }}
+        </button>
+      </li>
+    }
+  </ul>
+</main>

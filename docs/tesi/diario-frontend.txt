@@ -167,6 +167,14 @@ Artefatti: ramo 018-home-carte; evento-card, home, testata (variante chiara), fi
 Problemi: il termine "wild card" era ambiguo e per un po' ho proposto la ricerca con i jolly; la domanda diretta non l'ha risolto, la foto si'. Le foto vere non c'erano: ho disegnato tre illustrazioni SVG e l'ho dichiarato.
 Spunto: quando una parola della richiesta ha piu' significati, chiedere una foto o un esempio vale piu' di una domanda a parole; una scelta a card con opzioni scritte non ha tolto il dubbio.
 
+[2026-10-17] File e rotte come in ScoutShopper: modulo, routing e prove per ogni pagina
+Cosa: ogni pagina riceve un modulo e un file di rotte accanto al componente; alla radice nasce `app-routing.module.ts` e sparisce `app.routes.ts`; ogni componente ha la sua prova (`.spec.ts`), 23 nuove.
+Chi: Mahima ha indicato la struttura da copiare (componente con tutti i suoi file, rotta compresa, e il modulo di rotte alla radice); Claude ha riletto ScoutShopper-fe, ha visto che li' il modulo c'e' solo nella Home e che manca l'`app-routing.module`, e ha seguito la richiesta di Mahima generando i file con uno script.
+Paradigma: AI-assisted con un progetto esistente come esempio e code harness: i 43 e2e, invariati, hanno confermato che le rotte caricate a pezzi si comportano come prima.
+Artefatti: ramo 019-moduli-routing; app-routing.module.ts, *.module.ts, *-routing.module.ts, *.component.spec.ts, app.config.ts.
+Problemi: la guida e il clone non coincidevano con la richiesta (niente `app-routing.module` nel clone): ho scelto la richiesta e l'ho scritto. Con componenti "standalone" il modulo non dichiara il componente ma lo importa. Cinque prove nuove sono fallite perche' i componenti vogliono un parametro obbligatorio (id, token, code, mode): ho dato loro un valore di prova.
+Spunto: copiare una struttura da un esempio richiede di leggere cosa c'e' davvero nell'esempio; quando l'esempio e la parola dell'utente differiscono, si segue l'utente e si scrive la differenza.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

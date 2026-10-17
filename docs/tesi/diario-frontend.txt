@@ -135,6 +135,14 @@ Problemi: i test cercavano le schede con `mat-card`: spostando il catalogo su un
 Seguito: Mahima ha detto "sito accattivante": la prima versione era giudicata troppo sobria. Aggiunta una testata con le curve di livello e i colori delle branche sulla data degli eventi. Lezione: "curare la UI" e "accattivante" sono richieste diverse, la seconda vuole un rischio estetico in piu' e si e' capito solo dopo la prima consegna.
 Spunto: i test funzionali non vedono un menu tagliato o una data a capo; guardare le schermate a 390 px e in tema scuro e' un controllo che i test non sostituiscono.
 
+[2026-10-16] La struttura dei file come in ScoutShopper: componenti divisi per pagina
+Cosa: tutte le pagine spostate in una cartella per link con i nomi `.component`; barra, menu e piede diventano componenti; testata, stato vuoto, riga evento e filtri estratti come componenti riusabili; menu e tema diventano servizi.
+Chi: Mahima ha indicato lo ScoutShopper frontend come modello; Claude ha letto quel progetto, ha ricavato le convenzioni (cartella per componente, suffisso .component, navbar e footer separati) e ha fatto lo spostamento con uno script.
+Paradigma: AI-assisted con riferimento a un progetto esistente dell'utente come "specifica per esempio", e code harness: i 38 test e2e, scritti prima e identici prima e dopo, hanno garantito che spostare i file non cambiasse il comportamento.
+Artefatti: ramo 015-struttura-componenti; MenuService, ThemeService, navbar, sidebar, footer, testata, stato-vuoto, eventi/evento-riga, eventi/filtri-eventi.
+Problemi: l'elenco degli eventi e' una `ul`, quindi la riga non poteva essere un elemento personalizzato dentro la lista: il componente usa il selettore `li[app-evento-riga]` e resta una vera `li`. Il test della riga ha richiesto di registrare la lingua italiana, come l'app.
+Spunto: uno spostamento di file grande si fa in modo sicuro solo con un controllo automatico che non cambia: qui i test e2e non sono stati toccati, solo i selettori del catalogo.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

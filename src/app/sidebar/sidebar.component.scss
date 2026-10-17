@@ -1,0 +1,24 @@
+nav { display: flex; flex-direction: column; gap: 2px; }
+.group {
+  margin: 20px 12px 6px;
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--mat-sys-on-surface);
+  text-decoration: none;
+  font: var(--mat-sys-label-large);
+  font-size: 15px;
+  border-left: 3px solid transparent;
+}
+.item:hover { background: var(--mat-sys-surface-container); }
+.item.active {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  border-left-color: var(--mat-sys-primary);
+}

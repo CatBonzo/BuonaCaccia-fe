@@ -1,0 +1,23 @@
+.top {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 12px 0 16px;
+  min-height: 60px;
+  background: var(--mat-sys-surface);
+  border-bottom: 1px solid var(--bc-line);
+}
+.brand {
+  font: var(--mat-sys-headline-small);
+  font-weight: 700;
+  color: var(--mat-sys-primary);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+.spacer { flex: 1; }
+.who { font-size: 14px; }
+
+@media (max-width: 900px) {
+  .who { display: none; }
+  .top { padding-left: 4px; }
+}

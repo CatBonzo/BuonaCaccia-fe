@@ -1,0 +1,7 @@
+<section>
+  <h1>{{ titolo() }}</h1>
+  @if (introduzione()) {
+    <p class="lead">{{ introduzione() }}</p>
+  }
+  <ng-content />
+</section>

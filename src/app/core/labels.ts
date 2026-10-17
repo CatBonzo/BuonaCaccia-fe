@@ -25,6 +25,13 @@ export const STATUS_LABELS: Record<string, string> = {
   CANCELLED: 'Annullato',
 };
 
+/** Le regioni AGESCI dai codici di tre lettere del backend, per mostrarle per esteso. */
+export const REGION_NAMES: Record<string, string> = {
+  ABR: 'Abruzzo', BAS: 'Basilicata', CAL: 'Calabria', CAM: 'Campania', EMR: 'Emilia-Romagna', FVG: 'Friuli-Venezia Giulia',
+  LAZ: 'Lazio', LIG: 'Liguria', LOM: 'Lombardia', MAR: 'Marche', MOL: 'Molise', PIE: 'Piemonte', PUG: 'Puglia', SAR: 'Sardegna',
+  SIC: 'Sicilia', TOS: 'Toscana', TAA: 'Trentino-Alto Adige', UMB: 'Umbria', VDA: "Valle d'Aosta", VEN: 'Veneto',
+};
+
 export const LEVEL_LABELS: Record<string, string> = { NATIONAL: 'Nazionale', REGIONAL: 'Regionale', ZONE: 'Di zona' };
 
 export const OBLIGATION_LABELS: Record<string, string> = {

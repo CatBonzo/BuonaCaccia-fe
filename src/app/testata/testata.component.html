@@ -1,7 +1,20 @@
-<section>
-  <h1>{{ inizio() }}<em>{{ accento() }}</em></h1>
-  @if (introduzione()) {
-    <p class="lead">{{ introduzione() }}</p>
+<section [class.chiara]="variante() === 'chiara'">
+  <div class="testo">
+    <h1>{{ inizio() }}<em>{{ accento() }}</em></h1>
+    @if (introduzione()) {
+      <p class="lead">{{ introduzione() }}</p>
+    }
+    <ng-content />
+  </div>
+  @if (variante() === 'chiara') {
+    <svg class="bussola" viewBox="0 0 220 160" aria-hidden="true" focusable="false">
+      <rect x="0" y="0" width="220" height="160" rx="26" class="fondo" />
+      <ellipse cx="110" cy="82" rx="86" ry="62" class="anello" />
+      <ellipse cx="110" cy="82" rx="58" ry="40" class="anello fitto" />
+      <text x="110" y="30" text-anchor="middle" class="nord">N</text>
+      <path d="M110 40 L122 82 L110 126 L98 82 Z" class="ago" />
+      <path d="M110 40 L122 82 L110 82 Z" class="ago-punta" />
+      <circle cx="110" cy="82" r="5" class="perno" />
+    </svg>
   }
-  <ng-content />
 </section>

@@ -2,9 +2,9 @@ import { expect, test } from '@playwright/test';
 
 test('il catalogo e\' pubblico, il login e\' a un clic', async ({ page }) => {
   await page.goto('/');
-  await expect(page).toHaveURL(/\/eventi$/);
-  await expect(page.getByRole('link', { name: 'Accedi' })).toBeVisible();
-  await page.getByRole('link', { name: 'Accedi' }).click();
+  await expect(page.getByRole('heading', { name: 'Buona caccia!' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Accedi', exact: true }).first()).toBeVisible();
+  await page.getByTestId('login').click();
   await expect(page.getByRole('button', { name: /Entra come socio$/ })).toBeVisible();
 });
 

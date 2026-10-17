@@ -60,7 +60,8 @@ test.describe('aspetto e menu', () => {
     await expect(links.getByRole('link', { name: 'Eventi', exact: true })).toHaveAttribute('aria-current', 'page');
 
     await links.getByRole('link', { name: 'Home', exact: true }).click();
-    await expect(page).toHaveURL(/\/eventi$/);
+    await expect(page).toHaveURL(/\/$/);
+    await expect(links.getByRole('link', { name: 'Home', exact: true })).toHaveAttribute('aria-current', 'page');
   });
 
   test('chi è entrato vede le stesse voci nella barra e il suo nome a destra', async ({ page }) => {

@@ -7,7 +7,7 @@
   <a class="brand" routerLink="/eventi"><i class="fa-solid fa-compass" aria-hidden="true"></i> Buona Caccia</a>
   <nav class="links" aria-label="Navigazione del sito">
     @for (link of links; track link.path) {
-      <a [routerLink]="link.path" [routerLinkActive]="link.path === '/' ? '' : 'active'" ariaCurrentWhenActive="page" [attr.data-testid]="'nav-' + link.id">{{ link.label }}</a>
+      <a [routerLink]="link.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: link.path === '/' }" ariaCurrentWhenActive="page" [attr.data-testid]="'nav-' + link.id">{{ link.label }}</a>
     }
   </nav>
   <span class="spacer"></span>

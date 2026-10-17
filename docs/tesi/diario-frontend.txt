@@ -159,6 +159,14 @@ Artefatti: ramo 017-navbar; navbar, aiuto, info, app.routes.ts, e2e/aspetto.spec
 Problemi: il server di sviluppo ha compilato a meta' (rotte aggiunte prima dei file) e non si e' ripreso: i test sembravano rotti, bastava riavviarlo. Un test dei rimborsi e' fallito una volta con dati rimasti da una corsa interrotta e poi e' passato.
 Spunto: quando un test fallisce in modo strano, prima controllare che il server di prova serva il codice vero; e un riferimento che non si riesce a vedere va dichiarato come ipotesi, non ignorato.
 
+[2026-10-17] Le "wild card" erano le carte: Home con le carte, Eventi con filtri e carte
+Cosa: la carta evento come nella foto di riferimento, una Home vera (saluto, tre carte, immagini con testo, riquadri informativi), la pagina Eventi con testata chiara, pannello filtri e griglia di carte, un piede in ogni pagina.
+Chi: Mahima ha ripetuto "wild card" in due richieste e alla terza ha allegato una foto: Claude aveva fatto un'ipotesi sbagliata (ricerca con i jolly) e l'ha corretta guardando la foto; il resto e' stato deciso da Claude partendo dalla foto e dal testo.
+Paradigma: AI-assisted con riferimento visivo reale (la foto) e code harness: 43 e2e verdi, con prove nuove sulla Home, sulla carta e sul piede.
+Artefatti: ramo 018-home-carte; evento-card, home, testata (variante chiara), filtri-eventi, footer, public/img/*.svg, e2e/home.spec.ts.
+Problemi: il termine "wild card" era ambiguo e per un po' ho proposto la ricerca con i jolly; la domanda diretta non l'ha risolto, la foto si'. Le foto vere non c'erano: ho disegnato tre illustrazioni SVG e l'ho dichiarato.
+Spunto: quando una parola della richiesta ha piu' significati, chiedere una foto o un esempio vale piu' di una domanda a parole; una scelta a card con opzioni scritte non ha tolto il dubbio.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

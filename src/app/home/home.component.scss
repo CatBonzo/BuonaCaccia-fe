@@ -1,0 +1,37 @@
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+.cta .mat-mdc-unelevated-button {
+  --mat-button-filled-container-color: var(--bc-accent);
+  --mat-button-filled-label-text-color: #1b0c00;
+}
+.cta .chiaro { color: #e6eaf3; }
+.error { color: var(--mat-sys-error); }
+
+.prossimi { margin-top: 40px; }
+.head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.head h2 { margin: 0; font: 700 1.8rem/1.2 var(--mat-sys-brand-font, serif); }
+.all { color: var(--mat-sys-primary); font-weight: 700; text-decoration: none; }
+.all .fa-solid { margin-left: 4px; font-size: 0.8rem; transition: margin 150ms ease; }
+.all:hover .fa-solid { margin-left: 8px; }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+.storie { display: grid; gap: 56px; margin: 72px 0 0; }
+.storie article { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 40px; }
+.storie article.inverso img { order: 2; }
+.storie img { width: 100%; height: auto; border-radius: 24px; box-shadow: 0 14px 34px rgb(20 35 74 / 0.2); }
+.kicker { margin: 0 0 8px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bc-accent); }
+.storie h2 { margin: 0 0 12px; font: 700 2rem/1.15 var(--mat-sys-brand-font, serif); }
+.storie p { line-height: 1.6; }
+.storie p:not(.kicker) { margin: 0 0 14px; max-width: 52ch; }
+
+.info { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 72px; }
+.info div { display: flex; flex-direction: column; gap: 4px; padding: 20px; border: 1px solid var(--bc-line); border-radius: 18px; background: var(--mat-sys-surface-container-low); }
+.info .fa-solid { margin-bottom: 8px; font-size: 1.4rem; color: var(--bc-accent); }
+.info strong { color: var(--mat-sys-primary); }
+.info span { color: var(--mat-sys-on-surface-variant); }
+
+@media (max-width: 800px) {
+  .storie { gap: 40px; margin-top: 48px; }
+  .storie article { grid-template-columns: 1fr; gap: 20px; }
+  .storie article.inverso img { order: 0; }
+  .info { margin-top: 48px; }
+}

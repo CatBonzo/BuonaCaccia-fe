@@ -1,6 +1,10 @@
-<app-testata titolo="Buona caccia!" introduzione="Campi, route e momenti di formazione: trova il prossimo e iscriviti.">
-  <app-filtri-eventi [regions]="regions()" (cerca)="onFilters($event)" />
-</app-testata>
+<app-testata
+  variante="chiara"
+  titolo="La tua prossima avventura comincia da qui."
+  [paroleAccento]="3"
+  introduzione="Scopri le esperienze formative e gli eventi scout aperti nella tua regione e in tutta Italia."
+/>
+<app-filtri-eventi [regions]="regions()" (cerca)="onFilters($event)" />
 
 @if (loading()) {
   <mat-progress-bar mode="indeterminate" />
@@ -39,7 +43,7 @@
     }
     <ul class="events">
       @for (event of group.events; track event.id) {
-        <li app-evento-riga [event]="event"></li>
+        <li app-evento-card [event]="event"></li>
       }
     </ul>
   </section>

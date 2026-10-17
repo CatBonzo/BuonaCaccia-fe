@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" role="img" aria-label="Un sentiero tra le montagne">
+  <rect width="480" height="320" fill="#f4e7d6"/>
+  <circle cx="120" cy="86" r="34" fill="#e8702a"/>
+  <path d="M0 220 L110 120 L190 200 L290 90 L400 210 L480 150 V320 H0Z" fill="#8aa4db"/>
+  <path d="M0 250 L130 160 L230 240 L330 150 L480 250 V320 H0Z" fill="#1f3f73"/>
+  <path d="M0 290 Q160 240 250 270 T480 262 V320 H0Z" fill="#2b5a46"/>
+  <path d="M236 320 C250 292 214 276 244 252 C270 232 246 220 262 204" fill="none" stroke="#f4e7d6" stroke-width="12" stroke-linecap="round" stroke-dasharray="2 16"/>
+  <g fill="#14234a"><path d="M60 280 l12 -34 l12 34z"/><path d="M84 284 l10 -28 l10 28z"/><path d="M410 276 l12 -34 l12 34z"/></g>
+</svg>

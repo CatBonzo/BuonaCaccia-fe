@@ -175,6 +175,14 @@ Artefatti: ramo 019-moduli-routing; app-routing.module.ts, *.module.ts, *-routin
 Problemi: la guida e il clone non coincidevano con la richiesta (niente `app-routing.module` nel clone): ho scelto la richiesta e l'ho scritto. Con componenti "standalone" il modulo non dichiara il componente ma lo importa. Cinque prove nuove sono fallite perche' i componenti vogliono un parametro obbligatorio (id, token, code, mode): ho dato loro un valore di prova.
 Spunto: copiare una struttura da un esempio richiede di leggere cosa c'e' davvero nell'esempio; quando l'esempio e la parola dell'utente differiscono, si segue l'utente e si scrive la differenza.
 
+[2026-10-17] Icone nella barra in alto
+Cosa: Home, Eventi, Aiuto, Info, Accedi ed Esci mostrano un'icona Font Awesome accanto al testo.
+Chi: Mahima l'ha chiesto; Claude ha aggiunto il campo `icon` ai collegamenti in navbar.component.ts e il tag <i> nel .html, con un po' di spazio nel .scss.
+Paradigma: AI-assisted, richiesta breve eseguita direttamente.
+Artefatti: ramo 020-icone-navbar, navbar.component.{ts,html,scss}.
+Problemi: Accedi aveva gia' un'icona nel codice; l'ho allineata con le altre (spazio uguale) e ho aggiunto Esci.
+Spunto: icone decorative con aria-hidden non cambiano i nomi accessibili, quindi i test restano uguali.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

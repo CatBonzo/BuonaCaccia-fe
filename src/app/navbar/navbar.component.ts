@@ -20,10 +20,10 @@ export class NavbarComponent {
 
   /** I collegamenti del sito: sono gli stessi per tutti. "Home" e' la pagina iniziale con le carte; "Eventi" e' il catalogo con la ricerca. */
   protected readonly links = [
-    { id: 'home', label: 'Home', path: '/' },
-    { id: 'eventi', label: 'Eventi', path: '/eventi' },
-    { id: 'aiuto', label: 'Aiuto', path: '/aiuto' },
-    { id: 'info', label: 'Info', path: '/info' },
+    { id: 'home', icon: 'fa-house', label: 'Home', path: '/' },
+    { id: 'eventi', icon: 'fa-calendar-days', label: 'Eventi', path: '/eventi' },
+    { id: 'aiuto', icon: 'fa-circle-question', label: 'Aiuto', path: '/aiuto' },
+    { id: 'info', icon: 'fa-circle-info', label: 'Info', path: '/info' },
   ];
 
   /** Il pulsante del menu e' premuto: lo apre o lo chiude chi contiene il cassetto. */

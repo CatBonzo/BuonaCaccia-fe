@@ -25,6 +25,7 @@
 .links a {
   display: flex;
   align-items: center;
+  gap: 8px;
   padding: 0 14px;
   color: var(--mat-sys-on-surface-variant);
   font-weight: 500;
@@ -45,3 +46,5 @@
   .top { padding: 8px 8px 0; }
   .links { order: 3; flex: 0 0 100%; overflow-x: auto; min-height: 44px; }
 }
+
+.login i, .who i, [data-testid='logout'] i { margin-right: 8px; }

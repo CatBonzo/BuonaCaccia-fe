@@ -4,7 +4,7 @@
     <p class="hint">Accesso di prova: scegli chi vuoi essere.</p>
   </header>
   @if (loading()) {
-    <mat-progress-bar mode="indeterminate" />
+    <p-progressbar mode="indeterminate" [style]="{ height: '4px' }" ariaLabel="Caricamento" />
   }
   @if (error(); as message) {
     <p class="error" role="alert">{{ message }}</p>
@@ -17,9 +17,7 @@
           <strong>{{ user.firstName }} {{ user.lastName }}</strong>
           <span>{{ user.label }}</span>
         </span>
-        <button mat-stroked-button type="button" [attr.data-user]="user.username" (click)="enter(user)">
-          Entra come {{ user.username }}
-        </button>
+        <p-button type="button" [outlined]="true" [label]="'Entra come ' + user.username" [attr.data-user]="user.username" (onClick)="enter(user)" />
       </li>
     }
   </ul>

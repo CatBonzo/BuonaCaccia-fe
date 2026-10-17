@@ -2,11 +2,15 @@
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 12px;
-  align-items: start;
+  align-items: center;
 }
 .filters .wide { grid-column: 1; }
+.filters input[pInputText], .filters p-iconfield { width: 100%; }
+.date { display: flex; align-items: center; gap: 8px; color: #c9d1e3; }
+.date input { flex: 1; }
 .actions { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.actions .mat-mdc-button { color: var(--mat-sys-on-primary-container); }
+.actions ::ng-deep .on-dark.p-button-text { color: #e6eaf3; }
+.actions ::ng-deep .on-dark.p-button-text:hover { background: rgb(255 255 255 / 0.1); }
 
 @media (max-width: 720px) {
   .filters { grid-template-columns: 1fr 1fr; }

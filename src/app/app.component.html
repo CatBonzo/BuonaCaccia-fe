@@ -1,16 +1,19 @@
-<app-navbar (menuToggle)="nav.toggle()" />
-<mat-sidenav-container class="container">
-  <mat-sidenav
-    #nav
-    class="nav"
-    [mode]="menu.narrow() ? 'over' : 'side'"
-    [opened]="!menu.narrow() && menu.hasMenu()"
-    [class.hidden]="!menu.hasMenu()"
-  >
-    <app-sidebar />
-  </mat-sidenav>
-  <mat-sidenav-content class="content">
+<app-navbar (menuToggle)="drawer.set(true)" />
+<div class="shell">
+  @if (menu.hasMenu() && !menu.narrow()) {
+    <aside class="nav">
+      <app-sidebar />
+    </aside>
+  }
+  <div class="content">
     <main><router-outlet /></main>
     <app-footer />
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </div>
+</div>
+@if (menu.hasMenu() && menu.narrow()) {
+  <p-drawer [(visible)]="drawer" position="left" styleClass="drawer" ariaCloseLabel="Chiudi il menu">
+    <ng-template #headless>
+      <app-sidebar />
+    </ng-template>
+  </p-drawer>
+}

@@ -6,6 +6,13 @@ export type Theme = 'light' | 'dark' | null;
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   readonly theme = signal<Theme>(read());
+  private readonly dark = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : null;
+
+  constructor() {
+    // Con "come il sistema" il tema segue il sistema anche mentre la pagina e' aperta.
+    this.dark?.addEventListener('change', () => this.apply());
+    this.apply();
+  }
 
   /** Sistema, chiaro, scuro e di nuovo sistema: tre passi in giro con un solo pulsante. */
   cycle(): void {
@@ -14,12 +21,20 @@ export class ThemeService {
     const root = document.documentElement;
     if (next) root.dataset['theme'] = next;
     else delete root.dataset['theme'];
+    this.apply();
     try {
       if (next) localStorage.setItem('bc-theme', next);
       else localStorage.removeItem('bc-theme');
     } catch {
       // Senza memoria del browser la scelta vale solo per questa visita.
     }
+  }
+
+  /** PrimeNG cambia colori con la classe `app-dark`: la mettiamo quando il tema in uso e' scuro. */
+  private apply(): void {
+    const t = this.theme();
+    const dark = t === 'dark' || (t === null && !!this.dark?.matches);
+    document.documentElement.classList.toggle('app-dark', dark);
   }
 }
 

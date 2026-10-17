@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { ButtonModule } from 'primeng/button';
+import { ProgressBarModule } from 'primeng/progressbar';
 import { Api } from '../api/api';
 import { mockAuthFindAll } from '../api/functions';
 import { MockUserResponse } from '../api/models';
@@ -11,7 +11,7 @@ import { SessionService } from '../core/session.service';
 /** Accesso di prova: si sceglie uno degli utenti finti del backend. Sara' sostituito da Keycloak. */
 @Component({
   selector: 'app-login',
-  imports: [MatButtonModule, MatProgressBarModule],
+  imports: [ButtonModule, ProgressBarModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })

@@ -1,9 +1,10 @@
 @use '@angular/material' as mat;
 
-// Direzione grafica (decisione del 2026-10-16, vedi AGENTS.md): carta da orientamento verde-grigia,
-// verde bosco come colore di marca, azzurro solo per le informazioni. Titoli in Bricolage Grotesque
-// (carattere con personalita'), testi in Atkinson Hyperlegible Next (pensato per leggersi bene da tutti).
-// Ogni colore ha la sua coppia chiaro/scuro: il tema segue il sistema, ma si puo' forzare dal menu.
+// Direzione grafica (decisione del 2026-10-17, vedi AGENTS.md): le schermate di riferimento di Mahima.
+// Blu notte come colore di marca, arancione come accento, carta calda come sfondo, titoli con le grazie (Fraunces),
+// testi in Atkinson Hyperlegible Next (pensato per leggersi bene da tutti). Ogni colore ha la sua coppia chiaro/scuro.
+// I componenti sono di PrimeNG (tema in core/tema-primeng.ts); Angular Material resta solo sulle pagine non ancora
+// passate a PrimeNG e prende gli stessi colori, cosi' le due parti non si distinguono.
 
 html {
   height: 100%;
@@ -11,11 +12,11 @@ html {
   @include mat.theme(
     (
       color: (
-        primary: mat.$green-palette,
-        tertiary: mat.$azure-palette,
+        primary: mat.$blue-palette,
+        tertiary: mat.$orange-palette,
       ),
       typography: (
-        brand-family: ('Bricolage Grotesque Variable', 'Bricolage Grotesque', sans-serif),
+        brand-family: ('Fraunces Variable', 'Fraunces', Georgia, serif),
         plain-family: ('Atkinson Hyperlegible Next', sans-serif),
         bold-weight: 700,
         medium-weight: 500,
@@ -26,37 +27,37 @@ html {
   );
   @include mat.theme-overrides(
     (
-      background: light-dark(#f1f4ee, #101612),
-      surface: light-dark(#f1f4ee, #101612),
-      surface-container-lowest: light-dark(#ffffff, #0c120e),
-      surface-container-low: light-dark(#ffffff, #151d18),
-      surface-container: light-dark(#e8eee5, #19231d),
-      surface-container-high: light-dark(#dfe7dc, #202b24),
-      surface-container-highest: light-dark(#d6dfd2, #27342c),
-      surface-variant: light-dark(#dfe7dc, #27342c),
-      on-surface: light-dark(#16231c, #e3eae3),
-      on-surface-variant: light-dark(#46574d, #b2c0b6),
-      outline: light-dark(#6f8076, #7d8f84),
-      outline-variant: light-dark(#c3cfc3, #33423a),
-      primary: light-dark(#1b5e45, #8fd1b0),
-      on-primary: light-dark(#ffffff, #0b2a1d),
-      primary-container: light-dark(#cfe9da, #1f4a38),
-      on-primary-container: light-dark(#0c2f20, #cfe9da),
-      secondary: light-dark(#2a5f9e, #a5c8f2),
-      on-secondary: light-dark(#ffffff, #0f2c4d),
-      secondary-container: light-dark(#d6e4f6, #23405f),
-      on-secondary-container: light-dark(#0f2c4d, #d6e4f6),
-      tertiary: light-dark(#2a5f9e, #a5c8f2),
-      tertiary-container: light-dark(#d6e4f6, #23405f),
-      on-tertiary-container: light-dark(#0f2c4d, #d6e4f6),
+      background: light-dark(#f7f5f0, #0b1226),
+      surface: light-dark(#f7f5f0, #0b1226),
+      surface-container-lowest: light-dark(#ffffff, #0b1226),
+      surface-container-low: light-dark(#ffffff, #101a33),
+      surface-container: light-dark(#efece4, #172342),
+      surface-container-high: light-dark(#e3dfd3, #1f2d52),
+      surface-container-highest: light-dark(#d0cbbb, #2a3a63),
+      surface-variant: light-dark(#e3dfd3, #2a3a63),
+      on-surface: light-dark(#14234a, #e6eaf3),
+      on-surface-variant: light-dark(#4a5775, #a3b0cd),
+      outline: light-dark(#76809a, #7c8db3),
+      outline-variant: light-dark(#d9d4c6, #2a3a63),
+      primary: light-dark(#1b2f5c, #8aa4db),
+      on-primary: light-dark(#ffffff, #0d1830),
+      primary-container: light-dark(#d9e2f5, #1f2d52),
+      on-primary-container: light-dark(#14234a, #d9e2f5),
+      secondary: light-dark(#b8480a, #f4a674),
+      on-secondary: light-dark(#ffffff, #3a1600),
+      secondary-container: light-dark(#fde3d0, #4a2410),
+      on-secondary-container: light-dark(#3a1600, #fde3d0),
+      tertiary: light-dark(#b8480a, #f4a674),
+      tertiary-container: light-dark(#fde3d0, #4a2410),
+      on-tertiary-container: light-dark(#3a1600, #fde3d0),
       error: light-dark(#b3261e, #f2b8b5),
       error-container: light-dark(#f9dedc, #5c1a16),
       on-error-container: light-dark(#410e0b, #f9dedc),
       corner-extra-small: 4px,
       corner-small: 6px,
       corner-medium: 8px,
-      corner-large: 10px,
-      corner-extra-large: 14px,
+      corner-large: 12px,
+      corner-extra-large: 16px,
     )
   );
   @include mat.button-overrides(
@@ -69,7 +70,9 @@ html {
     )
   );
 
-  // Colori che servono solo a noi: stato dei posti e delle pratiche.
+  // Colori che servono solo a noi: marca, accento, stato dei posti e delle pratiche.
+  --bc-navy: #14234a;
+  --bc-accent: light-dark(#e8702a, #f4a674);
   --bc-ok: light-dark(#1b5e45, #8fd1b0);
   --bc-warn: light-dark(#8a5300, #e8b65a);
   --bc-closed: light-dark(#6f8076, #8a9b90);
@@ -104,6 +107,7 @@ body {
 h1, h2, h3 {
   font-family: var(--mat-sys-brand-font, inherit);
   letter-spacing: -0.01em;
+  color: var(--mat-sys-primary);
 }
 h1 {
   font: var(--mat-sys-display-small);
@@ -111,6 +115,9 @@ h1 {
   margin: 0 0 16px;
 }
 h2 { font: var(--mat-sys-headline-small); }
+
+// PrimeNG usa gli stessi caratteri del resto del sito.
+:root { --p-font-family: 'Atkinson Hyperlegible Next', sans-serif; }
 
 // Un solo stile per il focus da tastiera, ben visibile su ogni sfondo.
 :focus-visible {

@@ -1,7 +1,6 @@
 import { Component, inject, output } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { ButtonModule } from 'primeng/button';
 import { MenuService } from '../core/menu.service';
 import { SessionService } from '../core/session.service';
 import { ThemeService } from '../core/theme.service';
@@ -9,7 +8,7 @@ import { ThemeService } from '../core/theme.service';
 /** Barra in alto: il nome, il pulsante del menu sul telefono, il tema e la persona che ha fatto l'accesso. */
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, MatButtonModule, MatIconModule],
+  imports: [RouterLink, ButtonModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })

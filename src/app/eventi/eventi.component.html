@@ -3,7 +3,7 @@
 </app-testata>
 
 @if (loading()) {
-  <mat-progress-bar mode="indeterminate" />
+  <p-progressbar mode="indeterminate" [style]="{ height: '4px' }" ariaLabel="Caricamento" />
 }
 @if (error(); as message) {
   <p class="error" role="alert">{{ message }}</p>
@@ -12,7 +12,7 @@
 @if (!loading() && !error() && events().length === 0) {
   <app-stato-vuoto
     data-testid="empty"
-    icona="travel_explore"
+    icona="pi-compass"
     titolo="Nessun evento trovato con questi filtri."
     suggerimento="Prova a togliere un filtro o a cercare una parola più corta."
   />
@@ -21,14 +21,20 @@
 @if (events().length) {
   <div class="listhead">
     <p class="count" aria-live="polite">{{ total() }} {{ total() === 1 ? 'evento' : 'eventi' }}</p>
-    <mat-form-field class="sort" subscriptSizing="dynamic">
-      <mat-label>Ordina per</mat-label>
-      <mat-select name="sort" [(ngModel)]="sort" (selectionChange)="onSort()">
-        @for (s of sorts; track s.value) {
-          <mat-option [value]="s.value">{{ s.label }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+    <label class="sort">
+      <span>Ordina per</span>
+      <p-select
+        name="sort"
+        [options]="sorts"
+        optionLabel="label"
+        optionValue="value"
+        [(ngModel)]="sort"
+        (onChange)="onSort()"
+        appendTo="body"
+        ariaLabel="Ordina per"
+        data-testid="sort"
+      />
+    </label>
   </div>
 }
 
@@ -45,11 +51,11 @@
   </section>
 }
 
-<mat-paginator
-  [length]="total()"
-  [pageSize]="pageSize"
-  [pageIndex]="pageIndex()"
-  [hidePageSize]="true"
-  (page)="onPage($event)"
-  aria-label="Pagine degli eventi"
+<p-paginator
+  [rows]="pageSize"
+  [totalRecords]="total()"
+  [first]="pageIndex() * pageSize"
+  [showCurrentPageReport]="false"
+  [alwaysShow]="false"
+  (onPageChange)="onPage($event)"
 />

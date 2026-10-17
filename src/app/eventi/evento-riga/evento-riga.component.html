@@ -8,7 +8,7 @@
   </h3>
   <p class="kind">{{ event().typeName }}</p>
   <p class="where">
-    <mat-icon aria-hidden="true">place</mat-icon>
+    <i class="pi pi-map-marker" aria-hidden="true"></i>
     {{ event().location }}, {{ event().region }}
   </p>
   <p class="dates">
@@ -19,6 +19,9 @@
 </div>
 <div class="state">
   <p class="seats">{{ availabilityText() }}</p>
+  @if (fill() !== null) {
+    <p-progressbar class="bar" [value]="fill()" [showValue]="false" [style]="{ height: '6px' }" ariaLabel="Posti occupati" />
+  }
   @if (event().status === 'CANCELLED') {
     <p class="seats cancelled">{{ statusText() }}</p>
   }

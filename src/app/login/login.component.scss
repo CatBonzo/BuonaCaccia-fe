@@ -26,5 +26,5 @@ h1 { font: var(--mat-sys-display-medium); color: var(--mat-sys-primary); margin-
 .who span { color: var(--mat-sys-on-surface-variant); font: var(--mat-sys-body-medium); }
 @media (max-width: 600px) {
   .users li { grid-template-columns: 44px 1fr; }
-  .users button { grid-column: 1 / -1; }
+  .users p-button { grid-column: 1 / -1; }
 }

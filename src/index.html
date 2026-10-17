@@ -6,7 +6,7 @@
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
-    <script>try{var t=localStorage.getItem("bc-theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <script>try{var t=localStorage.getItem("bc-theme");if(t)document.documentElement.dataset.theme=t;if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("app-dark")}catch(e){}</script>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

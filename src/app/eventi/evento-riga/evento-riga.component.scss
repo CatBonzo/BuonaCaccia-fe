@@ -3,16 +3,19 @@
   display: grid;
   grid-template-columns: 92px 1fr minmax(160px, 220px);
   gap: 8px 20px;
-  padding: 18px 12px 18px 20px;
-  border-bottom: 1px solid var(--bc-line);
+  padding: 18px 16px 18px 24px;
+  border: 1px solid var(--bc-line);
+  border-radius: 16px;
+  background: var(--mat-sys-surface-container-low);
+  transition: box-shadow 150ms ease, transform 150ms ease;
 }
 // Il segno a sinistra racconta la disponibilita': pieno se si puo' iscriversi, a tratti se e' quasi pieno, spento se chiuso.
 :host::before {
   content: '';
   position: absolute;
   left: 0;
-  top: 18px;
-  bottom: 18px;
+  top: 16px;
+  bottom: 16px;
   width: 4px;
   border-radius: 2px;
   background: var(--bc-ok);
@@ -21,7 +24,7 @@
   background: repeating-linear-gradient(to bottom, var(--bc-warn) 0 8px, transparent 8px 12px);
 }
 :host([data-tone='closed'])::before { background: var(--bc-closed); opacity: 0.45; }
-:host(:hover) { background: var(--mat-sys-surface-container-low); }
+:host(:hover) { box-shadow: 0 6px 20px rgb(20 35 74 / 0.12); transform: translateY(-1px); }
 
 .when {
   display: flex;
@@ -44,14 +47,15 @@
 .mon { margin-top: 4px; font: var(--mat-sys-label-large); color: inherit; }
 
 .info p, .state p { margin: 0; }
-.title { margin: 0; font: var(--mat-sys-title-large); font-weight: 700; letter-spacing: -0.01em; }
+.title { margin: 0; font: 700 1.3rem/1.25 var(--mat-sys-brand-font, serif); letter-spacing: -0.01em; }
 .title a { color: inherit; text-decoration: none; }
 // Tutta la riga e' cliccabile, ma il collegamento vero resta uno solo: il titolo.
 .title a::after { content: ''; position: absolute; inset: 0; }
 .title a:focus-visible { outline-offset: 4px; }
 .kind { margin-top: 2px; color: var(--mat-sys-on-surface-variant); }
 .where, .dates { margin-top: 6px; display: flex; align-items: center; gap: 4px; font: var(--mat-sys-body-medium); }
-.where mat-icon { font-size: 18px; width: 18px; height: 18px; color: var(--mat-sys-primary); }
+.where .pi { font-size: 0.95rem; color: var(--bc-accent); }
+.bar { display: block; margin: 6px 0 4px; }
 .dates { color: var(--mat-sys-on-surface-variant); gap: 4px; }
 
 .state { text-align: right; }
@@ -64,7 +68,7 @@
 .cat { margin-top: 2px; font: var(--mat-sys-label-medium); color: var(--cat); }
 
 @media (max-width: 720px) {
-  :host { grid-template-columns: 76px 1fr; padding-left: 16px; }
+  :host { grid-template-columns: 76px 1fr; padding-left: 20px; }
   .day { font-size: 26px; white-space: nowrap; }
   .state { grid-column: 2; text-align: left; display: flex; flex-wrap: wrap; gap: 2px 12px; align-items: baseline; }
   .fee { margin-top: 0; }

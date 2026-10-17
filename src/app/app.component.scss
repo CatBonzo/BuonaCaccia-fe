@@ -1,18 +1,17 @@
-:host { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+:host { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
 
-.container { flex: 1; background: var(--mat-sys-surface); }
+.shell { flex: 1; display: flex; align-items: stretch; }
 .nav {
-  width: 264px;
-  padding: 12px 12px 24px;
-  background: var(--mat-sys-surface);
-  border-right: 1px solid var(--bc-line);
-  --mat-sidenav-container-shape: 0;
+  width: 272px;
+  flex: none;
+  background: var(--bc-navy);
+  color: #e6eaf3;
 }
-.nav.hidden { display: none; }
-
-.content { padding: 24px 32px 24px; }
+.content { flex: 1; min-width: 0; padding: 24px 32px; }
 main { max-width: 1100px; margin: 0 auto; }
 
+:host ::ng-deep .drawer { width: 288px; background: var(--bc-navy); border: 0; }
+
 @media (max-width: 900px) {
-  .content { padding: 16px 16px 16px; }
+  .content { padding: 16px; }
 }

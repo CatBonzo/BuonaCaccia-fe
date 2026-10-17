@@ -1,10 +1,10 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, computed, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { ButtonModule } from 'primeng/button';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 import { RegionDto } from '../../api/models';
 import { AVAILABILITY_LABELS, CATEGORY_LABELS } from '../../core/labels';
 
@@ -21,7 +21,7 @@ export interface FiltriEventi {
 /** La barra di ricerca del catalogo: testo, regione e categoria sempre in vista, il resto sotto "Altri filtri". */
 @Component({
   selector: 'app-filtri-eventi',
-  imports: [FormsModule, MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule],
+  imports: [FormsModule, ButtonModule, IconFieldModule, InputIconModule, InputTextModule, SelectModule],
   templateUrl: './filtri-eventi.component.html',
   styleUrl: './filtri-eventi.component.scss',
 })
@@ -30,8 +30,10 @@ export class FiltriEventiComponent {
   /** Premuto "Cerca" (o Invio) o "Azzera filtri": porta i filtri a chi mostra l'elenco. */
   readonly cerca = output<FiltriEventi>();
 
-  protected readonly categories = Object.entries(CATEGORY_LABELS);
-  protected readonly availabilities = Object.entries(AVAILABILITY_LABELS);
+  /** Le tendine hanno sempre la voce "Tutte" in testa: il valore vuoto vuol dire "nessun filtro". */
+  protected readonly regionOptions = computed(() => [{ code: '', name: 'Tutte le regioni' }, ...this.regions()]);
+  protected readonly categoryOptions = [{ code: '', name: 'Tutte le categorie' }, ...Object.entries(CATEGORY_LABELS).map(([code, name]) => ({ code, name }))];
+  protected readonly availabilityOptions = [{ code: '', name: 'Qualsiasi disponibilità' }, ...Object.entries(AVAILABILITY_LABELS).map(([code, name]) => ({ code, name }))];
   protected readonly moreFilters = signal(false);
 
   protected q = '';

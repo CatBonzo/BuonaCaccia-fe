@@ -1,9 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSelectModule } from '@angular/material/select';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { SelectModule } from 'primeng/select';
 import { Api } from '../api/api';
 import { eventSearch, EventSearch$Params } from '../api/fn/events/event-search';
 import { regionFindAll } from '../api/fn/regions/region-find-all';
@@ -28,7 +27,7 @@ const MONTHS = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'l
 @Component({
   selector: 'app-eventi',
   imports: [
-    FormsModule, MatFormFieldModule, MatPaginatorModule, MatProgressBarModule, MatSelectModule,
+    FormsModule, PaginatorModule, ProgressBarModule, SelectModule,
     TestataComponent, FiltriEventiComponent, EventoRigaComponent, StatoVuotoComponent,
   ],
   templateUrl: './eventi.component.html',
@@ -81,8 +80,8 @@ export class EventiComponent {
     this.search(0);
   }
 
-  protected onPage(event: PageEvent): void {
-    this.search(event.pageIndex);
+  protected onPage(event: PaginatorState): void {
+    this.search(event.page ?? 0);
   }
 
   /** Costruisce i parametri: i filtri vuoti non vengono inviati. */

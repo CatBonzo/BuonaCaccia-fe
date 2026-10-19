@@ -247,6 +247,14 @@ Artefatti: ramo 025-tabella-selezione; segreteria-eventi.component.scss.
 Problemi: nessuno; una regola precedente dava solo spazio sotto ai filtri e andava sostituita, non affiancata.
 Spunto: una richiesta di grafica ("equidistanti") si verifica guardando gli spazi nello screenshot, non solo i numeri nel codice.
 
+[2026-10-19] Nuovo evento a pannelli con Optimus
+Cosa: la pagina per creare o modificare un evento e' divisa in pannelli (Categoria e regione, Informazioni, Date, Posti e quota, Capo) con i componenti Optimus; le date usano il calendario Optimus in italiano; l'avviso sulle date sbagliate resta.
+Chi: Mahima ha indicato lo stile (riferimento + pannelli + libreria Optimus); Claude ha scelto i contenuti di ogni pannello e il significato di "Capo" (chi puo' iscrivere), e riscritto i test.
+Paradigma: AI-assisted partendo da una descrizione (il riferimento visivo non era raggiungibile); code harness: 43 test unitari e 47 e2e verdi.
+Artefatti: ramo 026-form-evento-pannelli; evento-form (ts, html, scss), app.config.ts, core/data-italiana.ts, e2e/gestione-eventi.spec.ts.
+Problemi: il calendario Optimus non legge il testo inserito di colpo da `fill` (accetta solo digitazione tasto per tasto) e il testo nuovo si aggiunge al vecchio: i test selezionano tutto e scrivono; un clic di prova sul bordo dello schermo mi ha fatto uscire dall'account durante uno screenshot.
+Spunto: cambiare libreria cambia anche il modo di scrivere i test: i test descrivono l'uso reale (digitare), non una scorciatoia.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

@@ -3,6 +3,13 @@ import { createDraft } from './api';
 import { filterByName } from './tabella';
 import { loginAs } from './login';
 
+/** Le date si scrivono tasto per tasto: il calendario Optimus ignora il testo incollato di colpo (`fill`). */
+async function typeDate(page: Page, id: string, text: string) {
+  await page.locator(`#${id}`).press('Control+A');
+  await page.locator(`#${id}`).pressSequentially(text);
+  await page.locator(`#${id}`).press('Tab');
+}
+
 async function choose(page: Page, testId: string, option: string) {
   await page.getByTestId(testId).click();
   await page.getByRole('option', { name: option, exact: true }).click();
@@ -81,9 +88,9 @@ test.describe('gestione eventi della segreteria', () => {
     await page.getByTestId('new-event').click();
     await expect(page).toHaveURL(/\/segreteria\/eventi\/nuovo$/);
     // Il calendario si apre dall'icona e una data scelta compare nel campo.
-    await page.getByRole('button', { name: 'Apri il calendario' }).first().click();
-    await page.locator('.mat-calendar-body-cell:not(.mat-calendar-body-disabled)').first().click();
-    await expect(page.getByTestId('f-start')).toHaveValue(/^\d{2}\/\d{2}\/\d{4}$/);
+    await page.locator('.p-datepicker-dropdown').first().click();
+    await page.locator('.p-datepicker-day:not(.p-disabled)').first().click();
+    await expect(page.locator('#f-start')).toHaveValue(/^\d{2}\/\d{2}\/\d{4}$/);
   });
 
   test('crea una bozza, la pubblica, la vede nel catalogo, chiude le iscrizioni e annulla con motivo', async ({ page }) => {
@@ -95,14 +102,14 @@ test.describe('gestione eventi della segreteria', () => {
     await page.getByTestId('f-title').fill(title);
     await page.getByTestId('f-location').fill('Pian del Re');
     await page.getByTestId('f-province').fill('cn');
-    await page.getByTestId('f-start').fill('10/03/2027');
-    await page.getByTestId('f-end').fill('09/03/2027');
+    await typeDate(page, 'f-start', '10/03/2027');
+    await typeDate(page, 'f-end', '09/03/2027');
     // L'avviso compare subito, senza salvare; con l'ordine giusto sparisce.
     await expect(page.getByTestId('date-warning')).toContainText('rientro non può precedere');
-    await page.getByTestId('f-open').fill('01/10/2026');
-    await page.getByTestId('f-close').fill('01/03/2027');
-    await page.getByTestId('f-seats').fill('10');
-    await page.getByTestId('f-fee').fill('50');
+    await typeDate(page, 'f-open', '01/10/2026');
+    await typeDate(page, 'f-close', '01/03/2027');
+    await page.locator('#f-seats').fill('10');
+    await page.locator('#f-fee').fill('50');
     await choose(page, 'f-mode', 'Il socio da solo');
     await page.getByTestId('save-event').click();
 
@@ -120,7 +127,7 @@ test.describe('gestione eventi della segreteria', () => {
     // Si corregge dal modulo di modifica e poi si pubblica.
     await card.getByTestId('edit').click();
     await expect(page.getByTestId('f-title')).toHaveValue(title);
-    await page.getByTestId('f-end').fill('12/03/2027');
+    await typeDate(page, 'f-end', '12/03/2027');
     await expect(page.getByTestId('date-warning')).toHaveCount(0);
     await page.getByTestId('save-event').click();
     await expect(page).toHaveURL(/\/segreteria\/eventi$/);

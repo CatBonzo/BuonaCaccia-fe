@@ -207,6 +207,46 @@ Artefatti: ramo 024-gestione-eventi-tabella; segreteria-eventi, evento-form, eve
 Problemi: il calendario Material legge "10/03/2027" come 3 ottobre (formato americano) e i campi data nativi non si compilavano come nei test: adattatore italiano e test aggiornati a gg/mm/aaaa. La finestra di conferma, con il mouse, resta un attimo nella pagina dopo "No": il test aspetta che sparisca. Il test del menu su telefono e' fallito due volte alla prima esecuzione dopo modifiche e passa alla seconda: probabile ricompilazione del server di sviluppo, da tenere d'occhio.
 Spunto: cambiare il tipo di controllo (data nativa -> calendario) cambia anche come si scrive nei test: i test sono parte del cambiamento.
 
+[2026-10-19] Tabella eventi essenziale, con filtri per colonna e selezione multipla
+Cosa: la tabella di Gestione eventi mostra solo ID, Nome, Stato e Azioni, con un filtro per colonna; si possono scegliere piu' righe e agire insieme da una barra in basso (Esporta, Duplica, Pubblica, Elimina); lo stato e' un'etichetta colorata.
+Chi: Mahima ha dato la tabella di riferimento e poi precisato le colonne ("id, nome, stato, azioni, filtrabile"); Claude ha scelto quali azioni multiple offrire, come filtrare (backend per nome e stato, righe visibili per ID) e come contare i risultati delle azioni di gruppo.
+Paradigma: AI-assisted con riferimento visivo; code harness: due nuovi e2e (filtri per colonna; selezione, esporta, duplica, elimina) e un piccolo aiuto condiviso per i test (`e2e/tabella.ts`).
+Artefatti: ramo 025-tabella-selezione; segreteria-eventi, evento-conferma, e2e.
+Problemi: il filtro del nome parte con una pausa e ridisegnava le righe mentre i test aprivano il menu (elemento "staccato"): righe riconosciute per id e test che aspettano la risposta del backend. Il filtro ID non puo' cercare su tutti gli eventi perche' il backend cerca solo nel titolo: l'ho dichiarato.
+Spunto: una funzione che dipende da una pausa (ricerca mentre si scrive) obbliga i test ad aspettare l'evento giusto, non a dormire.
+
+[2026-10-19] Installata Optimus UI
+Cosa: aggiunte le librerie Optimus UI (componenti tabella, ricerca, filtri, icone) e il tema Aura in app.config.ts; poi la tabella di Gestione eventi e' stata riscritta con `p-table` (filtri per colonna, selezione, barra azioni, paginazione Optimus); 43 test unitari e 11 e2e della gestione eventi verdi.
+Chi: Mahima ha chiesto la libreria (e corretto il nome: non PrimeNG ma Optimus); Claude ha verificato licenza (MIT) e compatibilita' (Angular 22) prima di installare.
+Paradigma: AI-assisted; verifica delle fonti prima di aggiungere una dipendenza (npm view, pagina ufficiale).
+Artefatti: ramo 025-tabella-selezione; package.json, app.config.ts.
+Problemi: il nome detto a voce ("penNG") faceva pensare a PrimeNG, scartato per la licenza: la ricerca ha mostrato che Optimus e' un fork gratuito. Il tema e i componenti portano il bundle iniziale a 795 kB (limite 700, solo avviso). I test e2e cercavano `tr[mat-row]`: ora `tr[data-row]`.
+Spunto: un nome ambiguo va verificato sulla fonte prima di rifiutare o accettare la scelta.
+
+[2026-10-19] Tabella eventi come l'esempio Optimus
+Cosa: Gestione eventi mostra ID, Tipo, Titolo, Regione, Stato e Azioni; ogni colonna ha il suo filtro (testo, tendina, tendina multipla) e in alto c'e' la ricerca su tutta la tabella.
+Chi: Mahima ha incollato il codice dell'esempio Optimus e l'elenco delle colonne; Claude ha adattato l'esempio ai dati veri, scelto di scaricare tutti gli eventi e filtrare nel browser, e aggiornato i test.
+Paradigma: AI-assisted partendo da un esempio ufficiale; code harness: 43 test unitari e 11 e2e verdi dopo la riscrittura.
+Artefatti: ramo 025-tabella-selezione; segreteria-eventi (ts, html, scss), e2e/tabella.ts, e2e/gestione-eventi.spec.ts.
+Problemi: il filtro del testo partiva solo premendo Invio e cercava "inizia con": servono filterOn="input" e matchMode="contains". Il backend e Docker si erano fermati tra un turno e l'altro: rilancio a mano.
+Spunto: un esempio di una libreria ha valori predefiniti pensati per la demo; vanno letti e scelti, non copiati.
+
+[2026-10-19] Filtri allargati e tabella piu' grande
+Cosa: i campi dei filtri della tabella eventi riempiono la colonna (prima il testo era tagliato), la ricerca globale e' piu' larga, testo, righe e icone sono piu' grandi e sopra i 1400 px la tabella esce un po' dalla colonna dei contenuti.
+Chi: Mahima ha segnalato il problema con uno screenshot e chiesto una tabella piu' grande; Claude ha misurato le larghezze nel browser e scelto le dimensioni.
+Paradigma: AI-assisted con ciclo screenshot-correzione; code harness: gli stessi 11 e2e restano verdi.
+Artefatti: ramo 025-tabella-selezione; segreteria-eventi.component.scss.
+Problemi: due correzioni sbagliate (un display: flex sulla cella spezzava le righe; larghezze fisse in rem facevano uscire le Azioni a 1200 px): trovato misurando larghezza di tabella e colonne con un piccolo test.
+Spunto: quando una grafica non torna conviene misurare gli elementi invece di indovinare.
+
+[2026-10-19] Filtri equidistanti e azioni centrate
+Cosa: la riga dei filtri ha lo stesso spazio sopra e sotto e la colonna Azioni (titolo e icone) e' centrata.
+Chi: Mahima l'ha chiesto con uno screenshot; Claude ha scelto i 14 px e controllato con uno screenshot.
+Paradigma: AI-assisted con ciclo screenshot-correzione; code harness: 11 e2e verdi.
+Artefatti: ramo 025-tabella-selezione; segreteria-eventi.component.scss.
+Problemi: nessuno; una regola precedente dava solo spazio sotto ai filtri e andava sostituita, non affiancata.
+Spunto: una richiesta di grafica ("equidistanti") si verifica guardando gli spazi nello screenshot, non solo i numeri nel codice.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

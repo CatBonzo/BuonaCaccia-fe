@@ -1,39 +1,45 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { IconFieldModule } from '@openng/optimus-ui/iconfield';
+import { InputIconModule } from '@openng/optimus-ui/inputicon';
+import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { MultiSelectModule } from '@openng/optimus-ui/multiselect';
+import { SelectModule } from '@openng/optimus-ui/select';
+import { Table, TableFilterEvent, TableModule } from '@openng/optimus-ui/table';
+import { TagModule } from '@openng/optimus-ui/tag';
 import { Api } from '../api/api';
+import { eventCreate } from '../api/fn/events/event-create';
 import { eventCancel } from '../api/fn/events/event-cancel';
 import { eventDelete } from '../api/fn/events/event-delete';
 import { eventCloseRegistrations } from '../api/fn/events/event-close-registrations';
 import { eventManaged, EventManaged$Params } from '../api/fn/events/event-managed';
 import { eventPublish } from '../api/fn/events/event-publish';
-import { EventDto } from '../api/models';
+import { EventDto, EventRequestDto } from '../api/models';
 import { ApiError } from '../core/api-error';
-import { STATUS_LABELS, label } from '../core/labels';
+import { REGION_NAMES, STATUS_LABELS, label } from '../core/labels';
 import { SessionService } from '../core/session.service';
 import { EventoConfermaComponent } from '../evento-conferma/evento-conferma.component';
 
 const PAGE_SIZE = 12;
+/** Il backend dà al massimo 100 eventi per pagina: l'elenco si scarica a pagine e poi si filtra nella tabella. */
+const FETCH_SIZE = 100;
 
-/** Gli eventi della propria regione, in qualunque stato, in una tabella: si vede, si modifica, si elimina; le altre azioni stanno nel menu della riga. */
+/** Una riga della tabella: l'evento più i testi già pronti per cercarci dentro. */
+type Row = EventDto & { regionName: string; statusLabel: string };
+type Severity = 'success' | 'info' | 'warn' | 'danger' | 'secondary';
+
+/** Gli eventi della propria regione, in qualunque stato, in una tabella Optimus (`p-table`): si vede, si modifica, si elimina; le altre azioni stanno nel menu della riga. */
 @Component({
   selector: 'app-segreteria-eventi',
   imports: [
-    CurrencyPipe, DatePipe, FormsModule, RouterLink, MatButtonModule, MatChipsModule, MatDialogModule, MatFormFieldModule, MatInputModule,
-    MatMenuModule, MatPaginatorModule, MatProgressBarModule, MatSelectModule, MatTableModule, MatTooltipModule,
+    FormsModule, RouterLink, MatButtonModule, MatDialogModule, MatMenuModule, MatTooltipModule,
+    IconFieldModule, InputIconModule, InputTextModule, MultiSelectModule, SelectModule, TableModule, TagModule,
   ],
   templateUrl: './segreteria-eventi.component.html',
   styleUrl: './segreteria-eventi.component.scss',
@@ -44,36 +50,128 @@ export class SegreteriaEventiComponent {
   private readonly dialog = inject(MatDialog);
   protected readonly session = inject(SessionService);
 
-  protected readonly events = signal<EventDto[]>([]);
-  protected readonly total = signal(0);
-  protected readonly pageIndex = signal(0);
+  protected readonly events = signal<Row[]>([]);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
-  protected readonly statuses = Object.entries(STATUS_LABELS);
   protected readonly labelOf = label;
   protected readonly statusLabels = STATUS_LABELS;
   protected readonly pageSize = PAGE_SIZE;
-  protected status = '';
-  protected q = '';
-  protected sort = 'createdAt,desc';
-  protected readonly sorts = [
-    ['createdAt,desc', 'Più recenti'],
-    ['startDate,asc', 'Data di inizio'],
-    ['title,asc', 'Titolo'],
-  ];
+  protected readonly statusOptions = Object.entries(STATUS_LABELS).map(([value, label]) => ({ label, value }));
+  /** Le scelte dei filtri a tendina vengono dagli eventi che ci sono, non da un elenco fisso. */
+  protected readonly typeOptions = computed(() => [...new Set(this.events().map((e) => e.typeName).filter((t): t is string => !!t))].sort());
+  protected readonly regionOptions = computed(() =>
+    [...new Set(this.events().map((e) => e.region as string).filter(Boolean))].map((value) => ({ value, label: REGION_NAMES[value] ?? value })),
+  );
 
-  protected readonly columns = ['evento', 'stato', 'date', 'luogo', 'iscritti', 'quota', 'azioni'];
+  /** Le righe scelte con le caselle (le gestisce la tabella): servono alla barra delle azioni in basso. */
+  /** Quante righe passano i filtri: la tabella lo dice a ogni filtro. */
+  protected readonly visibleCount = signal(0);
+  protected readonly selected = signal<Row[]>([]);
 
   constructor() {
-    this.load(0);
+    this.load();
   }
 
-  protected filter(): void {
-    this.load(0);
+  protected severityOf(status: string | undefined): Severity {
+    switch (status) {
+      case 'REGISTRATION_OPEN':
+      case 'PUBLISHED':
+        return 'success';
+      case 'REGISTRATION_CLOSED':
+        return 'warn';
+      case 'IN_PROGRESS':
+        return 'info';
+      case 'CANCELLED':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
   }
 
-  protected onPage(event: PageEvent): void {
-    this.load(event.pageIndex);
+  protected onFilter(event: TableFilterEvent): void {
+    this.visibleCount.set(event.filteredValue?.length ?? this.events().length);
+  }
+
+  protected resetFilters(table: Table): void {
+    table.clear();
+    this.visibleCount.set(this.events().length);
+  }
+
+  protected clearSelection(): void {
+    this.selected.set([]);
+  }
+
+  /** Scarica le righe scelte in un file CSV (separatore `;` e segno di codifica, cosi' Excel in italiano lo apre bene). */
+  protected exportSelected(): void {
+    const cell = (v: unknown) => `"${String(v ?? '').replaceAll('"', '""')}"`;
+    const rows = [['Codice', 'Titolo', 'Tipo', 'Stato', 'Inizio', 'Fine', 'Luogo', 'Provincia', 'Posti', 'Iscritti', 'Quota']];
+    for (const e of this.selected()) {
+      rows.push([e.code, e.title, e.typeName, label(STATUS_LABELS, e.status), e.startDate, e.endDate, e.location, e.province, e.seats, e.enrolledCount, e.fee] as string[]);
+    }
+    const csv = '\uFEFF' + rows.map((r) => r.map(cell).join(';')).join('\r\n');
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    link.download = 'eventi.csv';
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
+
+  /** Crea una bozza uguale a ciascun evento scelto (con "(copia)" nel titolo): serve a partire da un evento gia' fatto. */
+  protected duplicateSelected(): void {
+    this.bulk(this.selected(), (e) => this.api.invoke(eventCreate, { body: this.copyOf(e) }), 'duplicati');
+  }
+
+  protected duplicate(e: EventDto): void {
+    this.act(this.api.invoke(eventCreate, { body: this.copyOf(e) }), 'Bozza creata: è una copia dell’evento.');
+  }
+
+  /** Pubblica quelli che si possono pubblicare; gli altri (o quelli con dati incoerenti) restano come sono e si contano a parte. */
+  protected publishSelected(): void {
+    this.bulk(
+      this.selected().filter((e) => this.can(e, 'PUBLISH')),
+      (e) => this.api.invoke(eventPublish, { id: e.id!, body: { version: e.version } }),
+      'pubblicati',
+    );
+  }
+
+  protected deleteSelected(): void {
+    const deletable = this.selected().filter((e) => this.can(e, 'DELETE'));
+    if (!deletable.length) {
+      this.snackBar.open('Tra gli eventi scelti nessuno si può eliminare.', 'Chiudi', { duration: 5000 });
+      return;
+    }
+    const messaggio = `${deletable.length === 1 ? 'Un evento verrà eliminato' : deletable.length + ' eventi verranno eliminati'}. Non si torna indietro.`;
+    this.dialog
+      .open<EventoConfermaComponent, unknown, boolean>(EventoConfermaComponent, { data: { azione: 'delete', titolo: '', messaggio } })
+      .afterClosed()
+      .subscribe((ok) => {
+        if (ok) this.bulk(deletable, (e) => this.api.invoke(eventDelete, { id: e.id! }), 'eliminati');
+      });
+  }
+
+  /** Esegue l'azione su ogni evento e dice quanti sono andati a buon fine e quanti no. */
+  private bulk(list: EventDto[], action: (e: EventDto) => Promise<unknown>, verb: string): void {
+    if (!list.length) {
+      this.snackBar.open('Nessuno degli eventi scelti può fare questa azione.', 'Chiudi', { duration: 5000 });
+      return;
+    }
+    Promise.allSettled(list.map(action)).then((results) => {
+      const ok = results.filter((r) => r.status === 'fulfilled').length;
+      const ko = results.length - ok;
+      this.snackBar.open(`${ok} ${ok === 1 ? 'evento' : 'eventi'} ${verb}${ko ? `, ${ko} no` : ''}.`, 'Chiudi', { duration: 5000 });
+      this.clearSelection();
+      this.load();
+    });
+  }
+
+  private copyOf(e: EventDto): EventRequestDto {
+    return {
+      typeCode: e.typeCode!, level: e.level!, region: e.region, zone: e.zone ?? undefined, title: `${e.title ?? ''} (copia)`.trim(),
+      description: e.description ?? undefined, location: e.location ?? undefined, province: e.province ?? undefined,
+      startDate: e.startDate, endDate: e.endDate, registrationOpenDate: e.registrationOpenDate, registrationCloseDate: e.registrationCloseDate,
+      seats: e.seats, fee: e.fee, enrollmentMode: e.enrollmentMode, requirements: e.requirements, obligations: e.obligations,
+      contacts: e.contacts ?? undefined,
+    };
   }
 
   /** Le azioni possibili le decide il backend (`availableActions`): qui si legge solo l'elenco. */
@@ -113,29 +211,32 @@ export class SegreteriaEventiComponent {
     request.then(
       () => {
         this.snackBar.open(success, 'Chiudi', { duration: 4000 });
-        this.load(this.pageIndex());
+        this.load();
       },
       (e: ApiError) => this.error.set(e.details.length ? e.details.map((d) => d.message).join(' ') : e.message),
     );
   }
 
-  private load(page: number): void {
+  /** Scarica tutte le pagine degli eventi della regione: poi filtri, ricerca e pagine si fanno nella tabella. */
+  private async load(): Promise<void> {
     this.loading.set(true);
-    const params: EventManaged$Params = { page, size: PAGE_SIZE };
-    if (this.q.trim()) params.q = this.q.trim();
-    params.sort = this.sort;
-    if (this.status) params.status = this.status as EventManaged$Params['status'];
-    this.api.invoke(eventManaged, params).then(
-      (response) => {
-        this.events.set(response.payload?.content ?? []);
-        this.total.set(response.payload?.totalElements ?? 0);
-        this.pageIndex.set(response.payload?.page ?? page);
-        this.loading.set(false);
-      },
-      (e: ApiError) => {
-        this.error.set(e.message);
-        this.loading.set(false);
-      },
-    );
+    this.clearSelection();
+    try {
+      const rows: Row[] = [];
+      for (let page = 0, pages = 1; page < pages; page++) {
+        const params: EventManaged$Params = { page, size: FETCH_SIZE, sort: 'createdAt,desc' };
+        const payload = (await this.api.invoke(eventManaged, params)).payload;
+        pages = payload?.totalPages ?? 1;
+        for (const e of payload?.content ?? []) {
+          rows.push({ ...e, regionName: REGION_NAMES[e.region ?? ''] ?? e.region ?? '', statusLabel: label(STATUS_LABELS, e.status) });
+        }
+      }
+      this.events.set(rows);
+      this.visibleCount.set(rows.length);
+    } catch (e) {
+      this.error.set((e as ApiError).message);
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

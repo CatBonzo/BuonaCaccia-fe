@@ -1,11 +1,11 @@
 import { expect, Page, test } from '@playwright/test';
 import { createDraft, enrollId, publishEvent, withdrawAll } from './api';
 import { loginAs } from './login';
+import { filterByName } from './tabella';
 
 async function findCard(page: Page, title: string) {
-  await page.getByTestId('q').fill(title);
-  await page.getByTestId('apply').click();
-  return page.locator('tr[mat-row]', { hasText: title });
+  await filterByName(page, title);
+  return page.locator('tr[data-row]', { hasText: title });
 }
 
 test.describe('eliminazione degli eventi', () => {
@@ -26,7 +26,7 @@ test.describe('eliminazione degli eventi', () => {
 
     await card.getByTestId('delete').click();
     await page.getByTestId('confirm-delete').click();
-    await expect(page.locator('tr[mat-row]', { hasText: draft.title })).toHaveCount(0);
+    await expect(page.locator('tr[data-row]', { hasText: draft.title })).toHaveCount(0);
   });
 
   test('elimina un evento creato che non ha iscrizioni', async ({ page, request }) => {
@@ -38,7 +38,7 @@ test.describe('eliminazione degli eventi', () => {
     await expect(card).toHaveCount(1);
     await card.getByTestId('delete').click();
     await page.getByTestId('confirm-delete').click();
-    await expect(page.locator('tr[mat-row]', { hasText: event.title })).toHaveCount(0);
+    await expect(page.locator('tr[data-row]', { hasText: event.title })).toHaveCount(0);
   });
 
   test('un evento con iscrizioni non si elimina, si puo\' annullare', async ({ page, request }) => {

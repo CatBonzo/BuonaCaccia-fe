@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { TINY_PDF, enrollId, publishEvent, setRoverFormTemplate, uploadPdf, withdrawAll } from './api';
 import { chooseEvent } from './choose-event';
 import { loginAs } from './login';
+import { filterByName } from './tabella';
 
 /** Evento gratuito con una scheda sanitaria online e un modulo da consegnare in segreteria. */
 function publishWithDocuments(request: Parameters<typeof publishEvent>[0], tag: string) {
@@ -52,9 +53,8 @@ test.describe('segreteria: iscrizioni e documenti', () => {
     await enrollId(request, 'rover', event.id);
     await loginAs(page, 'segreteria');
     await page.goto('/segreteria/eventi');
-    await page.getByTestId('q').fill(event.title);
-    await page.getByTestId('apply').click();
-    await page.locator('tr[mat-row]', { hasText: event.title }).getByTestId('more').click();
+    await filterByName(page, event.title);
+    await page.locator('tr[data-row]', { hasText: event.title }).getByTestId('more').click();
     await page.getByTestId('enrollments').click();
     await expect(page.locator('mat-card[data-enrollment]')).toHaveCount(1);
   });

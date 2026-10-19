@@ -8,87 +8,91 @@
   </a>
 </div>
 
-<form class="filters" (ngSubmit)="filter()">
-  <mat-form-field subscriptSizing="dynamic" class="q">
-    <mat-label>Cerca nel titolo</mat-label>
-    <input matInput name="q" [(ngModel)]="q" data-testid="q" />
-  </mat-form-field>
-  <mat-form-field subscriptSizing="dynamic">
-    <mat-label>Ordina per</mat-label>
-    <mat-select name="sort" [(ngModel)]="sort" (selectionChange)="filter()" data-testid="sort">
-      @for (o of sorts; track o[0]) {
-        <mat-option [value]="o[0]">{{ o[1] }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field subscriptSizing="dynamic">
-    <mat-label>Stato</mat-label>
-    <mat-select name="status" [(ngModel)]="status" (selectionChange)="filter()" data-testid="status-filter">
-      <mat-option value="">Tutti</mat-option>
-      @for (s of statuses; track s[0]) {
-        <mat-option [value]="s[0]">{{ s[1] }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-  <button mat-flat-button type="submit" data-testid="apply">Cerca</button>
-</form>
-
-@if (loading()) {
-  <mat-progress-bar mode="indeterminate" />
-}
 @if (error(); as message) {
   <p class="error" role="alert" data-testid="manage-error">{{ message }}</p>
 }
-@if (!loading() && events().length === 0) {
-  <p class="empty" data-testid="empty">Nessun evento.</p>
-}
 
-@if (events().length) {
-  <div class="table-wrap">
-    <table mat-table [dataSource]="events()" aria-label="Eventi della regione">
-      <ng-container matColumnDef="evento">
-        <th mat-header-cell *matHeaderCellDef>Evento</th>
-        <td mat-cell *matCellDef="let e">
-          <a class="title" [routerLink]="['/eventi', e.id]">{{ e.title || '(senza titolo)' }}</a>
-          <span class="meta">{{ e.code }} · {{ e.typeName }}</span>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="stato">
-        <th mat-header-cell *matHeaderCellDef>Stato</th>
-        <td mat-cell *matCellDef="let e">
-          <mat-chip-set><mat-chip data-testid="event-status" [attr.data-status]="e.status">{{ labelOf(statusLabels, e.status) }}</mat-chip></mat-chip-set>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef>Date</th>
-        <td mat-cell *matCellDef="let e">
-          @if (e.startDate) {
-            {{ e.startDate | date: 'd MMM y' }} – {{ e.endDate | date: 'd MMM y' }}
-          } @else {
-            <span class="meta">da definire</span>
-          }
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="luogo">
-        <th mat-header-cell *matHeaderCellDef>Luogo</th>
-        <td mat-cell *matCellDef="let e">{{ e.location || '—' }}{{ e.province ? ' (' + e.province + ')' : '' }}</td>
-      </ng-container>
-      <ng-container matColumnDef="iscritti">
-        <th mat-header-cell *matHeaderCellDef>Iscritti</th>
-        <td mat-cell *matCellDef="let e">
-          @if (e.status !== 'DRAFT') { {{ e.enrolledCount }}/{{ e.seats }} } @else { <span class="meta">—</span> }
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="quota">
-        <th mat-header-cell *matHeaderCellDef>Quota</th>
-        <td mat-cell *matCellDef="let e">{{ e.fee | currency: 'EUR' : 'symbol' : '1.0-2' : 'it' }}</td>
-      </ng-container>
-      <ng-container matColumnDef="azioni">
-        <th mat-header-cell *matHeaderCellDef class="actions-head">Azioni</th>
-        <td mat-cell *matCellDef="let e" class="actions">
+
+<div class="table-wrap">
+  <p-table
+    #dt
+    [value]="events()"
+    dataKey="id"
+    [selection]="selected()"
+    (selectionChange)="selected.set($event)"
+    [rows]="pageSize"
+    [paginator]="true"
+    [loading]="loading()"
+    [globalFilterFields]="['code', 'typeName', 'title', 'regionName', 'statusLabel']"
+    [tableStyle]="{ 'min-width': '48rem' }"
+    (onFilter)="onFilter($event)"
+    aria-label="Eventi della regione"
+  >
+    <ng-template #caption>
+      <div class="caption">
+        <button mat-button type="button" (click)="resetFilters(dt)" data-testid="reset-filters"><i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> Azzera filtri</button>
+        <p-iconfield iconPosition="left" class="global">
+          <p-inputicon class="fa-solid fa-magnifying-glass" />
+          <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Cerca in tutta la tabella" aria-label="Cerca in tutta la tabella" data-testid="global-search" />
+        </p-iconfield>
+      </div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th class="check"><p-tableHeaderCheckbox ariaLabel="Seleziona tutti gli eventi" data-testid="select-all" /></th>
+        <th class="w-id">ID</th>
+        <th class="w-type">Tipo</th>
+        <th>Titolo</th>
+        <th class="w-region">Regione</th>
+        <th class="w-status">Stato</th>
+        <th class="actions-head">Azioni</th>
+      </tr>
+      <!-- Seconda riga dell'intestazione: un filtro per colonna. -->
+      <tr class="filter-row">
+        <th class="check"></th>
+        <th><p-columnFilter type="text" field="code" filterOn="input" matchMode="contains" placeholder="Filtra ID" ariaLabel="Filtra per ID" [showMenu]="false" /></th>
+        <th>
+          <p-columnFilter field="typeName" matchMode="in" [showMenu]="false">
+            <ng-template #filter let-value let-filter="filterCallback">
+              <p-multiselect [ngModel]="value" [options]="typeOptions()" placeholder="Tutti" (onChange)="filter($event.value)" ariaLabel="Filtra per tipo" appendTo="body" styleClass="w-full" data-testid="type-filter" />
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <th><p-columnFilter type="text" field="title" filterOn="input" matchMode="contains" placeholder="Filtra per titolo" ariaLabel="Filtra per titolo" [showMenu]="false" /></th>
+        <th>
+          <p-columnFilter field="region" matchMode="in" [showMenu]="false">
+            <ng-template #filter let-value let-filter="filterCallback">
+              <p-multiselect [ngModel]="value" [options]="regionOptions()" optionLabel="label" optionValue="value" placeholder="Tutte" (onChange)="filter($event.value)" ariaLabel="Filtra per regione" appendTo="body" styleClass="w-full" data-testid="region-filter" />
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+            <ng-template #filter let-value let-filter="filterCallback">
+              <p-select [ngModel]="value" [options]="statusOptions" optionLabel="label" optionValue="value" (onChange)="filter($event.value)" placeholder="Tutti gli stati" [showClear]="true" ariaLabel="Filtra per stato" appendTo="body" styleClass="w-full" data-testid="status-filter">
+                <ng-template let-option #item><p-tag [value]="option.label" [severity]="severityOf(option.value)" /></ng-template>
+              </p-select>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-e>
+      <tr data-row [attr.data-event]="e.title">
+        <td class="check"><p-tableCheckbox [value]="e" [ariaLabel]="'Seleziona ' + e.title" data-testid="select" /></td>
+        <td class="code">{{ e.code }}</td>
+        <td>{{ e.typeName }}</td>
+        <td><a class="title" [routerLink]="['/eventi', e.id]">{{ e.title || '(senza titolo)' }}</a></td>
+        <td>{{ e.regionName }}</td>
+        <td><p-tag data-testid="event-status" [attr.data-status]="e.status" [value]="e.statusLabel" [severity]="severityOf(e.status)" /></td>
+        <td class="actions">
           <a mat-icon-button [routerLink]="['/eventi', e.id]" matTooltip="Visualizza" aria-label="Visualizza l'evento" data-testid="view">
             <i class="fa-solid fa-eye" aria-hidden="true"></i>
           </a>
+          <button mat-icon-button type="button" matTooltip="Duplica" aria-label="Duplica l'evento" data-testid="duplicate" (click)="duplicate(e)">
+            <i class="fa-solid fa-copy" aria-hidden="true"></i>
+          </button>
           @if (can(e, 'EDIT')) {
             <a mat-icon-button [routerLink]="['/segreteria/eventi', e.id, 'modifica']" matTooltip="Modifica" aria-label="Modifica l'evento" data-testid="edit">
               <i class="fa-solid fa-pen" aria-hidden="true"></i>
@@ -124,12 +128,21 @@
             }
           </mat-menu>
         </td>
-      </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr><td colspan="7" data-testid="empty">Nessun evento con questi filtri.</td></tr>
+    </ng-template>
+  </p-table>
+</div>
 
-      <tr mat-header-row *matHeaderRowDef="columns"></tr>
-      <tr mat-row *matRowDef="let row; columns: columns" [attr.data-event]="row.title"></tr>
-    </table>
+@if (selected().length) {
+  <div class="bulk" role="toolbar" aria-label="Azioni sugli eventi scelti" data-testid="bulk-bar">
+    <button type="button" class="bulk-x" aria-label="Deseleziona tutto" data-testid="bulk-clear" (click)="clearSelection()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+    <span class="bulk-count" aria-live="polite" data-testid="bulk-count">{{ selected().length }} di {{ visibleCount() }} selezionati</span>
+    <button type="button" data-testid="bulk-export" (click)="exportSelected()"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> Esporta</button>
+    <button type="button" data-testid="bulk-duplicate" (click)="duplicateSelected()"><i class="fa-solid fa-copy" aria-hidden="true"></i> Duplica</button>
+    <button type="button" data-testid="bulk-publish" (click)="publishSelected()"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i> Pubblica</button>
+    <button type="button" data-testid="bulk-delete" (click)="deleteSelected()"><i class="fa-solid fa-trash" aria-hidden="true"></i> Elimina</button>
   </div>
 }
-
-<mat-paginator [length]="total()" [pageSize]="pageSize" [pageIndex]="pageIndex()" [hidePageSize]="true" (page)="onPage($event)" aria-label="Pagine degli eventi" />

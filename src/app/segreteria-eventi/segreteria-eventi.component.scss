@@ -3,32 +3,92 @@
 .sub { margin: 4px 0 0; color: var(--mat-sys-on-surface-variant); }
 .new i { margin-right: 8px; }
 
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 16px;
-  padding: 12px 16px;
-  border: 1px solid var(--bc-line);
-  border-radius: 14px;
-  background: var(--mat-sys-surface-container-lowest, #fff);
-}
-.filters .q { flex: 1 1 220px; }
-
 .table-wrap { overflow-x: auto; border: 1px solid var(--bc-line); border-radius: 14px; background: var(--mat-sys-surface-container-lowest, #fff); }
 table { width: 100%; background: transparent; }
-th.mat-mdc-header-cell { font-weight: 700; color: var(--mat-sys-on-surface-variant); white-space: nowrap; }
-td.mat-mdc-cell { padding-top: 10px; padding-bottom: 10px; }
-tr.mat-mdc-row:hover { background: var(--mat-sys-surface-container-low); }
+th { font-weight: 700; color: var(--mat-sys-on-surface-variant); white-space: nowrap; }
+td { padding-top: 10px; padding-bottom: 10px; }
+tbody tr:hover { background: var(--mat-sys-surface-container-low); }
 .title { display: block; font-weight: 700; color: var(--mat-sys-primary); text-decoration: none; }
 .title:hover { text-decoration: underline; }
 .meta { display: block; color: var(--mat-sys-on-surface-variant); font-size: 0.85rem; }
-.actions, .actions-head { text-align: right; white-space: nowrap; }
+.actions, .actions-head { text-align: center; white-space: nowrap; }
 .actions i { font-size: 0.95rem; }
 mat-menu i, .mat-mdc-menu-item i { margin-right: 10px; width: 1.1rem; text-align: center; }
-mat-chip[data-status='DRAFT'] { --mdc-chip-label-text-color: var(--mat-sys-on-surface-variant); }
 
 .empty { color: var(--mat-sys-on-surface-variant); }
 .error { color: var(--mat-sys-error); }
-.slot { display: inline-block; width: 48px; height: 48px; vertical-align: middle; }
+.slot { display: inline-block; width: 40px; height: 40px; vertical-align: middle; }
+
+th.check, td.check { width: 56px; padding-right: 0; }
+// Barra delle azioni sulle righe scelte: scura, in basso al centro, sopra la tabella.
+.bulk {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: stretch;
+  max-width: calc(100vw - 24px);
+  overflow-x: auto;
+  border-radius: 14px;
+  background: var(--bc-navy);
+  color: #fff;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.35);
+}
+.bulk button, .bulk-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  border: 0;
+  border-left: 1px solid rgb(255 255 255 / 0.18);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.bulk button { cursor: pointer; }
+.bulk button:hover { background: rgb(255 255 255 / 0.12); }
+.bulk button:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+.bulk .bulk-x { border-left: 0; }
+.bulk-count { font-weight: 500; opacity: 0.85; }
+
+.code { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--mat-sys-on-surface-variant); }
+tbody tr.selected { background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent); }
+tr.filter-row th { padding-top: 0; padding-bottom: 12px; }
+.caption { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.caption i { margin-right: 6px; }
+p-iconfield.global { min-width: 260px; }
+.w-full, :host ::ng-deep .w-full { width: 100%; min-width: 0; }
+p-columnfilter, :host ::ng-deep p-columnfilter { display: block; width: 100%; }
+:host ::ng-deep p-columnfilter input { width: 100%; }
+// I campi dei filtri riempiono la loro colonna (la tabella li lascia stretti).
+:host ::ng-deep .p-datatable-filter,
+:host ::ng-deep p-columnfilterformelement { display: block; width: 100%; }
+:host ::ng-deep p-columnfilterformelement input,
+:host ::ng-deep p-columnfilter p-select,
+:host ::ng-deep p-columnfilter p-multiselect { width: 100%; min-width: 0; }
+p-iconfield.global { min-width: 320px; }
+p-iconfield.global input { width: 100%; }
+
+// Tabella piu' grande: testo e righe piu' ampi, e sugli schermi larghi esce un po' dalla colonna del contenuto.
+:host { display: block; }
+@media (min-width: 1400px) { :host { margin-inline: -140px; } }
+.table-wrap { font-size: 1.05rem; }
+:host ::ng-deep .p-datatable-table th { padding: 18px 12px; font-size: 1.05rem; }
+:host ::ng-deep .p-datatable-table td { padding: 20px 12px; }
+tr.filter-row th { padding-top: 14px !important; padding-bottom: 14px !important; border-top: 1px solid var(--bc-line); }
+.title { font-size: 1.1rem; }
+.code { font-size: 1.05rem; }
+:host ::ng-deep p-columnfilter input, :host ::ng-deep p-columnfilter .p-select, :host ::ng-deep p-columnfilter .p-multiselect, p-iconfield.global input { min-height: 46px; font-size: 1rem; }
+.actions i { font-size: 1.1rem; }
+.actions .mat-mdc-icon-button { width: 42px; height: 42px; padding: 9px; }
+.slot { width: 42px; }
+:host ::ng-deep p-tag .p-tag { font-size: 0.95rem; padding: 6px 12px; }
+th.w-id { width: 10%; }
+th.w-type { width: 14%; }
+th.w-region { width: 10%; }
+th.w-status { width: 14%; }
+th.actions-head { width: 240px; }

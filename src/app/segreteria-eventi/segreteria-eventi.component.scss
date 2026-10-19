@@ -61,11 +61,34 @@ tr.filter-row th { padding-top: 0; padding-bottom: 12px; }
 .caption { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 .caption i { margin-right: 6px; }
 p-iconfield.global { min-width: 260px; }
-th.w-id { width: 9.5rem; }
-th.w-type { width: 12rem; }
-th.w-region { width: 10rem; }
-th.w-status { width: 11rem; }
-th.actions-head { width: 11rem; }
 .w-full, :host ::ng-deep .w-full { width: 100%; min-width: 0; }
 p-columnfilter, :host ::ng-deep p-columnfilter { display: block; width: 100%; }
 :host ::ng-deep p-columnfilter input { width: 100%; }
+// I campi dei filtri riempiono la loro colonna (la tabella li lascia stretti).
+:host ::ng-deep .p-datatable-filter,
+:host ::ng-deep p-columnfilterformelement { display: block; width: 100%; }
+:host ::ng-deep p-columnfilterformelement input,
+:host ::ng-deep p-columnfilter p-select,
+:host ::ng-deep p-columnfilter p-multiselect { width: 100%; min-width: 0; }
+p-iconfield.global { min-width: 320px; }
+p-iconfield.global input { width: 100%; }
+
+// Tabella piu' grande: testo e righe piu' ampi, e sugli schermi larghi esce un po' dalla colonna del contenuto.
+:host { display: block; }
+@media (min-width: 1400px) { :host { margin-inline: -140px; } }
+.table-wrap { font-size: 1.05rem; }
+:host ::ng-deep .p-datatable-table th { padding: 18px 12px; font-size: 1.05rem; }
+:host ::ng-deep .p-datatable-table td { padding: 20px 12px; }
+tr.filter-row th { padding-top: 0 !important; padding-bottom: 16px !important; }
+.title { font-size: 1.1rem; }
+.code { font-size: 1.05rem; }
+:host ::ng-deep p-columnfilter input, :host ::ng-deep p-columnfilter .p-select, :host ::ng-deep p-columnfilter .p-multiselect, p-iconfield.global input { min-height: 46px; font-size: 1rem; }
+.actions i { font-size: 1.1rem; }
+.actions .mat-mdc-icon-button { width: 42px; height: 42px; padding: 9px; }
+.slot { width: 42px; }
+:host ::ng-deep p-tag .p-tag { font-size: 0.95rem; padding: 6px 12px; }
+th.w-id { width: 10%; }
+th.w-type { width: 14%; }
+th.w-region { width: 10%; }
+th.w-status { width: 14%; }
+th.actions-head { width: 240px; }

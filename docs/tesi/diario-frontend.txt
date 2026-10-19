@@ -231,6 +231,14 @@ Artefatti: ramo 025-tabella-selezione; segreteria-eventi (ts, html, scss), e2e/t
 Problemi: il filtro del testo partiva solo premendo Invio e cercava "inizia con": servono filterOn="input" e matchMode="contains". Il backend e Docker si erano fermati tra un turno e l'altro: rilancio a mano.
 Spunto: un esempio di una libreria ha valori predefiniti pensati per la demo; vanno letti e scelti, non copiati.
 
+[2026-10-19] Filtri allargati e tabella piu' grande
+Cosa: i campi dei filtri della tabella eventi riempiono la colonna (prima il testo era tagliato), la ricerca globale e' piu' larga, testo, righe e icone sono piu' grandi e sopra i 1400 px la tabella esce un po' dalla colonna dei contenuti.
+Chi: Mahima ha segnalato il problema con uno screenshot e chiesto una tabella piu' grande; Claude ha misurato le larghezze nel browser e scelto le dimensioni.
+Paradigma: AI-assisted con ciclo screenshot-correzione; code harness: gli stessi 11 e2e restano verdi.
+Artefatti: ramo 025-tabella-selezione; segreteria-eventi.component.scss.
+Problemi: due correzioni sbagliate (un display: flex sulla cella spezzava le righe; larghezze fisse in rem facevano uscire le Azioni a 1200 px): trovato misurando larghezza di tabella e colonne con un piccolo test.
+Spunto: quando una grafica non torna conviene misurare gli elementi invece di indovinare.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

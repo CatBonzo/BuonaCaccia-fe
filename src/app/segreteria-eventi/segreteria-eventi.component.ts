@@ -1,10 +1,13 @@
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -21,15 +24,16 @@ import { EventDto } from '../api/models';
 import { ApiError } from '../core/api-error';
 import { STATUS_LABELS, label } from '../core/labels';
 import { SessionService } from '../core/session.service';
+import { EventoConfermaComponent } from '../evento-conferma/evento-conferma.component';
 
 const PAGE_SIZE = 12;
 
-/** Gli eventi della propria regione, in qualunque stato, con le azioni consentite dallo stato. */
+/** Gli eventi della propria regione, in qualunque stato, in una tabella: si vede, si modifica, si elimina; le altre azioni stanno nel menu della riga. */
 @Component({
   selector: 'app-segreteria-eventi',
   imports: [
-    DatePipe, FormsModule, RouterLink, MatButtonModule, MatCardModule, MatChipsModule, MatFormFieldModule, MatInputModule,
-    MatPaginatorModule, MatProgressBarModule, MatSelectModule,
+    CurrencyPipe, DatePipe, FormsModule, RouterLink, MatButtonModule, MatChipsModule, MatDialogModule, MatFormFieldModule, MatInputModule,
+    MatMenuModule, MatPaginatorModule, MatProgressBarModule, MatSelectModule, MatTableModule, MatTooltipModule,
   ],
   templateUrl: './segreteria-eventi.component.html',
   styleUrl: './segreteria-eventi.component.scss',
@@ -37,6 +41,7 @@ const PAGE_SIZE = 12;
 export class SegreteriaEventiComponent {
   private readonly api = inject(Api);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
   protected readonly session = inject(SessionService);
 
   protected readonly events = signal<EventDto[]>([]);
@@ -57,11 +62,7 @@ export class SegreteriaEventiComponent {
     ['title,asc', 'Titolo'],
   ];
 
-  /** Evento per cui si sta scrivendo il motivo dell'annullamento. */
-  protected readonly cancelling = signal<string | null>(null);
-  protected reason = '';
-  /** Evento per cui si chiede conferma dell'eliminazione. */
-  protected readonly deleting = signal<string | null>(null);
+  protected readonly columns = ['evento', 'stato', 'date', 'luogo', 'iscritti', 'quota', 'azioni'];
 
   constructor() {
     this.load(0);
@@ -88,29 +89,29 @@ export class SegreteriaEventiComponent {
     this.act(this.api.invoke(eventCloseRegistrations, { id: e.id!, body: { version: e.version } }), 'Iscrizioni chiuse.');
   }
 
-  protected startCancel(e: EventDto): void {
-    this.cancelling.set(e.id!);
-    this.reason = '';
-  }
-
+  /** Chiede il motivo in una finestra e poi annulla l'evento: il motivo lo ricevono tutti gli iscritti. */
   protected cancel(e: EventDto): void {
-    if (!this.reason.trim()) {
-      this.error.set('Scrivi il motivo dell’annullamento.');
-      return;
-    }
-    this.act(this.api.invoke(eventCancel, { id: e.id!, body: { reason: this.reason.trim(), version: e.version! } }), 'Evento annullato.');
+    this.dialog
+      .open<EventoConfermaComponent, unknown, string>(EventoConfermaComponent, { data: { azione: 'cancel', titolo: e.title } })
+      .afterClosed()
+      .subscribe((reason) => {
+        if (reason) this.act(this.api.invoke(eventCancel, { id: e.id!, body: { reason, version: e.version! } }), 'Evento annullato.');
+      });
   }
 
   protected remove(e: EventDto): void {
-    this.act(this.api.invoke(eventDelete, { id: e.id! }), 'Evento eliminato.');
+    this.dialog
+      .open<EventoConfermaComponent, unknown, boolean>(EventoConfermaComponent, { data: { azione: 'delete', titolo: e.title } })
+      .afterClosed()
+      .subscribe((ok) => {
+        if (ok) this.act(this.api.invoke(eventDelete, { id: e.id! }), 'Evento eliminato.');
+      });
   }
 
   private act(request: Promise<unknown>, success: string): void {
     this.error.set(null);
     request.then(
       () => {
-        this.cancelling.set(null);
-        this.deleting.set(null);
         this.snackBar.open(success, 'Chiudi', { duration: 4000 });
         this.load(this.pageIndex());
       },

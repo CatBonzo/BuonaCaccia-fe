@@ -255,6 +255,14 @@ Artefatti: ramo 026-form-evento-pannelli; evento-form (ts, html, scss), app.conf
 Problemi: il calendario Optimus non legge il testo inserito di colpo da `fill` (accetta solo digitazione tasto per tasto) e il testo nuovo si aggiunge al vecchio: i test selezionano tutto e scrivono; un clic di prova sul bordo dello schermo mi ha fatto uscire dall'account durante uno screenshot.
 Spunto: cambiare libreria cambia anche il modo di scrivere i test: i test descrivono l'uso reale (digitare), non una scorciatoia.
 
+[2026-10-19] Tipi di evento nuovi: il test segue i titoli
+Cosa: dopo che il backend ha adottato i 22 tipi di evento di Mahima, il test e2e della creazione sceglie il tipo "CFA" invece del vecchio titolo lungo; il codice del frontend non cambia.
+Chi: Mahima ha dato l'elenco dei tipi; Claude ha adeguato il test e lo ha rieseguito con il backend nuovo.
+Paradigma: AI-assisted; code harness: i 47 e2e sono verdi con i tipi nuovi.
+Artefatti: ramo 027-tipi-evento-test; e2e/gestione-eventi.spec.ts.
+Problemi: nessuno; il frontend legge i tipi dal backend e non ha elenchi propri.
+Spunto: se il frontend non copia i dati del backend, un cambio di dati non lo tocca: solo i test che li citano.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

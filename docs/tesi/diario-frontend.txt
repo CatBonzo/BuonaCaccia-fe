@@ -215,6 +215,14 @@ Artefatti: ramo 025-tabella-selezione; segreteria-eventi, evento-conferma, e2e.
 Problemi: il filtro del nome parte con una pausa e ridisegnava le righe mentre i test aprivano il menu (elemento "staccato"): righe riconosciute per id e test che aspettano la risposta del backend. Il filtro ID non puo' cercare su tutti gli eventi perche' il backend cerca solo nel titolo: l'ho dichiarato.
 Spunto: una funzione che dipende da una pausa (ricerca mentre si scrive) obbliga i test ad aspettare l'evento giusto, non a dormire.
 
+[2026-10-19] Installata Optimus UI
+Cosa: aggiunte le librerie Optimus UI (componenti tabella, ricerca, filtri, icone) e il tema Aura in app.config.ts; per ora nessuna schermata le usa.
+Chi: Mahima ha chiesto la libreria (e corretto il nome: non PrimeNG ma Optimus); Claude ha verificato licenza (MIT) e compatibilita' (Angular 22) prima di installare.
+Paradigma: AI-assisted; verifica delle fonti prima di aggiungere una dipendenza (npm view, pagina ufficiale).
+Artefatti: ramo 025-tabella-selezione; package.json, app.config.ts.
+Problemi: il nome detto a voce ("penNG") faceva pensare a PrimeNG, scartato per la licenza: la ricerca ha mostrato che Optimus e' un fork gratuito. Il tema porta il bundle iniziale a 763 kB (limite 700, solo avviso).
+Spunto: un nome ambiguo va verificato sulla fonte prima di rifiutare o accettare la scelta.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

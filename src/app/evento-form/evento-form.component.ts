@@ -72,6 +72,8 @@ export class EventoFormComponent {
   protected readonly dateFields: { key: DateField; id: string; label: string }[] = [
     { key: 'startDate', id: 'f-start', label: 'Inizio' },
     { key: 'endDate', id: 'f-end', label: 'Fine' },
+  ];
+  protected readonly registrationFields: { key: DateField; id: string; label: string }[] = [
     { key: 'registrationOpenDate', id: 'f-open', label: 'Apertura iscrizioni' },
     { key: 'registrationCloseDate', id: 'f-close', label: 'Chiusura iscrizioni' },
   ];
@@ -120,9 +122,13 @@ export class EventoFormComponent {
 
   /** Avvisi sulle date mentre si scrive: stesse regole che il backend applica alla pubblicazione, la bozza si salva comunque. */
   protected dateWarnings(): string[] {
-    const { startDate: start, endDate: end, registrationOpenDate: open, registrationCloseDate: close } = this.f;
+    const { startDate: start, endDate: end } = this.f;
+    return start && end && end < start ? ['Il rientro non può precedere la partenza.'] : [];
+  }
+
+  protected registrationWarnings(): string[] {
+    const { startDate: start, registrationOpenDate: open, registrationCloseDate: close } = this.f;
     const warnings: string[] = [];
-    if (start && end && end < start) warnings.push('Il rientro non può precedere la partenza.');
     if (open && close && open >= close) warnings.push('La chiusura delle iscrizioni deve seguire l’apertura.');
     else if (close && start && close > start) warnings.push('Le iscrizioni devono chiudere entro la partenza.');
     return warnings;

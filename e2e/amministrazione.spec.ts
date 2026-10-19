@@ -25,20 +25,19 @@ test.describe('amministrazione', () => {
     await expect(page.getByTestId('type-error')).toBeVisible();
 
     await page.getByTestId('type-code').fill(code);
-    await page.getByTestId('type-name').fill(`Tipo ${code}`);
     await page.getByTestId('type-min-age').fill('12');
     await page.getByTestId('add-obligation').click();
     await page.getByTestId('type-save').click();
 
     const card = page.locator(`mat-card[data-type="${code}"]`);
-    await expect(card).toContainText(`Tipo ${code}`);
+    await expect(card).toContainText(code);
     await expect(card.getByTestId('type-status')).toContainText('Attivo');
     await expect(card).toContainText('Adempimenti: 1');
 
     await card.getByTestId('type-edit').click();
-    await page.getByTestId('type-name').fill(`Tipo ${code} rivisto`);
+    await page.getByText('È una candidatura').click();
     await page.getByTestId('type-save').click();
-    await expect(card).toContainText('rivisto');
+    await expect(card).toContainText('Candidatura');
 
     await card.getByTestId('type-deactivate').click();
     await card.getByTestId('type-confirm-deactivate').click();

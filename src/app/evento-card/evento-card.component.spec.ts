@@ -10,7 +10,7 @@ registerLocaleData(localeIt);
 
 describe('EventoCardComponent', () => {
   const evento = {
-    id: 'e1', code: 'PIE-2027-001', title: 'Route di prova', typeCode: 'ROSS', typeName: 'Route', location: 'Pian del Re', province: 'CN',
+    id: 'e1', code: 'PIE-2027-001', title: 'Route di prova', typeCode: 'ROSS', location: 'Pian del Re', province: 'CN',
     region: 'PIE', level: 'REGIONAL', startDate: '2027-03-10', endDate: '2027-03-12', fee: 50, seats: 30, enrolledCount: 1,
     availability: 'OPEN', category: 'RS', status: 'PUBLISHED',
   } as unknown as EventDto;
@@ -25,7 +25,7 @@ describe('EventoCardComponent', () => {
 
   it('mostra tipo, titolo, luogo, regione per esteso, posti e quota', async () => {
     const el = await crea(evento);
-    expect(el.querySelector('.type')?.textContent).toBe('Route');
+    expect(el.querySelector('.type')?.textContent).toBe('ROSS');
     expect(el.querySelector('.cat')?.textContent).toBe('Rover e Scolte');
     expect(el.querySelector('.level')?.textContent).toBe('Regionale · Piemonte');
     expect(el.querySelector('.title a')?.textContent).toBe('Route di prova');

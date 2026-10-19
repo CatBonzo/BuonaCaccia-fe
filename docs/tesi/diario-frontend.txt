@@ -263,6 +263,14 @@ Artefatti: ramo 027-tipi-evento-test; e2e/gestione-eventi.spec.ts.
 Problemi: nessuno; il frontend legge i tipi dal backend e non ha elenchi propri.
 Spunto: se il frontend non copia i dati del backend, un cambio di dati non lo tocca: solo i test che li citano.
 
+[2026-10-19] Tipo di evento = solo codice
+Cosa: il tipo di evento non ha piu' il nome: il client e' rigenerato e tabella, form, card, dettaglio e amministrazione mostrano solo il codice (es. CFA); in amministrazione e' sparito il campo Nome.
+Chi: Mahima ha deciso (dopo una prima incomprensione di Claude); Claude ha eseguito backend e frontend.
+Paradigma: AI-assisted; SDD: il contratto cambia prima, il client si rigenera; code harness: 43 unit e 47 e2e verdi.
+Artefatti: PR 14 backend, PR 27 frontend.
+Problemi: Claude aveva tolto il nome solo dove coincideva col codice; Mahima ha chiesto di toglierlo ovunque.
+Spunto: quando una persona dice "togli X", il perimetro e' tutto il sistema, non il punto in cui lo si nota.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

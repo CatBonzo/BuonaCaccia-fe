@@ -104,6 +104,7 @@ Attriti trovati nel contratto del backend durante lo sviluppo del frontend.
 | 2026-10-16 | La segreteria non ha un'azione per rifiutare un adempimento di un'iscrizione (l'endpoint reject e' dei capi) | Aperto: chiedere a Mahima se serve (es. rifiutare per documento cartaceo non valido) |
 | 2026-10-16 | `GET /events/{id}/reconciliation/export` e' descritto come testo JSON, non come file CSV | Corretto nel backend, PR 11 (`text/csv`, formato binario) |
 | 2026-10-16 | `outstanding` nella riconciliazione ha numero e nome ma non l'id dell'iscrizione | Corretto nel backend, PR 11 (`enrollmentId`) |
+| 2026-10-19 | Il tipo di evento aveva anche un `name`, ma per Mahima il tipo e' solo il codice ("Tipo") | Corretto nel backend, PR 14: `name`/`typeName` tolti. Frontend: client rigenerato, tabella, form, card, dettaglio e amministrazione mostrano solo il codice |
 
 ## 5. Fasi
 

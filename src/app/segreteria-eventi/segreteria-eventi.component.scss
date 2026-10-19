@@ -3,19 +3,6 @@
 .sub { margin: 4px 0 0; color: var(--mat-sys-on-surface-variant); }
 .new i { margin-right: 8px; }
 
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 16px;
-  padding: 12px 16px;
-  border: 1px solid var(--bc-line);
-  border-radius: 14px;
-  background: var(--mat-sys-surface-container-lowest, #fff);
-}
-.filters .q { flex: 1 1 220px; }
-
 .table-wrap { overflow-x: auto; border: 1px solid var(--bc-line); border-radius: 14px; background: var(--mat-sys-surface-container-lowest, #fff); }
 table { width: 100%; background: transparent; }
 th.mat-mdc-header-cell { font-weight: 700; color: var(--mat-sys-on-surface-variant); white-space: nowrap; }
@@ -27,8 +14,82 @@ tr.mat-mdc-row:hover { background: var(--mat-sys-surface-container-low); }
 .actions, .actions-head { text-align: right; white-space: nowrap; }
 .actions i { font-size: 0.95rem; }
 mat-menu i, .mat-mdc-menu-item i { margin-right: 10px; width: 1.1rem; text-align: center; }
-mat-chip[data-status='DRAFT'] { --mdc-chip-label-text-color: var(--mat-sys-on-surface-variant); }
 
 .empty { color: var(--mat-sys-on-surface-variant); }
 .error { color: var(--mat-sys-error); }
-.slot { display: inline-block; width: 48px; height: 48px; vertical-align: middle; }
+.slot { display: inline-block; width: 40px; height: 40px; vertical-align: middle; }
+
+th.check, td.check { width: 56px; padding-right: 0; }
+tr.mat-mdc-row.selected { background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent); }
+
+// Lo stato come etichetta colorata con un puntino, come nella tabella di riferimento.
+.badge {
+  --c: var(--bc-closed);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 14%, transparent);
+}
+.badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+.badge[data-status='REGISTRATION_OPEN'], .badge[data-status='PUBLISHED'] { --c: var(--bc-ok); }
+.badge[data-status='REGISTRATION_CLOSED'] { --c: var(--bc-warn); }
+.badge[data-status='IN_PROGRESS'] { --c: var(--mat-sys-primary); }
+.badge[data-status='CANCELLED'] { --c: var(--mat-sys-error); }
+
+// Barra delle azioni sulle righe scelte: scura, in basso al centro, sopra la tabella.
+.bulk {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: stretch;
+  max-width: calc(100vw - 24px);
+  overflow-x: auto;
+  border-radius: 14px;
+  background: var(--bc-navy);
+  color: #fff;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.35);
+}
+.bulk button, .bulk-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  border: 0;
+  border-left: 1px solid rgb(255 255 255 / 0.18);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.bulk button { cursor: pointer; }
+.bulk button:hover { background: rgb(255 255 255 / 0.12); }
+.bulk button:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
+.bulk .bulk-x { border-left: 0; }
+.bulk-count { font-weight: 500; opacity: 0.85; }
+
+.code { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--mat-sys-on-surface-variant); }
+tr.filter-row th { padding-top: 0; padding-bottom: 12px; border-bottom: 1px solid var(--bc-line); }
+.col-filter {
+  width: 100%;
+  min-width: 120px;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border: 1px solid var(--bc-line);
+  border-radius: 8px;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: inherit;
+  font-weight: 400;
+}
+.col-filter:focus-visible { outline: 2px solid var(--bc-accent); outline-offset: 1px; }
+mat-select.col-filter { display: block; }

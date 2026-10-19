@@ -207,6 +207,14 @@ Artefatti: ramo 024-gestione-eventi-tabella; segreteria-eventi, evento-form, eve
 Problemi: il calendario Material legge "10/03/2027" come 3 ottobre (formato americano) e i campi data nativi non si compilavano come nei test: adattatore italiano e test aggiornati a gg/mm/aaaa. La finestra di conferma, con il mouse, resta un attimo nella pagina dopo "No": il test aspetta che sparisca. Il test del menu su telefono e' fallito due volte alla prima esecuzione dopo modifiche e passa alla seconda: probabile ricompilazione del server di sviluppo, da tenere d'occhio.
 Spunto: cambiare il tipo di controllo (data nativa -> calendario) cambia anche come si scrive nei test: i test sono parte del cambiamento.
 
+[2026-10-19] Tabella eventi essenziale, con filtri per colonna e selezione multipla
+Cosa: la tabella di Gestione eventi mostra solo ID, Nome, Stato e Azioni, con un filtro per colonna; si possono scegliere piu' righe e agire insieme da una barra in basso (Esporta, Duplica, Pubblica, Elimina); lo stato e' un'etichetta colorata.
+Chi: Mahima ha dato la tabella di riferimento e poi precisato le colonne ("id, nome, stato, azioni, filtrabile"); Claude ha scelto quali azioni multiple offrire, come filtrare (backend per nome e stato, righe visibili per ID) e come contare i risultati delle azioni di gruppo.
+Paradigma: AI-assisted con riferimento visivo; code harness: due nuovi e2e (filtri per colonna; selezione, esporta, duplica, elimina) e un piccolo aiuto condiviso per i test (`e2e/tabella.ts`).
+Artefatti: ramo 025-tabella-selezione; segreteria-eventi, evento-conferma, e2e.
+Problemi: il filtro del nome parte con una pausa e ridisegnava le righe mentre i test aprivano il menu (elemento "staccato"): righe riconosciute per id e test che aspettano la risposta del backend. Il filtro ID non puo' cercare su tutti gli eventi perche' il backend cerca solo nel titolo: l'ho dichiarato.
+Spunto: una funzione che dipende da una pausa (ricerca mentre si scrive) obbliga i test ad aspettare l'evento giusto, non a dormire.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

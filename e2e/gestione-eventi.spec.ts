@@ -1,4 +1,6 @@
 import { expect, Page, test } from '@playwright/test';
+import { createDraft } from './api';
+import { filterByName } from './tabella';
 import { loginAs } from './login';
 
 async function choose(page: Page, testId: string, option: string) {
@@ -8,14 +10,67 @@ async function choose(page: Page, testId: string, option: string) {
 
 /** Si cerca per titolo: il titolo e' unico, quindi resta una sola riga. */
 async function findCard(page: Page, title: string) {
-  await page.getByTestId('q').fill(title);
-  await page.getByTestId('apply').click();
+  await filterByName(page, title);
   const card = page.locator('tr[mat-row]', { hasText: title });
   await expect(card).toHaveCount(1);
   return card;
 }
 
 test.describe('gestione eventi della segreteria', () => {
+  test('la tabella ha ID, nome, stato e azioni, e ogni colonna si filtra', async ({ page, request }) => {
+    const draft = await createDraft(request, `filtro${Date.now()}`);
+    await loginAs(page, 'segreteria');
+    await page.goto('/segreteria/eventi');
+    await expect(page.locator('th.mat-mdc-header-cell', { hasText: 'ID' }).first()).toBeVisible();
+    await expect(page.locator('tr[mat-row]').first().getByTestId('event-status')).toBeVisible();
+
+    // Stato: solo le bozze.
+    await choose(page, 'status-filter', 'Bozza');
+    const rows = page.locator('tr[mat-row]');
+    await expect(rows.first()).toBeVisible();
+    await expect(page.locator('[data-testid="event-status"]:not([data-status="DRAFT"])')).toHaveCount(0);
+
+    // Nome (sul backend) e ID (sulle righe che si vedono).
+    await filterByName(page, draft.title);
+    await expect(rows).toHaveCount(1);
+    const code = (await rows.first().locator('td.code').innerText()).trim();
+    await page.getByTestId('id-filter').fill(code);
+    await expect(rows).toHaveCount(1);
+    await page.getByTestId('id-filter').fill('zzz-non-esiste');
+    await expect(page.getByTestId('empty')).toBeVisible();
+
+    await page.getByTestId('reset-filters').click();
+    await expect(page.getByTestId('q')).toHaveValue('');
+    await expect(rows.first()).toBeVisible();
+  });
+
+  test('si scelgono piu\' righe: barra in basso, duplica, esporta ed elimina', async ({ page, request }) => {
+    const prefix = `sel${Date.now()}`;
+    await createDraft(request, `${prefix}a`);
+    await createDraft(request, `${prefix}b`);
+    await loginAs(page, 'segreteria');
+    await page.goto('/segreteria/eventi');
+    await filterByName(page, prefix);
+    const rows = page.locator('tr[mat-row]', { hasText: prefix });
+    await expect(rows).toHaveCount(2);
+    await expect(page.getByTestId('bulk-bar')).toHaveCount(0);
+
+    await page.getByTestId('select-all').click();
+    await expect(page.getByTestId('bulk-count')).toContainText('2 di 2 selezionati');
+    const download = page.waitForEvent('download');
+    await page.getByTestId('bulk-export').click();
+    expect((await download).suggestedFilename()).toBe('eventi.csv');
+
+    await page.getByTestId('bulk-duplicate').click();
+    await expect(rows).toHaveCount(4);
+    await expect(page.getByTestId('bulk-bar')).toHaveCount(0);
+
+    await page.getByTestId('select-all').click();
+    await page.getByTestId('bulk-delete').click();
+    await page.getByTestId('confirm-delete').click();
+    await expect(rows).toHaveCount(0);
+  });
+
   test('la tabella mostra gli eventi con vedi, modifica, elimina e "Nuovo evento" porta a una pagina a parte', async ({ page }) => {
     await loginAs(page, 'segreteria');
     await page.goto('/segreteria/eventi');

@@ -1,10 +1,10 @@
 import { expect, Page, test } from '@playwright/test';
 import { createDraft, enrollId, publishEvent, withdrawAll } from './api';
 import { loginAs } from './login';
+import { filterByName } from './tabella';
 
 async function findCard(page: Page, title: string) {
-  await page.getByTestId('q').fill(title);
-  await page.getByTestId('apply').click();
+  await filterByName(page, title);
   return page.locator('tr[mat-row]', { hasText: title });
 }
 

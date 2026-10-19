@@ -9,6 +9,8 @@ export interface EventoConfermaData {
   /** `delete` chiede solo conferma; `cancel` chiede anche il motivo, che ricevono tutti gli iscritti. */
   azione: 'delete' | 'cancel';
   titolo: string;
+  /** Se c'e', sostituisce la frase della finestra (per le azioni su piu' eventi). */
+  messaggio?: string;
 }
 
 /** Finestra di conferma per eliminare o annullare un evento. Chiude con `true` (elimina) o con il motivo scritto (annulla). */

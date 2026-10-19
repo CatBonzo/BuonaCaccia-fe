@@ -1,9 +1,9 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
@@ -15,12 +15,13 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Api } from '../api/api';
+import { eventCreate } from '../api/fn/events/event-create';
 import { eventCancel } from '../api/fn/events/event-cancel';
 import { eventDelete } from '../api/fn/events/event-delete';
 import { eventCloseRegistrations } from '../api/fn/events/event-close-registrations';
 import { eventManaged, EventManaged$Params } from '../api/fn/events/event-managed';
 import { eventPublish } from '../api/fn/events/event-publish';
-import { EventDto } from '../api/models';
+import { EventDto, EventRequestDto } from '../api/models';
 import { ApiError } from '../core/api-error';
 import { STATUS_LABELS, label } from '../core/labels';
 import { SessionService } from '../core/session.service';
@@ -32,7 +33,7 @@ const PAGE_SIZE = 12;
 @Component({
   selector: 'app-segreteria-eventi',
   imports: [
-    CurrencyPipe, DatePipe, FormsModule, RouterLink, MatButtonModule, MatChipsModule, MatDialogModule, MatFormFieldModule, MatInputModule,
+    DatePipe, FormsModule, RouterLink, MatButtonModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule, MatInputModule,
     MatMenuModule, MatPaginatorModule, MatProgressBarModule, MatSelectModule, MatTableModule, MatTooltipModule,
   ],
   templateUrl: './segreteria-eventi.component.html',
@@ -56,13 +57,26 @@ export class SegreteriaEventiComponent {
   protected status = '';
   protected q = '';
   protected sort = 'createdAt,desc';
-  protected readonly sorts = [
-    ['createdAt,desc', 'Più recenti'],
-    ['startDate,asc', 'Data di inizio'],
-    ['title,asc', 'Titolo'],
-  ];
 
-  protected readonly columns = ['evento', 'stato', 'date', 'luogo', 'iscritti', 'quota', 'azioni'];
+  /** Il filtro sull'ID (il codice dell'evento) si applica alle righe che si vedono: il backend cerca solo nel titolo. */
+  protected readonly idFilter = signal('');
+  private nameTimer: ReturnType<typeof setTimeout> | undefined;
+
+  /** Le righe scelte con le caselle (per id): servono alla barra delle azioni in basso. */
+  private readonly selectedIds = signal<ReadonlySet<string>>(new Set());
+  /** Le righe in tabella: quelle arrivate dal backend, ristrette dal filtro sull'ID. */
+  protected readonly rows = computed(() => {
+    const id = this.idFilter().trim().toLowerCase();
+    return id ? this.events().filter((e) => e.code?.toLowerCase().includes(id)) : this.events();
+  });
+  protected readonly selected = computed(() => this.rows().filter((e) => this.selectedIds().has(e.id!)));
+  protected readonly allSelected = computed(() => this.rows().length > 0 && this.selected().length === this.rows().length);
+  protected readonly someSelected = computed(() => this.selected().length > 0 && !this.allSelected());
+
+  /** Le righe si riconoscono per id: quando l'elenco si ricarica (filtri) quelle che restano non si ridisegnano. */
+  protected readonly trackById = (_: number, e: EventDto) => e.id;
+  protected readonly columns = ['seleziona', 'id', 'nome', 'stato', 'azioni'];
+  protected readonly filterColumns = ['f-seleziona', 'f-id', 'f-nome', 'f-stato', 'f-azioni'];
 
   constructor() {
     this.load(0);
@@ -72,8 +86,113 @@ export class SegreteriaEventiComponent {
     this.load(0);
   }
 
+  /** Il nome si cerca sul backend mentre si scrive, dopo una breve pausa per non fare una richiesta a ogni lettera. */
+  protected onName(value: string): void {
+    this.q = value;
+    clearTimeout(this.nameTimer);
+    this.nameTimer = setTimeout(() => this.load(0), 300);
+  }
+
+  protected resetFilters(): void {
+    this.q = '';
+    this.status = '';
+    this.idFilter.set('');
+    this.load(0);
+  }
+
   protected onPage(event: PageEvent): void {
     this.load(event.pageIndex);
+  }
+
+  protected isSelected(e: EventDto): boolean {
+    return this.selectedIds().has(e.id!);
+  }
+
+  protected toggle(e: EventDto): void {
+    const next = new Set(this.selectedIds());
+    if (!next.delete(e.id!)) next.add(e.id!);
+    this.selectedIds.set(next);
+  }
+
+  protected toggleAll(): void {
+    this.selectedIds.set(this.allSelected() ? new Set() : new Set(this.rows().map((e) => e.id!)));
+  }
+
+  protected clearSelection(): void {
+    this.selectedIds.set(new Set());
+  }
+
+  /** Scarica le righe scelte in un file CSV (separatore `;` e segno di codifica, cosi' Excel in italiano lo apre bene). */
+  protected exportSelected(): void {
+    const cell = (v: unknown) => `"${String(v ?? '').replaceAll('"', '""')}"`;
+    const rows = [['Codice', 'Titolo', 'Tipo', 'Stato', 'Inizio', 'Fine', 'Luogo', 'Provincia', 'Posti', 'Iscritti', 'Quota']];
+    for (const e of this.selected()) {
+      rows.push([e.code, e.title, e.typeName, label(STATUS_LABELS, e.status), e.startDate, e.endDate, e.location, e.province, e.seats, e.enrolledCount, e.fee] as string[]);
+    }
+    const csv = '\uFEFF' + rows.map((r) => r.map(cell).join(';')).join('\r\n');
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    link.download = 'eventi.csv';
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }
+
+  /** Crea una bozza uguale a ciascun evento scelto (con "(copia)" nel titolo): serve a partire da un evento gia' fatto. */
+  protected duplicateSelected(): void {
+    this.bulk(this.selected(), (e) => this.api.invoke(eventCreate, { body: this.copyOf(e) }), 'duplicati');
+  }
+
+  protected duplicate(e: EventDto): void {
+    this.act(this.api.invoke(eventCreate, { body: this.copyOf(e) }), 'Bozza creata: è una copia dell’evento.');
+  }
+
+  /** Pubblica quelli che si possono pubblicare; gli altri (o quelli con dati incoerenti) restano come sono e si contano a parte. */
+  protected publishSelected(): void {
+    this.bulk(
+      this.selected().filter((e) => this.can(e, 'PUBLISH')),
+      (e) => this.api.invoke(eventPublish, { id: e.id!, body: { version: e.version } }),
+      'pubblicati',
+    );
+  }
+
+  protected deleteSelected(): void {
+    const deletable = this.selected().filter((e) => this.can(e, 'DELETE'));
+    if (!deletable.length) {
+      this.snackBar.open('Tra gli eventi scelti nessuno si può eliminare.', 'Chiudi', { duration: 5000 });
+      return;
+    }
+    const messaggio = `${deletable.length === 1 ? 'Un evento verrà eliminato' : deletable.length + ' eventi verranno eliminati'}. Non si torna indietro.`;
+    this.dialog
+      .open<EventoConfermaComponent, unknown, boolean>(EventoConfermaComponent, { data: { azione: 'delete', titolo: '', messaggio } })
+      .afterClosed()
+      .subscribe((ok) => {
+        if (ok) this.bulk(deletable, (e) => this.api.invoke(eventDelete, { id: e.id! }), 'eliminati');
+      });
+  }
+
+  /** Esegue l'azione su ogni evento e dice quanti sono andati a buon fine e quanti no. */
+  private bulk(list: EventDto[], action: (e: EventDto) => Promise<unknown>, verb: string): void {
+    if (!list.length) {
+      this.snackBar.open('Nessuno degli eventi scelti può fare questa azione.', 'Chiudi', { duration: 5000 });
+      return;
+    }
+    Promise.allSettled(list.map(action)).then((results) => {
+      const ok = results.filter((r) => r.status === 'fulfilled').length;
+      const ko = results.length - ok;
+      this.snackBar.open(`${ok} ${ok === 1 ? 'evento' : 'eventi'} ${verb}${ko ? `, ${ko} no` : ''}.`, 'Chiudi', { duration: 5000 });
+      this.clearSelection();
+      this.load(this.pageIndex());
+    });
+  }
+
+  private copyOf(e: EventDto): EventRequestDto {
+    return {
+      typeCode: e.typeCode!, level: e.level!, region: e.region, zone: e.zone ?? undefined, title: `${e.title ?? ''} (copia)`.trim(),
+      description: e.description ?? undefined, location: e.location ?? undefined, province: e.province ?? undefined,
+      startDate: e.startDate, endDate: e.endDate, registrationOpenDate: e.registrationOpenDate, registrationCloseDate: e.registrationCloseDate,
+      seats: e.seats, fee: e.fee, enrollmentMode: e.enrollmentMode, requirements: e.requirements, obligations: e.obligations,
+      contacts: e.contacts ?? undefined,
+    };
   }
 
   /** Le azioni possibili le decide il backend (`availableActions`): qui si legge solo l'elenco. */
@@ -121,6 +240,7 @@ export class SegreteriaEventiComponent {
 
   private load(page: number): void {
     this.loading.set(true);
+    this.clearSelection();
     const params: EventManaged$Params = { page, size: PAGE_SIZE };
     if (this.q.trim()) params.q = this.q.trim();
     params.sort = this.sort;

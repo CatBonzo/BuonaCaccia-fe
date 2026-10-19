@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -6,15 +5,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CheckboxModule } from '@openng/optimus-ui/checkbox';
 import { IconFieldModule } from '@openng/optimus-ui/iconfield';
 import { InputIconModule } from '@openng/optimus-ui/inputicon';
 import { InputTextModule } from '@openng/optimus-ui/inputtext';
-import { PaginatorModule, PaginatorState } from '@openng/optimus-ui/paginator';
+import { MultiSelectModule } from '@openng/optimus-ui/multiselect';
 import { SelectModule } from '@openng/optimus-ui/select';
-import { TableModule } from '@openng/optimus-ui/table';
+import { Table, TableFilterEvent, TableModule } from '@openng/optimus-ui/table';
+import { TagModule } from '@openng/optimus-ui/tag';
 import { Api } from '../api/api';
 import { eventCreate } from '../api/fn/events/event-create';
 import { eventCancel } from '../api/fn/events/event-cancel';
@@ -24,18 +22,24 @@ import { eventManaged, EventManaged$Params } from '../api/fn/events/event-manage
 import { eventPublish } from '../api/fn/events/event-publish';
 import { EventDto, EventRequestDto } from '../api/models';
 import { ApiError } from '../core/api-error';
-import { STATUS_LABELS, label } from '../core/labels';
+import { REGION_NAMES, STATUS_LABELS, label } from '../core/labels';
 import { SessionService } from '../core/session.service';
 import { EventoConfermaComponent } from '../evento-conferma/evento-conferma.component';
 
 const PAGE_SIZE = 12;
+/** Il backend dà al massimo 100 eventi per pagina: l'elenco si scarica a pagine e poi si filtra nella tabella. */
+const FETCH_SIZE = 100;
+
+/** Una riga della tabella: l'evento più i testi già pronti per cercarci dentro. */
+type Row = EventDto & { regionName: string; statusLabel: string };
+type Severity = 'success' | 'info' | 'warn' | 'danger' | 'secondary';
 
 /** Gli eventi della propria regione, in qualunque stato, in una tabella Optimus (`p-table`): si vede, si modifica, si elimina; le altre azioni stanno nel menu della riga. */
 @Component({
   selector: 'app-segreteria-eventi',
   imports: [
-    DatePipe, FormsModule, RouterLink, MatButtonModule, MatDialogModule, MatMenuModule, MatProgressBarModule, MatTooltipModule,
-    CheckboxModule, IconFieldModule, InputIconModule, InputTextModule, PaginatorModule, SelectModule, TableModule,
+    FormsModule, RouterLink, MatButtonModule, MatDialogModule, MatMenuModule, MatTooltipModule,
+    IconFieldModule, InputIconModule, InputTextModule, MultiSelectModule, SelectModule, TableModule, TagModule,
   ],
   templateUrl: './segreteria-eventi.component.html',
   styleUrl: './segreteria-eventi.component.scss',
@@ -46,76 +50,55 @@ export class SegreteriaEventiComponent {
   private readonly dialog = inject(MatDialog);
   protected readonly session = inject(SessionService);
 
-  protected readonly events = signal<EventDto[]>([]);
-  protected readonly total = signal(0);
-  protected readonly pageIndex = signal(0);
+  protected readonly events = signal<Row[]>([]);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
-  protected readonly statusOptions = [{ label: 'Tutti gli stati', value: '' }, ...Object.entries(STATUS_LABELS).map(([value, label]) => ({ label, value }))];
   protected readonly labelOf = label;
   protected readonly statusLabels = STATUS_LABELS;
   protected readonly pageSize = PAGE_SIZE;
-  protected status = '';
-  protected q = '';
-  protected sort = 'createdAt,desc';
+  protected readonly statusOptions = Object.entries(STATUS_LABELS).map(([value, label]) => ({ label, value }));
+  /** Le scelte dei filtri a tendina vengono dagli eventi che ci sono, non da un elenco fisso. */
+  protected readonly typeOptions = computed(() => [...new Set(this.events().map((e) => e.typeName).filter((t): t is string => !!t))].sort());
+  protected readonly regionOptions = computed(() =>
+    [...new Set(this.events().map((e) => e.region as string).filter(Boolean))].map((value) => ({ value, label: REGION_NAMES[value] ?? value })),
+  );
 
-  /** Il filtro sull'ID (il codice dell'evento) si applica alle righe che si vedono: il backend cerca solo nel titolo. */
-  protected readonly idFilter = signal('');
-  private nameTimer: ReturnType<typeof setTimeout> | undefined;
-
-  /** Le righe scelte con le caselle (per id): servono alla barra delle azioni in basso. */
-  private readonly selectedIds = signal<ReadonlySet<string>>(new Set());
-  /** Le righe in tabella: quelle arrivate dal backend, ristrette dal filtro sull'ID. */
-  protected readonly rows = computed(() => {
-    const id = this.idFilter().trim().toLowerCase();
-    return id ? this.events().filter((e) => e.code?.toLowerCase().includes(id)) : this.events();
-  });
-  protected readonly selected = computed(() => this.rows().filter((e) => this.selectedIds().has(e.id!)));
-  protected readonly allSelected = computed(() => this.rows().length > 0 && this.selected().length === this.rows().length);
-  protected readonly someSelected = computed(() => this.selected().length > 0 && !this.allSelected());
+  /** Le righe scelte con le caselle (le gestisce la tabella): servono alla barra delle azioni in basso. */
+  /** Quante righe passano i filtri: la tabella lo dice a ogni filtro. */
+  protected readonly visibleCount = signal(0);
+  protected readonly selected = signal<Row[]>([]);
 
   constructor() {
-    this.load(0);
+    this.load();
   }
 
-  protected filter(): void {
-    this.load(0);
+  protected severityOf(status: string | undefined): Severity {
+    switch (status) {
+      case 'REGISTRATION_OPEN':
+      case 'PUBLISHED':
+        return 'success';
+      case 'REGISTRATION_CLOSED':
+        return 'warn';
+      case 'IN_PROGRESS':
+        return 'info';
+      case 'CANCELLED':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
   }
 
-  /** Il nome si cerca sul backend mentre si scrive, dopo una breve pausa per non fare una richiesta a ogni lettera. */
-  protected onName(value: string): void {
-    this.q = value;
-    clearTimeout(this.nameTimer);
-    this.nameTimer = setTimeout(() => this.load(0), 300);
+  protected onFilter(event: TableFilterEvent): void {
+    this.visibleCount.set(event.filteredValue?.length ?? this.events().length);
   }
 
-  protected resetFilters(): void {
-    this.q = '';
-    this.status = '';
-    this.idFilter.set('');
-    this.load(0);
-  }
-
-  protected onPage(event: PaginatorState): void {
-    this.load(event.page ?? 0);
-  }
-
-  protected isSelected(e: EventDto): boolean {
-    return this.selectedIds().has(e.id!);
-  }
-
-  protected toggle(e: EventDto): void {
-    const next = new Set(this.selectedIds());
-    if (!next.delete(e.id!)) next.add(e.id!);
-    this.selectedIds.set(next);
-  }
-
-  protected toggleAll(): void {
-    this.selectedIds.set(this.allSelected() ? new Set() : new Set(this.rows().map((e) => e.id!)));
+  protected resetFilters(table: Table): void {
+    table.clear();
+    this.visibleCount.set(this.events().length);
   }
 
   protected clearSelection(): void {
-    this.selectedIds.set(new Set());
+    this.selected.set([]);
   }
 
   /** Scarica le righe scelte in un file CSV (separatore `;` e segno di codifica, cosi' Excel in italiano lo apre bene). */
@@ -177,7 +160,7 @@ export class SegreteriaEventiComponent {
       const ko = results.length - ok;
       this.snackBar.open(`${ok} ${ok === 1 ? 'evento' : 'eventi'} ${verb}${ko ? `, ${ko} no` : ''}.`, 'Chiudi', { duration: 5000 });
       this.clearSelection();
-      this.load(this.pageIndex());
+      this.load();
     });
   }
 
@@ -228,30 +211,32 @@ export class SegreteriaEventiComponent {
     request.then(
       () => {
         this.snackBar.open(success, 'Chiudi', { duration: 4000 });
-        this.load(this.pageIndex());
+        this.load();
       },
       (e: ApiError) => this.error.set(e.details.length ? e.details.map((d) => d.message).join(' ') : e.message),
     );
   }
 
-  private load(page: number): void {
+  /** Scarica tutte le pagine degli eventi della regione: poi filtri, ricerca e pagine si fanno nella tabella. */
+  private async load(): Promise<void> {
     this.loading.set(true);
     this.clearSelection();
-    const params: EventManaged$Params = { page, size: PAGE_SIZE };
-    if (this.q.trim()) params.q = this.q.trim();
-    params.sort = this.sort;
-    if (this.status) params.status = this.status as EventManaged$Params['status'];
-    this.api.invoke(eventManaged, params).then(
-      (response) => {
-        this.events.set(response.payload?.content ?? []);
-        this.total.set(response.payload?.totalElements ?? 0);
-        this.pageIndex.set(response.payload?.page ?? page);
-        this.loading.set(false);
-      },
-      (e: ApiError) => {
-        this.error.set(e.message);
-        this.loading.set(false);
-      },
-    );
+    try {
+      const rows: Row[] = [];
+      for (let page = 0, pages = 1; page < pages; page++) {
+        const params: EventManaged$Params = { page, size: FETCH_SIZE, sort: 'createdAt,desc' };
+        const payload = (await this.api.invoke(eventManaged, params)).payload;
+        pages = payload?.totalPages ?? 1;
+        for (const e of payload?.content ?? []) {
+          rows.push({ ...e, regionName: REGION_NAMES[e.region ?? ''] ?? e.region ?? '', statusLabel: label(STATUS_LABELS, e.status) });
+        }
+      }
+      this.events.set(rows);
+      this.visibleCount.set(rows.length);
+    } catch (e) {
+      this.error.set((e as ApiError).message);
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

@@ -223,6 +223,14 @@ Artefatti: ramo 025-tabella-selezione; package.json, app.config.ts.
 Problemi: il nome detto a voce ("penNG") faceva pensare a PrimeNG, scartato per la licenza: la ricerca ha mostrato che Optimus e' un fork gratuito. Il tema e i componenti portano il bundle iniziale a 795 kB (limite 700, solo avviso). I test e2e cercavano `tr[mat-row]`: ora `tr[data-row]`.
 Spunto: un nome ambiguo va verificato sulla fonte prima di rifiutare o accettare la scelta.
 
+[2026-10-19] Tabella eventi come l'esempio Optimus
+Cosa: Gestione eventi mostra ID, Tipo, Titolo, Regione, Stato e Azioni; ogni colonna ha il suo filtro (testo, tendina, tendina multipla) e in alto c'e' la ricerca su tutta la tabella.
+Chi: Mahima ha incollato il codice dell'esempio Optimus e l'elenco delle colonne; Claude ha adattato l'esempio ai dati veri, scelto di scaricare tutti gli eventi e filtrare nel browser, e aggiornato i test.
+Paradigma: AI-assisted partendo da un esempio ufficiale; code harness: 43 test unitari e 11 e2e verdi dopo la riscrittura.
+Artefatti: ramo 025-tabella-selezione; segreteria-eventi (ts, html, scss), e2e/tabella.ts, e2e/gestione-eventi.spec.ts.
+Problemi: il filtro del testo partiva solo premendo Invio e cercava "inizia con": servono filterOn="input" e matchMode="contains". Il backend e Docker si erano fermati tra un turno e l'altro: rilancio a mano.
+Spunto: un esempio di una libreria ha valori predefiniti pensati per la demo; vanno letti e scelti, non copiati.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

@@ -17,11 +17,13 @@ async function findCard(page: Page, title: string) {
 }
 
 test.describe('gestione eventi della segreteria', () => {
-  test('la tabella ha ID, nome, stato e azioni, e ogni colonna si filtra', async ({ page, request }) => {
+  test('la tabella ha ID, tipo, titolo, regione, stato e azioni, e ogni colonna si filtra', async ({ page, request }) => {
     const draft = await createDraft(request, `filtro${Date.now()}`);
     await loginAs(page, 'segreteria');
     await page.goto('/segreteria/eventi');
-    await expect(page.locator('th', { hasText: 'ID' }).first()).toBeVisible();
+    for (const name of ['ID', 'Tipo', 'Titolo', 'Regione', 'Stato', 'Azioni']) {
+      await expect(page.locator('th', { hasText: name }).first()).toBeVisible();
+    }
     await expect(page.locator('tr[data-row]').first().getByTestId('event-status')).toBeVisible();
 
     // Stato: solo le bozze.
@@ -34,13 +36,13 @@ test.describe('gestione eventi della segreteria', () => {
     await filterByName(page, draft.title);
     await expect(rows).toHaveCount(1);
     const code = (await rows.first().locator('td.code').innerText()).trim();
-    await page.getByTestId('id-filter').fill(code);
+    await page.getByLabel('Filtra per ID').fill(code);
     await expect(rows).toHaveCount(1);
-    await page.getByTestId('id-filter').fill('zzz-non-esiste');
+    await page.getByLabel('Filtra per ID').fill('zzz-non-esiste');
     await expect(page.getByTestId('empty')).toBeVisible();
 
     await page.getByTestId('reset-filters').click();
-    await expect(page.getByTestId('q')).toHaveValue('');
+    await expect(page.getByLabel('Filtra per titolo')).toHaveValue('');
     await expect(rows.first()).toBeVisible();
   });
 

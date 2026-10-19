@@ -1,8 +1,6 @@
 import { Page } from '@playwright/test';
 
-/** Scrive nel filtro del nome di Gestione eventi e aspetta che l'elenco sia stato ricaricato dal backend (la ricerca parte dopo una breve pausa). */
+/** Scrive nel filtro del titolo di Gestione eventi: la tabella filtra da sola, non c'e' nulla da aspettare dal backend. */
 export async function filterByName(page: Page, text: string): Promise<void> {
-  const filtered = page.waitForResponse((r) => r.url().includes('/events/managed') && r.url().includes('q='));
-  await page.getByTestId('q').fill(text);
-  await filtered;
+  await page.getByLabel('Filtra per titolo').fill(text);
 }

@@ -8,61 +8,84 @@
   </a>
 </div>
 
-@if (loading()) {
-  <mat-progress-bar mode="indeterminate" />
-}
 @if (error(); as message) {
   <p class="error" role="alert" data-testid="manage-error">{{ message }}</p>
 }
 
 
 <div class="table-wrap">
-  <p-table [value]="rows()" dataKey="id" [tableStyle]="{ 'min-width': '44rem' }" aria-label="Eventi della regione">
+  <p-table
+    #dt
+    [value]="events()"
+    dataKey="id"
+    [selection]="selected()"
+    (selectionChange)="selected.set($event)"
+    [rows]="pageSize"
+    [paginator]="true"
+    [loading]="loading()"
+    [globalFilterFields]="['code', 'typeName', 'title', 'regionName', 'statusLabel']"
+    [tableStyle]="{ 'min-width': '48rem' }"
+    (onFilter)="onFilter($event)"
+    aria-label="Eventi della regione"
+  >
+    <ng-template #caption>
+      <div class="caption">
+        <button mat-button type="button" (click)="resetFilters(dt)" data-testid="reset-filters"><i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> Azzera filtri</button>
+        <p-iconfield iconPosition="left" class="global">
+          <p-inputicon class="fa-solid fa-magnifying-glass" />
+          <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')" placeholder="Cerca in tutta la tabella" aria-label="Cerca in tutta la tabella" data-testid="global-search" />
+        </p-iconfield>
+      </div>
+    </ng-template>
     <ng-template #header>
       <tr>
-        <th class="check">
-          <p-checkbox [binary]="true" [ngModel]="allSelected()" [indeterminate]="someSelected()" (onChange)="toggleAll()" ariaLabel="Seleziona tutti gli eventi" data-testid="select-all" />
-        </th>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Stato</th>
+        <th class="check"><p-tableHeaderCheckbox ariaLabel="Seleziona tutti gli eventi" data-testid="select-all" /></th>
+        <th class="w-id">ID</th>
+        <th class="w-type">Tipo</th>
+        <th>Titolo</th>
+        <th class="w-region">Regione</th>
+        <th class="w-status">Stato</th>
         <th class="actions-head">Azioni</th>
       </tr>
       <!-- Seconda riga dell'intestazione: un filtro per colonna. -->
       <tr class="filter-row">
         <th class="check"></th>
-        <th class="filter">
-          <input pInputText class="col-filter" type="search" placeholder="Filtra ID" aria-label="Filtra per ID" [ngModel]="idFilter()" (ngModelChange)="idFilter.set($event)" data-testid="id-filter" />
+        <th><p-columnFilter type="text" field="code" filterOn="input" matchMode="contains" placeholder="Filtra ID" ariaLabel="Filtra per ID" [showMenu]="false" /></th>
+        <th>
+          <p-columnFilter field="typeName" matchMode="in" [showMenu]="false">
+            <ng-template #filter let-value let-filter="filterCallback">
+              <p-multiselect [ngModel]="value" [options]="typeOptions()" placeholder="Tutti" (onChange)="filter($event.value)" ariaLabel="Filtra per tipo" appendTo="body" styleClass="w-full" data-testid="type-filter" />
+            </ng-template>
+          </p-columnFilter>
         </th>
-        <th class="filter">
-          <p-iconfield>
-            <p-inputicon class="fa-solid fa-magnifying-glass" />
-            <input pInputText class="col-filter" type="search" placeholder="Filtra per nome" aria-label="Filtra per nome" [ngModel]="q" (ngModelChange)="onName($event)" data-testid="q" />
-          </p-iconfield>
+        <th><p-columnFilter type="text" field="title" filterOn="input" matchMode="contains" placeholder="Filtra per titolo" ariaLabel="Filtra per titolo" [showMenu]="false" /></th>
+        <th>
+          <p-columnFilter field="region" matchMode="in" [showMenu]="false">
+            <ng-template #filter let-value let-filter="filterCallback">
+              <p-multiselect [ngModel]="value" [options]="regionOptions()" optionLabel="label" optionValue="value" placeholder="Tutte" (onChange)="filter($event.value)" ariaLabel="Filtra per regione" appendTo="body" styleClass="w-full" data-testid="region-filter" />
+            </ng-template>
+          </p-columnFilter>
         </th>
-        <th class="filter">
-          <p-select class="col-filter" [options]="statusOptions" optionLabel="label" optionValue="value" [(ngModel)]="status" (onChange)="filter()" ariaLabel="Filtra per stato" placeholder="Tutti gli stati" appendTo="body" data-testid="status-filter" />
+        <th>
+          <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+            <ng-template #filter let-value let-filter="filterCallback">
+              <p-select [ngModel]="value" [options]="statusOptions" optionLabel="label" optionValue="value" (onChange)="filter($event.value)" placeholder="Tutti gli stati" [showClear]="true" ariaLabel="Filtra per stato" appendTo="body" styleClass="w-full" data-testid="status-filter">
+                <ng-template let-option #item><p-tag [value]="option.label" [severity]="severityOf(option.value)" /></ng-template>
+              </p-select>
+            </ng-template>
+          </p-columnFilter>
         </th>
-        <th class="filter actions-head">
-          <button mat-button type="button" (click)="resetFilters()" data-testid="reset-filters">Azzera</button>
-        </th>
+        <th></th>
       </tr>
     </ng-template>
     <ng-template #body let-e>
-      <tr data-row [attr.data-event]="e.title" [class.selected]="isSelected(e)">
-        <td class="check">
-          <p-checkbox [binary]="true" [ngModel]="isSelected(e)" (onChange)="toggle(e)" [ariaLabel]="'Seleziona ' + e.title" data-testid="select" />
-        </td>
+      <tr data-row [attr.data-event]="e.title">
+        <td class="check"><p-tableCheckbox [value]="e" [ariaLabel]="'Seleziona ' + e.title" data-testid="select" /></td>
         <td class="code">{{ e.code }}</td>
-        <td>
-          <a class="title" [routerLink]="['/eventi', e.id]">{{ e.title || '(senza titolo)' }}</a>
-          <span class="meta">
-            {{ e.typeName }}@if (e.startDate) { · {{ e.startDate | date: 'd MMM y' }} }@if (e.location) { · {{ e.location }} }
-          </span>
-        </td>
-        <td>
-          <span class="badge" data-testid="event-status" [attr.data-status]="e.status"><span class="dot" aria-hidden="true"></span>{{ labelOf(statusLabels, e.status) }}</span>
-        </td>
+        <td>{{ e.typeName }}</td>
+        <td><a class="title" [routerLink]="['/eventi', e.id]">{{ e.title || '(senza titolo)' }}</a></td>
+        <td>{{ e.regionName }}</td>
+        <td><p-tag data-testid="event-status" [attr.data-status]="e.status" [value]="e.statusLabel" [severity]="severityOf(e.status)" /></td>
         <td class="actions">
           <a mat-icon-button [routerLink]="['/eventi', e.id]" matTooltip="Visualizza" aria-label="Visualizza l'evento" data-testid="view">
             <i class="fa-solid fa-eye" aria-hidden="true"></i>
@@ -107,19 +130,16 @@
         </td>
       </tr>
     </ng-template>
+    <ng-template #emptymessage>
+      <tr><td colspan="7" data-testid="empty">Nessun evento con questi filtri.</td></tr>
+    </ng-template>
   </p-table>
 </div>
-
-@if (!loading() && rows().length === 0) {
-  <p class="empty" data-testid="empty">Nessun evento con questi filtri.</p>
-}
-
-<p-paginator [first]="pageIndex() * pageSize" [rows]="pageSize" [totalRecords]="total()" [alwaysShow]="false" (onPageChange)="onPage($event)" />
 
 @if (selected().length) {
   <div class="bulk" role="toolbar" aria-label="Azioni sugli eventi scelti" data-testid="bulk-bar">
     <button type="button" class="bulk-x" aria-label="Deseleziona tutto" data-testid="bulk-clear" (click)="clearSelection()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
-    <span class="bulk-count" aria-live="polite" data-testid="bulk-count">{{ selected().length }} di {{ rows().length }} selezionati</span>
+    <span class="bulk-count" aria-live="polite" data-testid="bulk-count">{{ selected().length }} di {{ visibleCount() }} selezionati</span>
     <button type="button" data-testid="bulk-export" (click)="exportSelected()"><i class="fa-solid fa-file-csv" aria-hidden="true"></i> Esporta</button>
     <button type="button" data-testid="bulk-duplicate" (click)="duplicateSelected()"><i class="fa-solid fa-copy" aria-hidden="true"></i> Duplica</button>
     <button type="button" data-testid="bulk-publish" (click)="publishSelected()"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i> Pubblica</button>

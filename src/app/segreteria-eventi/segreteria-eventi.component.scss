@@ -20,28 +20,6 @@ mat-menu i, .mat-mdc-menu-item i { margin-right: 10px; width: 1.1rem; text-align
 .slot { display: inline-block; width: 40px; height: 40px; vertical-align: middle; }
 
 th.check, td.check { width: 56px; padding-right: 0; }
-tbody tr.selected { background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent); }
-
-// Lo stato come etichetta colorata con un puntino, come nella tabella di riferimento.
-.badge {
-  --c: var(--bc-closed);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  white-space: nowrap;
-  color: var(--c);
-  background: color-mix(in srgb, var(--c) 14%, transparent);
-}
-.badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
-.badge[data-status='REGISTRATION_OPEN'], .badge[data-status='PUBLISHED'] { --c: var(--bc-ok); }
-.badge[data-status='REGISTRATION_CLOSED'] { --c: var(--bc-warn); }
-.badge[data-status='IN_PROGRESS'] { --c: var(--mat-sys-primary); }
-.badge[data-status='CANCELLED'] { --c: var(--mat-sys-error); }
-
 // Barra delle azioni sulle righe scelte: scura, in basso al centro, sopra la tabella.
 .bulk {
   position: fixed;
@@ -78,19 +56,16 @@ tbody tr.selected { background: color-mix(in srgb, var(--mat-sys-primary) 8%, tr
 .bulk-count { font-weight: 500; opacity: 0.85; }
 
 .code { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--mat-sys-on-surface-variant); }
-tr.filter-row th { padding-top: 0; padding-bottom: 12px; border-bottom: 1px solid var(--bc-line); }
-.col-filter {
-  width: 100%;
-  min-width: 120px;
-  box-sizing: border-box;
-  padding: 8px 12px;
-  border: 1px solid var(--bc-line);
-  border-radius: 8px;
-  background: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: inherit;
-  font-weight: 400;
-}
-.col-filter:focus-visible { outline: 2px solid var(--bc-accent); outline-offset: 1px; }
-p-select.col-filter { display: flex; padding: 0; }
-p-iconfield { display: block; }
+tbody tr.selected { background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent); }
+tr.filter-row th { padding-top: 0; padding-bottom: 12px; }
+.caption { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.caption i { margin-right: 6px; }
+p-iconfield.global { min-width: 260px; }
+th.w-id { width: 9.5rem; }
+th.w-type { width: 12rem; }
+th.w-region { width: 10rem; }
+th.w-status { width: 11rem; }
+th.actions-head { width: 11rem; }
+.w-full, :host ::ng-deep .w-full { width: 100%; min-width: 0; }
+p-columnfilter, :host ::ng-deep p-columnfilter { display: block; width: 100%; }
+:host ::ng-deep p-columnfilter input { width: 100%; }

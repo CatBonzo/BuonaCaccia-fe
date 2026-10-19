@@ -11,7 +11,7 @@ tbody tr:hover { background: var(--mat-sys-surface-container-low); }
 .title { display: block; font-weight: 700; color: var(--mat-sys-primary); text-decoration: none; }
 .title:hover { text-decoration: underline; }
 .meta { display: block; color: var(--mat-sys-on-surface-variant); font-size: 0.85rem; }
-.actions, .actions-head { text-align: right; white-space: nowrap; }
+.actions, .actions-head { text-align: center; white-space: nowrap; }
 .actions i { font-size: 0.95rem; }
 mat-menu i, .mat-mdc-menu-item i { margin-right: 10px; width: 1.1rem; text-align: center; }
 
@@ -79,7 +79,7 @@ p-iconfield.global input { width: 100%; }
 .table-wrap { font-size: 1.05rem; }
 :host ::ng-deep .p-datatable-table th { padding: 18px 12px; font-size: 1.05rem; }
 :host ::ng-deep .p-datatable-table td { padding: 20px 12px; }
-tr.filter-row th { padding-top: 0 !important; padding-bottom: 16px !important; }
+tr.filter-row th { padding-top: 14px !important; padding-bottom: 14px !important; border-top: 1px solid var(--bc-line); }
 .title { font-size: 1.1rem; }
 .code { font-size: 1.05rem; }
 :host ::ng-deep p-columnfilter input, :host ::ng-deep p-columnfilter .p-select, :host ::ng-deep p-columnfilter .p-multiselect, p-iconfield.global input { min-height: 46px; font-size: 1rem; }

@@ -239,6 +239,14 @@ Artefatti: ramo 025-tabella-selezione; segreteria-eventi.component.scss.
 Problemi: due correzioni sbagliate (un display: flex sulla cella spezzava le righe; larghezze fisse in rem facevano uscire le Azioni a 1200 px): trovato misurando larghezza di tabella e colonne con un piccolo test.
 Spunto: quando una grafica non torna conviene misurare gli elementi invece di indovinare.
 
+[2026-10-19] Filtri equidistanti e azioni centrate
+Cosa: la riga dei filtri ha lo stesso spazio sopra e sotto e la colonna Azioni (titolo e icone) e' centrata.
+Chi: Mahima l'ha chiesto con uno screenshot; Claude ha scelto i 14 px e controllato con uno screenshot.
+Paradigma: AI-assisted con ciclo screenshot-correzione; code harness: 11 e2e verdi.
+Artefatti: ramo 025-tabella-selezione; segreteria-eventi.component.scss.
+Problemi: nessuno; una regola precedente dava solo spazio sotto ai filtri e andava sostituita, non affiancata.
+Spunto: una richiesta di grafica ("equidistanti") si verifica guardando gli spazi nello screenshot, non solo i numeri nel codice.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

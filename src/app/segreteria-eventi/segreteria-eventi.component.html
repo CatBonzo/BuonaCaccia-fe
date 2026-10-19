@@ -23,7 +23,7 @@
     [rows]="pageSize"
     [paginator]="true"
     [loading]="loading()"
-    [globalFilterFields]="['code', 'typeName', 'title', 'regionName', 'statusLabel']"
+    [globalFilterFields]="['code', 'typeCode', 'title', 'regionName', 'statusLabel']"
     [tableStyle]="{ 'min-width': '48rem' }"
     (onFilter)="onFilter($event)"
     aria-label="Eventi della regione"
@@ -52,7 +52,7 @@
         <th class="check"></th>
         <th><p-columnFilter type="text" field="code" filterOn="input" matchMode="contains" placeholder="Filtra ID" ariaLabel="Filtra per ID" [showMenu]="false" /></th>
         <th>
-          <p-columnFilter field="typeName" matchMode="in" [showMenu]="false">
+          <p-columnFilter field="typeCode" matchMode="in" [showMenu]="false">
             <ng-template #filter let-value let-filter="filterCallback">
               <p-multiselect [ngModel]="value" [options]="typeOptions()" placeholder="Tutti" (onChange)="filter($event.value)" ariaLabel="Filtra per tipo" appendTo="body" styleClass="w-full" data-testid="type-filter" />
             </ng-template>
@@ -82,7 +82,7 @@
       <tr data-row [attr.data-event]="e.title">
         <td class="check"><p-tableCheckbox [value]="e" [ariaLabel]="'Seleziona ' + e.title" data-testid="select" /></td>
         <td class="code">{{ e.code }}</td>
-        <td>{{ e.typeName }}</td>
+        <td>{{ e.typeCode }}</td>
         <td><a class="title" [routerLink]="['/eventi', e.id]">{{ e.title || '(senza titolo)' }}</a></td>
         <td>{{ e.regionName }}</td>
         <td><p-tag data-testid="event-status" [attr.data-status]="e.status" [value]="e.statusLabel" [severity]="severityOf(e.status)" /></td>

@@ -98,7 +98,7 @@ test.describe('gestione eventi della segreteria', () => {
     await loginAs(page, 'segreteria');
     await page.goto('/segreteria/eventi/nuovo');
 
-    await choose(page, 'f-type', 'Campo di formazione associativa');
+    await choose(page, 'f-type', 'CFA');
     await page.getByTestId('f-title').fill(title);
     await page.getByTestId('f-location').fill('Pian del Re');
     await page.getByTestId('f-province').fill('cn');

@@ -58,7 +58,7 @@ export class SegreteriaEventiComponent {
   protected readonly pageSize = PAGE_SIZE;
   protected readonly statusOptions = Object.entries(STATUS_LABELS).map(([value, label]) => ({ label, value }));
   /** Le scelte dei filtri a tendina vengono dagli eventi che ci sono, non da un elenco fisso. */
-  protected readonly typeOptions = computed(() => [...new Set(this.events().map((e) => e.typeName).filter((t): t is string => !!t))].sort());
+  protected readonly typeOptions = computed(() => [...new Set(this.events().map((e) => e.typeCode).filter((t): t is string => !!t))].sort());
   protected readonly regionOptions = computed(() =>
     [...new Set(this.events().map((e) => e.region as string).filter(Boolean))].map((value) => ({ value, label: REGION_NAMES[value] ?? value })),
   );
@@ -106,7 +106,7 @@ export class SegreteriaEventiComponent {
     const cell = (v: unknown) => `"${String(v ?? '').replaceAll('"', '""')}"`;
     const rows = [['Codice', 'Titolo', 'Tipo', 'Stato', 'Inizio', 'Fine', 'Luogo', 'Provincia', 'Posti', 'Iscritti', 'Quota']];
     for (const e of this.selected()) {
-      rows.push([e.code, e.title, e.typeName, label(STATUS_LABELS, e.status), e.startDate, e.endDate, e.location, e.province, e.seats, e.enrolledCount, e.fee] as string[]);
+      rows.push([e.code, e.title, e.typeCode, label(STATUS_LABELS, e.status), e.startDate, e.endDate, e.location, e.province, e.seats, e.enrolledCount, e.fee] as string[]);
     }
     const csv = '\uFEFF' + rows.map((r) => r.map(cell).join(';')).join('\r\n');
     const link = document.createElement('a');

@@ -57,7 +57,7 @@ export class AmministrazioneTipiEventoComponent {
   protected startNew(): void {
     this.isNew = true;
     this.error.set(null);
-    this.editing.set({ code: '', name: '', category: 'EG', application: false, active: true, defaultRequirements: {}, defaultObligations: [] });
+    this.editing.set({ code: '', category: 'EG', application: false, active: true, defaultRequirements: {}, defaultObligations: [] });
   }
 
   protected startEdit(type: EventTypeDto): void {

@@ -18,16 +18,12 @@
 
 @if (editing(); as t) {
   <mat-card appearance="outlined" class="editor" data-testid="type-editor">
-    <mat-card-header><mat-card-title>{{ isNew ? 'Nuovo tipo di evento' : 'Modifica ' + t.name }}</mat-card-title></mat-card-header>
+    <mat-card-header><mat-card-title>{{ isNew ? 'Nuovo tipo di evento' : 'Modifica ' + t.code }}</mat-card-title></mat-card-header>
     <mat-card-content class="fields">
       <mat-form-field>
         <mat-label>Codice</mat-label>
         <input matInput name="code" [(ngModel)]="t.code" [disabled]="!isNew" data-testid="type-code" />
         <mat-hint>Lettere maiuscole, non si cambia dopo la creazione.</mat-hint>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Nome</mat-label>
-        <input matInput name="name" [(ngModel)]="t.name" data-testid="type-name" />
       </mat-form-field>
       <mat-form-field>
         <mat-label>Categoria</mat-label>
@@ -117,8 +113,8 @@
   @for (t of types(); track t.code) {
     <mat-card appearance="outlined" [attr.data-type]="t.code">
       <mat-card-header>
-        <mat-card-title>{{ t.name }}</mat-card-title>
-        <mat-card-subtitle>{{ t.code }} · {{ labelOf(categoryLabels, t.category) }}</mat-card-subtitle>
+        <mat-card-title>{{ t.code }}</mat-card-title>
+        <mat-card-subtitle>{{ labelOf(categoryLabels, t.category) }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <mat-chip-set>

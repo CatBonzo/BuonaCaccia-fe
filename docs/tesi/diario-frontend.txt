@@ -255,6 +255,22 @@ Artefatti: ramo 026-form-evento-pannelli; evento-form (ts, html, scss), app.conf
 Problemi: il calendario Optimus non legge il testo inserito di colpo da `fill` (accetta solo digitazione tasto per tasto) e il testo nuovo si aggiunge al vecchio: i test selezionano tutto e scrivono; un clic di prova sul bordo dello schermo mi ha fatto uscire dall'account durante uno screenshot.
 Spunto: cambiare libreria cambia anche il modo di scrivere i test: i test descrivono l'uso reale (digitare), non una scorciatoia.
 
+[2026-10-19] Tipi di evento nuovi: il test segue i titoli
+Cosa: dopo che il backend ha adottato i 22 tipi di evento di Mahima, il test e2e della creazione sceglie il tipo "CFA" invece del vecchio titolo lungo; il codice del frontend non cambia.
+Chi: Mahima ha dato l'elenco dei tipi; Claude ha adeguato il test e lo ha rieseguito con il backend nuovo.
+Paradigma: AI-assisted; code harness: i 47 e2e sono verdi con i tipi nuovi.
+Artefatti: ramo 027-tipi-evento-test; e2e/gestione-eventi.spec.ts.
+Problemi: nessuno; il frontend legge i tipi dal backend e non ha elenchi propri.
+Spunto: se il frontend non copia i dati del backend, un cambio di dati non lo tocca: solo i test che li citano.
+
+[2026-10-19] Tipo di evento = solo codice
+Cosa: il tipo di evento non ha piu' il nome: il client e' rigenerato e tabella, form, card, dettaglio e amministrazione mostrano solo il codice (es. CFA); in amministrazione e' sparito il campo Nome.
+Chi: Mahima ha deciso (dopo una prima incomprensione di Claude); Claude ha eseguito backend e frontend.
+Paradigma: AI-assisted; SDD: il contratto cambia prima, il client si rigenera; code harness: 43 unit e 47 e2e verdi.
+Artefatti: PR 14 backend, PR 27 frontend.
+Problemi: Claude aveva tolto il nome solo dove coincideva col codice; Mahima ha chiesto di toglierlo ovunque.
+Spunto: quando una persona dice "togli X", il perimetro e' tutto il sistema, non il punto in cui lo si nota.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

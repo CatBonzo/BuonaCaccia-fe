@@ -10,5 +10,4 @@ export interface EventTypeDto {
   code: string;
   defaultObligations?: Array<ObligationDto>;
   defaultRequirements?: RequirementsDto;
-  name: string;
 }

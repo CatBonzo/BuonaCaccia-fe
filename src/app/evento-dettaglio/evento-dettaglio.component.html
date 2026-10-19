@@ -13,7 +13,7 @@
 @if (event(); as e) {
   <article>
     <h1 data-testid="title">{{ e.title }}</h1>
-    <p class="subtitle">{{ e.typeName }} · {{ labelOf(levelLabels, e.level) }} · {{ e.location }}, {{ e.province }} ({{ e.region }})</p>
+    <p class="subtitle">{{ e.typeCode }} · {{ labelOf(levelLabels, e.level) }} · {{ e.location }}, {{ e.province }} ({{ e.region }})</p>
 
     @if (e.status === 'CANCELLED') {
       <p class="cancelled" role="status">

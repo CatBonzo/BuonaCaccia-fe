@@ -32,7 +32,6 @@ export interface EventDto {
   status?: 'DRAFT' | 'PUBLISHED' | 'REGISTRATION_OPEN' | 'REGISTRATION_CLOSED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
   title?: string;
   typeCode?: string;
-  typeName?: string;
   updatedAt?: string;
   version?: number;
   zone?: string;

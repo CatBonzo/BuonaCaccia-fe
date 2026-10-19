@@ -3,17 +3,18 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CheckboxModule } from '@openng/optimus-ui/checkbox';
+import { IconFieldModule } from '@openng/optimus-ui/iconfield';
+import { InputIconModule } from '@openng/optimus-ui/inputicon';
+import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { PaginatorModule, PaginatorState } from '@openng/optimus-ui/paginator';
+import { SelectModule } from '@openng/optimus-ui/select';
+import { TableModule } from '@openng/optimus-ui/table';
 import { Api } from '../api/api';
 import { eventCreate } from '../api/fn/events/event-create';
 import { eventCancel } from '../api/fn/events/event-cancel';
@@ -29,12 +30,12 @@ import { EventoConfermaComponent } from '../evento-conferma/evento-conferma.comp
 
 const PAGE_SIZE = 12;
 
-/** Gli eventi della propria regione, in qualunque stato, in una tabella: si vede, si modifica, si elimina; le altre azioni stanno nel menu della riga. */
+/** Gli eventi della propria regione, in qualunque stato, in una tabella Optimus (`p-table`): si vede, si modifica, si elimina; le altre azioni stanno nel menu della riga. */
 @Component({
   selector: 'app-segreteria-eventi',
   imports: [
-    DatePipe, FormsModule, RouterLink, MatButtonModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule, MatInputModule,
-    MatMenuModule, MatPaginatorModule, MatProgressBarModule, MatSelectModule, MatTableModule, MatTooltipModule,
+    DatePipe, FormsModule, RouterLink, MatButtonModule, MatDialogModule, MatMenuModule, MatProgressBarModule, MatTooltipModule,
+    CheckboxModule, IconFieldModule, InputIconModule, InputTextModule, PaginatorModule, SelectModule, TableModule,
   ],
   templateUrl: './segreteria-eventi.component.html',
   styleUrl: './segreteria-eventi.component.scss',
@@ -50,7 +51,7 @@ export class SegreteriaEventiComponent {
   protected readonly pageIndex = signal(0);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
-  protected readonly statuses = Object.entries(STATUS_LABELS);
+  protected readonly statusOptions = [{ label: 'Tutti gli stati', value: '' }, ...Object.entries(STATUS_LABELS).map(([value, label]) => ({ label, value }))];
   protected readonly labelOf = label;
   protected readonly statusLabels = STATUS_LABELS;
   protected readonly pageSize = PAGE_SIZE;
@@ -72,11 +73,6 @@ export class SegreteriaEventiComponent {
   protected readonly selected = computed(() => this.rows().filter((e) => this.selectedIds().has(e.id!)));
   protected readonly allSelected = computed(() => this.rows().length > 0 && this.selected().length === this.rows().length);
   protected readonly someSelected = computed(() => this.selected().length > 0 && !this.allSelected());
-
-  /** Le righe si riconoscono per id: quando l'elenco si ricarica (filtri) quelle che restano non si ridisegnano. */
-  protected readonly trackById = (_: number, e: EventDto) => e.id;
-  protected readonly columns = ['seleziona', 'id', 'nome', 'stato', 'azioni'];
-  protected readonly filterColumns = ['f-seleziona', 'f-id', 'f-nome', 'f-stato', 'f-azioni'];
 
   constructor() {
     this.load(0);
@@ -100,8 +96,8 @@ export class SegreteriaEventiComponent {
     this.load(0);
   }
 
-  protected onPage(event: PageEvent): void {
-    this.load(event.pageIndex);
+  protected onPage(event: PaginatorState): void {
+    this.load(event.page ?? 0);
   }
 
   protected isSelected(e: EventDto): boolean {

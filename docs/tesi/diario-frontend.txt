@@ -216,11 +216,11 @@ Problemi: il filtro del nome parte con una pausa e ridisegnava le righe mentre i
 Spunto: una funzione che dipende da una pausa (ricerca mentre si scrive) obbliga i test ad aspettare l'evento giusto, non a dormire.
 
 [2026-10-19] Installata Optimus UI
-Cosa: aggiunte le librerie Optimus UI (componenti tabella, ricerca, filtri, icone) e il tema Aura in app.config.ts; per ora nessuna schermata le usa.
+Cosa: aggiunte le librerie Optimus UI (componenti tabella, ricerca, filtri, icone) e il tema Aura in app.config.ts; poi la tabella di Gestione eventi e' stata riscritta con `p-table` (filtri per colonna, selezione, barra azioni, paginazione Optimus); 43 test unitari e 11 e2e della gestione eventi verdi.
 Chi: Mahima ha chiesto la libreria (e corretto il nome: non PrimeNG ma Optimus); Claude ha verificato licenza (MIT) e compatibilita' (Angular 22) prima di installare.
 Paradigma: AI-assisted; verifica delle fonti prima di aggiungere una dipendenza (npm view, pagina ufficiale).
 Artefatti: ramo 025-tabella-selezione; package.json, app.config.ts.
-Problemi: il nome detto a voce ("penNG") faceva pensare a PrimeNG, scartato per la licenza: la ricerca ha mostrato che Optimus e' un fork gratuito. Il tema porta il bundle iniziale a 763 kB (limite 700, solo avviso).
+Problemi: il nome detto a voce ("penNG") faceva pensare a PrimeNG, scartato per la licenza: la ricerca ha mostrato che Optimus e' un fork gratuito. Il tema e i componenti portano il bundle iniziale a 795 kB (limite 700, solo avviso). I test e2e cercavano `tr[mat-row]`: ora `tr[data-row]`.
 Spunto: un nome ambiguo va verificato sulla fonte prima di rifiutare o accettare la scelta.
 
 2. NOTE APERTE PER IL CAPITOLO 3

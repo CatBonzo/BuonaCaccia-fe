@@ -5,9 +5,9 @@
 
 .table-wrap { overflow-x: auto; border: 1px solid var(--bc-line); border-radius: 14px; background: var(--mat-sys-surface-container-lowest, #fff); }
 table { width: 100%; background: transparent; }
-th.mat-mdc-header-cell { font-weight: 700; color: var(--mat-sys-on-surface-variant); white-space: nowrap; }
-td.mat-mdc-cell { padding-top: 10px; padding-bottom: 10px; }
-tr.mat-mdc-row:hover { background: var(--mat-sys-surface-container-low); }
+th { font-weight: 700; color: var(--mat-sys-on-surface-variant); white-space: nowrap; }
+td { padding-top: 10px; padding-bottom: 10px; }
+tbody tr:hover { background: var(--mat-sys-surface-container-low); }
 .title { display: block; font-weight: 700; color: var(--mat-sys-primary); text-decoration: none; }
 .title:hover { text-decoration: underline; }
 .meta { display: block; color: var(--mat-sys-on-surface-variant); font-size: 0.85rem; }
@@ -20,7 +20,7 @@ mat-menu i, .mat-mdc-menu-item i { margin-right: 10px; width: 1.1rem; text-align
 .slot { display: inline-block; width: 40px; height: 40px; vertical-align: middle; }
 
 th.check, td.check { width: 56px; padding-right: 0; }
-tr.mat-mdc-row.selected { background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent); }
+tbody tr.selected { background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent); }
 
 // Lo stato come etichetta colorata con un puntino, come nella tabella di riferimento.
 .badge {
@@ -92,4 +92,5 @@ tr.filter-row th { padding-top: 0; padding-bottom: 12px; border-bottom: 1px soli
   font-weight: 400;
 }
 .col-filter:focus-visible { outline: 2px solid var(--bc-accent); outline-offset: 1px; }
-mat-select.col-filter { display: block; }
+p-select.col-filter { display: flex; padding: 0; }
+p-iconfield { display: block; }

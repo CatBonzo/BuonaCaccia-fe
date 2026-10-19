@@ -11,7 +11,7 @@ async function choose(page: Page, testId: string, option: string) {
 /** Si cerca per titolo: il titolo e' unico, quindi resta una sola riga. */
 async function findCard(page: Page, title: string) {
   await filterByName(page, title);
-  const card = page.locator('tr[mat-row]', { hasText: title });
+  const card = page.locator('tr[data-row]', { hasText: title });
   await expect(card).toHaveCount(1);
   return card;
 }
@@ -21,12 +21,12 @@ test.describe('gestione eventi della segreteria', () => {
     const draft = await createDraft(request, `filtro${Date.now()}`);
     await loginAs(page, 'segreteria');
     await page.goto('/segreteria/eventi');
-    await expect(page.locator('th.mat-mdc-header-cell', { hasText: 'ID' }).first()).toBeVisible();
-    await expect(page.locator('tr[mat-row]').first().getByTestId('event-status')).toBeVisible();
+    await expect(page.locator('th', { hasText: 'ID' }).first()).toBeVisible();
+    await expect(page.locator('tr[data-row]').first().getByTestId('event-status')).toBeVisible();
 
     // Stato: solo le bozze.
     await choose(page, 'status-filter', 'Bozza');
-    const rows = page.locator('tr[mat-row]');
+    const rows = page.locator('tr[data-row]');
     await expect(rows.first()).toBeVisible();
     await expect(page.locator('[data-testid="event-status"]:not([data-status="DRAFT"])')).toHaveCount(0);
 
@@ -51,7 +51,7 @@ test.describe('gestione eventi della segreteria', () => {
     await loginAs(page, 'segreteria');
     await page.goto('/segreteria/eventi');
     await filterByName(page, prefix);
-    const rows = page.locator('tr[mat-row]', { hasText: prefix });
+    const rows = page.locator('tr[data-row]', { hasText: prefix });
     await expect(rows).toHaveCount(2);
     await expect(page.getByTestId('bulk-bar')).toHaveCount(0);
 
@@ -74,8 +74,8 @@ test.describe('gestione eventi della segreteria', () => {
   test('la tabella mostra gli eventi con vedi, modifica, elimina e "Nuovo evento" porta a una pagina a parte', async ({ page }) => {
     await loginAs(page, 'segreteria');
     await page.goto('/segreteria/eventi');
-    await expect(page.locator('table[mat-table]')).toBeVisible();
-    await expect(page.locator('tr[mat-row]').first().getByTestId('view')).toBeVisible();
+    await expect(page.locator('p-table table')).toBeVisible();
+    await expect(page.locator('tr[data-row]').first().getByTestId('view')).toBeVisible();
     await page.getByTestId('new-event').click();
     await expect(page).toHaveURL(/\/segreteria\/eventi\/nuovo$/);
     // Il calendario si apre dall'icona e una data scelta compare nel campo.

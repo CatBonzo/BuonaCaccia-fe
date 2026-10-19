@@ -1,4 +1,4 @@
-<a mat-button routerLink="/segreteria/eventi">← Gestione eventi</a>
+<a mat-button routerLink="/segreteria/eventi" class="back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Gestione eventi</a>
 <h1>{{ editing() ? 'Modifica evento' : 'Nuovo evento' }}</h1>
 
 @if (loading()) {
@@ -80,22 +80,30 @@
 
   <mat-form-field>
     <mat-label>Inizio</mat-label>
-    <input matInput type="date" name="startDate" [(ngModel)]="f.startDate" data-testid="f-start" />
+    <input matInput [matDatepicker]="p1" name="startDate" placeholder="gg/mm/aaaa" [value]="toDate(f.startDate)" (dateInput)="setDate('startDate', $event.value)" (dateChange)="setDate('startDate', $event.value)" data-testid="f-start" />
+    <mat-datepicker-toggle matIconSuffix [for]="p1" aria-label="Apri il calendario" />
+    <mat-datepicker #p1 />
     @if (err('startDate'); as m) { <mat-error>{{ m }}</mat-error> }
   </mat-form-field>
   <mat-form-field>
     <mat-label>Fine</mat-label>
-    <input matInput type="date" name="endDate" [(ngModel)]="f.endDate" data-testid="f-end" />
+    <input matInput [matDatepicker]="p2" name="endDate" placeholder="gg/mm/aaaa" [value]="toDate(f.endDate)" (dateInput)="setDate('endDate', $event.value)" (dateChange)="setDate('endDate', $event.value)" data-testid="f-end" />
+    <mat-datepicker-toggle matIconSuffix [for]="p2" aria-label="Apri il calendario" />
+    <mat-datepicker #p2 />
     @if (err('endDate'); as m) { <mat-error>{{ m }}</mat-error> }
   </mat-form-field>
   <mat-form-field>
     <mat-label>Apertura iscrizioni</mat-label>
-    <input matInput type="date" name="registrationOpenDate" [(ngModel)]="f.registrationOpenDate" data-testid="f-open" />
+    <input matInput [matDatepicker]="p3" name="registrationOpenDate" placeholder="gg/mm/aaaa" [value]="toDate(f.registrationOpenDate)" (dateInput)="setDate('registrationOpenDate', $event.value)" (dateChange)="setDate('registrationOpenDate', $event.value)" data-testid="f-open" />
+    <mat-datepicker-toggle matIconSuffix [for]="p3" aria-label="Apri il calendario" />
+    <mat-datepicker #p3 />
     @if (err('registrationOpenDate'); as m) { <mat-error>{{ m }}</mat-error> }
   </mat-form-field>
   <mat-form-field>
     <mat-label>Chiusura iscrizioni</mat-label>
-    <input matInput type="date" name="registrationCloseDate" [(ngModel)]="f.registrationCloseDate" data-testid="f-close" />
+    <input matInput [matDatepicker]="p4" name="registrationCloseDate" placeholder="gg/mm/aaaa" [value]="toDate(f.registrationCloseDate)" (dateInput)="setDate('registrationCloseDate', $event.value)" (dateChange)="setDate('registrationCloseDate', $event.value)" data-testid="f-close" />
+    <mat-datepicker-toggle matIconSuffix [for]="p4" aria-label="Apri il calendario" />
+    <mat-datepicker #p4 />
     @if (err('registrationCloseDate'); as m) { <mat-error>{{ m }}</mat-error> }
   </mat-form-field>
 

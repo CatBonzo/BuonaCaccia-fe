@@ -2,6 +2,8 @@ import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -15,6 +17,7 @@ import { eventUpdate } from '../api/fn/events/event-update';
 import { regionFindAll } from '../api/fn/regions/region-find-all';
 import { EventDto, EventRequestDto, EventTypeDto, RegionDto } from '../api/models';
 import { ApiError } from '../core/api-error';
+import { DataItalianaAdapter, FORMATI_DATA_ITALIANI, dateToIso, isoToDate } from '../core/data-italiana';
 import { LEVEL_LABELS } from '../core/labels';
 import { SessionService } from '../core/session.service';
 
@@ -32,7 +35,14 @@ const EMPTY: EventFields = {
 /** Creazione e modifica di un evento. Requisiti e adempimenti arrivano dal tipo scelto e non si cambiano da qui. */
 @Component({
   selector: 'app-evento-form',
-  imports: [FormsModule, RouterLink, MatButtonModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule],
+  imports: [
+    FormsModule, RouterLink, MatButtonModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule,
+  ],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'it-IT' },
+    { provide: DateAdapter, useClass: DataItalianaAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: FORMATI_DATA_ITALIANI },
+  ],
   templateUrl: './evento-form.component.html',
   styleUrl: './evento-form.component.scss',
 })
@@ -56,6 +66,13 @@ export class EventoFormComponent {
   protected readonly levels = Object.entries(LEVEL_LABELS);
 
   protected f: EventFields = { ...EMPTY };
+
+  /** Il calendario lavora con date, il modulo e il backend con "aaaa-mm-gg": qui si passa dall'una all'altra. */
+  protected readonly toDate = isoToDate;
+
+  protected setDate(field: 'startDate' | 'endDate' | 'registrationOpenDate' | 'registrationCloseDate', date: Date | null): void {
+    this.f[field] = dateToIso(date);
+  }
 
   constructor() {
     this.api.invoke(eventTypeFindAll).then((r) => this.types.set((r.payload ?? []).filter((t) => t.active !== false)), () => undefined);

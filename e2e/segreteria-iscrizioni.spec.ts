@@ -54,7 +54,8 @@ test.describe('segreteria: iscrizioni e documenti', () => {
     await page.goto('/segreteria/eventi');
     await page.getByTestId('q').fill(event.title);
     await page.getByTestId('apply').click();
-    await page.locator('mat-card', { hasText: event.title }).getByTestId('enrollments').click();
+    await page.locator('tr[mat-row]', { hasText: event.title }).getByTestId('more').click();
+    await page.getByTestId('enrollments').click();
     await expect(page.locator('mat-card[data-enrollment]')).toHaveCount(1);
   });
 

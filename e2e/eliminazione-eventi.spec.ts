@@ -5,7 +5,7 @@ import { loginAs } from './login';
 async function findCard(page: Page, title: string) {
   await page.getByTestId('q').fill(title);
   await page.getByTestId('apply').click();
-  return page.locator('mat-card', { hasText: title });
+  return page.locator('tr[mat-row]', { hasText: title });
 }
 
 test.describe('eliminazione degli eventi', () => {
@@ -20,12 +20,13 @@ test.describe('eliminazione degli eventi', () => {
     const card = await findCard(page, draft.title);
     await expect(card).toHaveCount(1);
     await card.getByTestId('delete').click();
-    await card.getByRole('button', { name: 'No' }).click();
+    await page.getByRole('button', { name: 'No' }).click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(card).toHaveCount(1);
 
     await card.getByTestId('delete').click();
-    await card.getByTestId('confirm-delete').click();
-    await expect(page.locator('mat-card', { hasText: draft.title })).toHaveCount(0);
+    await page.getByTestId('confirm-delete').click();
+    await expect(page.locator('tr[mat-row]', { hasText: draft.title })).toHaveCount(0);
   });
 
   test('elimina un evento creato che non ha iscrizioni', async ({ page, request }) => {
@@ -36,8 +37,8 @@ test.describe('eliminazione degli eventi', () => {
     const card = await findCard(page, event.title);
     await expect(card).toHaveCount(1);
     await card.getByTestId('delete').click();
-    await card.getByTestId('confirm-delete').click();
-    await expect(page.locator('mat-card', { hasText: event.title })).toHaveCount(0);
+    await page.getByTestId('confirm-delete').click();
+    await expect(page.locator('tr[mat-row]', { hasText: event.title })).toHaveCount(0);
   });
 
   test('un evento con iscrizioni non si elimina, si puo\' annullare', async ({ page, request }) => {
@@ -48,7 +49,8 @@ test.describe('eliminazione degli eventi', () => {
 
     const card = await findCard(page, event.title);
     await expect(card).toHaveCount(1);
-    await expect(card.getByTestId('cancel')).toBeVisible();
+    await card.getByTestId('more').click();
+    await expect(page.getByTestId('cancel')).toBeVisible();
     await expect(card.getByTestId('delete')).toHaveCount(0);
   });
 });

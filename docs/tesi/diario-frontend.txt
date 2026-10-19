@@ -199,6 +199,14 @@ Artefatti: ramo 023-carte-evento; evento-card.component.{ts,html,scss,spec.ts}, 
 Problemi: l'immagine di riferimento non si scarica dal sandbox (proxy), quindi il disegno segue la descrizione di Mahima e le carte-con-stati piu' comuni. Un e2e del menu su telefono ha fallito una volta sola nella suite completa e passa da solo e alla seconda esecuzione: lo segno come instabile, non l'ho toccato.
 Spunto: quando manca il riferimento visivo conviene dirlo subito e chiedere uno screenshot in chat.
 
+[2026-10-19] Gestione eventi in tabella, con calendario nel modulo
+Cosa: l'elenco degli eventi della segreteria diventa una tabella Material con vedi/modifica/elimina sulla riga e un menu per le altre azioni; elimina e annulla chiedono conferma in una finestra; le date del modulo hanno il calendario in italiano; "Nuovo evento" e' allineato e porta alla pagina di creazione.
+Chi: Mahima ha indicato la struttura (tabella, azioni, pulsante, pagina a parte, calendario) e i riferimenti visivi; Claude ha scelto il menu per le azioni di stato, le finestre di conferma e l'adattatore di date italiano.
+Paradigma: AI-assisted con riferimenti visivi; code harness: i test e2e della gestione eventi sono stati riscritti sulla tabella (riga, menu, finestra) e ne e' stato aggiunto uno per tabella, pagina di creazione e calendario.
+Artefatti: ramo 024-gestione-eventi-tabella; segreteria-eventi, evento-form, evento-conferma (nuovo), core/data-italiana.ts, e2e.
+Problemi: il calendario Material legge "10/03/2027" come 3 ottobre (formato americano) e i campi data nativi non si compilavano come nei test: adattatore italiano e test aggiornati a gg/mm/aaaa. La finestra di conferma, con il mouse, resta un attimo nella pagina dopo "No": il test aspetta che sparisca. Il test del menu su telefono e' fallito due volte alla prima esecuzione dopo modifiche e passa alla seconda: probabile ricompilazione del server di sviluppo, da tenere d'occhio.
+Spunto: cambiare il tipo di controllo (data nativa -> calendario) cambia anche come si scrive nei test: i test sono parte del cambiamento.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

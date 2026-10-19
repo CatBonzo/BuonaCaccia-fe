@@ -17,8 +17,21 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     { provide: LOCALE_ID, useValue: 'it' },
     importProvidersFrom(AppRoutingModule),
-    // Optimus UI (fork MIT di PrimeNG, nessuna licenza): tema Aura, senza dark mode automatico.
-    provideOptimus({ theme: { preset: Aura, options: { darkModeSelector: false } } }),
+    // Optimus UI (fork MIT di PrimeNG, nessuna licenza): tema Aura, senza dark mode automatico, testi in italiano.
+    provideOptimus({
+      theme: { preset: Aura, options: { darkModeSelector: false } },
+      translation: {
+        firstDayOfWeek: 1,
+        dateFormat: 'dd/mm/yy',
+        dayNames: ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'],
+        dayNamesShort: ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'],
+        dayNamesMin: ['D', 'L', 'M', 'M', 'G', 'V', 'S'],
+        monthNames: ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'],
+        monthNamesShort: ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'],
+        today: 'Oggi',
+        clear: 'Cancella',
+      },
+    }),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     { provide: ApiConfiguration, useValue: { rootUrl: environment.apiUrl } },
   ],

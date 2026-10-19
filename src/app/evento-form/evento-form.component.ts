@@ -2,13 +2,16 @@ import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DatePickerModule } from '@openng/optimus-ui/datepicker';
+import { FluidModule } from '@openng/optimus-ui/fluid';
+import { InputNumberModule } from '@openng/optimus-ui/inputnumber';
+import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { MessageModule } from '@openng/optimus-ui/message';
+import { PanelModule } from '@openng/optimus-ui/panel';
+import { SelectModule } from '@openng/optimus-ui/select';
+import { TextareaModule } from '@openng/optimus-ui/textarea';
 import { Api } from '../api/api';
 import { eventTypeFindAll } from '../api/fn/event-types/event-type-find-all';
 import { eventCreate } from '../api/fn/events/event-create';
@@ -17,7 +20,7 @@ import { eventUpdate } from '../api/fn/events/event-update';
 import { regionFindAll } from '../api/fn/regions/region-find-all';
 import { EventDto, EventRequestDto, EventTypeDto, RegionDto } from '../api/models';
 import { ApiError } from '../core/api-error';
-import { DataItalianaAdapter, FORMATI_DATA_ITALIANI, dateToIso, isoToDate } from '../core/data-italiana';
+import { dateToIso, isoToDate } from '../core/data-italiana';
 import { LEVEL_LABELS } from '../core/labels';
 import { SessionService } from '../core/session.service';
 
@@ -27,21 +30,19 @@ type EventFields = {
   seats: number | null; fee: number | null; enrollmentMode: string;
 };
 
+type DateField = 'startDate' | 'endDate' | 'registrationOpenDate' | 'registrationCloseDate';
+
 const EMPTY: EventFields = {
   typeCode: '', level: '', region: '', zone: '', title: '', description: '', location: '', province: '', startDate: '', endDate: '',
   registrationOpenDate: '', registrationCloseDate: '', seats: null, fee: null, enrollmentMode: '',
 };
 
-/** Creazione e modifica di un evento. Requisiti e adempimenti arrivano dal tipo scelto e non si cambiano da qui. */
+/** Creazione e modifica di un evento, in pannelli (categoria e regione, informazioni, date, posti e quota, capo) con i componenti Optimus. Requisiti e adempimenti arrivano dal tipo scelto e non si cambiano da qui. */
 @Component({
   selector: 'app-evento-form',
   imports: [
-    FormsModule, RouterLink, MatButtonModule, MatDatepickerModule, MatFormFieldModule, MatInputModule, MatProgressBarModule, MatSelectModule,
-  ],
-  providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'it-IT' },
-    { provide: DateAdapter, useClass: DataItalianaAdapter },
-    { provide: MAT_DATE_FORMATS, useValue: FORMATI_DATA_ITALIANI },
+    FormsModule, RouterLink, MatButtonModule, MatProgressBarModule,
+    DatePickerModule, FluidModule, InputNumberModule, InputTextModule, MessageModule, PanelModule, SelectModule, TextareaModule,
   ],
   templateUrl: './evento-form.component.html',
   styleUrl: './evento-form.component.scss',
@@ -63,15 +64,37 @@ export class EventoFormComponent {
   protected readonly error = signal<string | null>(null);
   /** Errori per campo, dalle risposte 422 del backend. */
   protected readonly fieldErrors = signal<Record<string, string>>({});
-  protected readonly levels = Object.entries(LEVEL_LABELS);
+  protected readonly modeOptions = [
+    { value: 'SELF', label: 'Il socio da solo' },
+    { value: 'BY_LEADER', label: 'Il capo unità' },
+    { value: 'BOTH', label: 'Entrambi' },
+  ];
+  protected readonly dateFields: { key: DateField; id: string; label: string }[] = [
+    { key: 'startDate', id: 'f-start', label: 'Inizio' },
+    { key: 'endDate', id: 'f-end', label: 'Fine' },
+    { key: 'registrationOpenDate', id: 'f-open', label: 'Apertura iscrizioni' },
+    { key: 'registrationCloseDate', id: 'f-close', label: 'Chiusura iscrizioni' },
+  ];
 
   protected f: EventFields = { ...EMPTY };
 
-  /** Il calendario lavora con date, il modulo e il backend con "aaaa-mm-gg": qui si passa dall'una all'altra. */
-  protected readonly toDate = isoToDate;
+  /** Il calendario lavora con date, il modulo e il backend con "aaaa-mm-gg": `dates` e `f` si tengono allineati. */
+  protected dates: Record<DateField, Date | null> = { startDate: null, endDate: null, registrationOpenDate: null, registrationCloseDate: null };
 
-  protected setDate(field: 'startDate' | 'endDate' | 'registrationOpenDate' | 'registrationCloseDate', date: Date | null): void {
+  protected setDate(field: DateField, date: Date | null): void {
+    this.dates[field] = date;
     this.f[field] = dateToIso(date);
+  }
+
+  private syncDates(): void {
+    for (const key of ['startDate', 'endDate', 'registrationOpenDate', 'registrationCloseDate'] as const) this.dates[key] = isoToDate(this.f[key]);
+  }
+
+  /** Il livello nazionale lo vede solo chi puo' gestire i tipi di evento. */
+  protected levelOptions(): { value: string; label: string }[] {
+    return Object.entries(LEVEL_LABELS)
+      .filter(([value]) => value !== 'NATIONAL' || this.canNational())
+      .map(([value, label]) => ({ value, label }));
   }
 
   constructor() {
@@ -80,7 +103,10 @@ export class EventoFormComponent {
     effect(() => {
       const id = this.id();
       if (id) this.load(id);
-      else this.f = { ...EMPTY, level: 'REGIONAL', region: this.session.regionCode() };
+      else {
+        this.f = { ...EMPTY, level: 'REGIONAL', region: this.session.regionCode() };
+        this.syncDates();
+      }
     });
   }
 
@@ -169,6 +195,7 @@ export class EventoFormComponent {
           registrationCloseDate: e.registrationCloseDate ?? '', seats: e.seats ?? null, fee: e.fee ?? null,
           enrollmentMode: e.enrollmentMode ?? '',
         };
+        this.syncDates();
         this.loading.set(false);
       },
       (e: ApiError) => {

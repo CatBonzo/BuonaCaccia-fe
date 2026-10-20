@@ -11,116 +11,144 @@
 }
 
 @if (event(); as e) {
-  <article>
-    <h1 data-testid="title">{{ e.title }}</h1>
-    <p class="subtitle">{{ e.typeCode }} · {{ labelOf(levelLabels, e.level) }} · {{ e.location }}, {{ e.province }} ({{ e.region }})</p>
+  <article [attr.data-cat]="cat()">
+    <header class="hero">
+      <i class="fa-solid big" [ngClass]="icon()" aria-hidden="true"></i>
+      <div class="hero-text">
+        <div class="tags">
+          <p-tag [value]="e.typeCode ?? ''" severity="contrast" data-testid="type-code" />
+          <p-tag [value]="labelOf(categoryLabels, e.category)" severity="secondary" />
+          <p-tag [value]="labelOf(levelLabels, e.level)" severity="secondary" />
+          <p-tag data-testid="availability" [value]="labelOf(availabilityLabels, e.availability)" [severity]="availabilitySeverity(e)" />
+        </div>
+        <h1 data-testid="title">{{ e.title }}</h1>
+        <p class="subtitle"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> {{ e.location }}, {{ e.province }} · {{ regionName(e) }}</p>
+      </div>
+    </header>
 
     @if (e.status === 'CANCELLED') {
-      <p class="cancelled" role="status">
+      <p-message severity="error" class="cancelled" role="status">
         Evento annullato{{ e.cancellationReason ? ': ' + e.cancellationReason : '' }}.
-      </p>
+      </p-message>
     }
 
-    <mat-chip-set>
-      <mat-chip data-testid="availability">{{ labelOf(availabilityLabels, e.availability) }}</mat-chip>
-      <mat-chip>{{ labelOf(categoryLabels, e.category) }}</mat-chip>
-    </mat-chip-set>
+    <div class="layout">
+      <div class="sections">
+        <p-panel class="panel">
+          <ng-template #header><span class="panel-title"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Logistica</span></ng-template>
+          <p class="lead">L'evento <strong>{{ e.typeCode }}</strong> della regione <strong>{{ regionName(e) }}</strong></p>
+          <dl>
+            <dt><i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Quando</dt>
+            <dd>dal <strong>{{ e.startDate | date: 'dd/MM/y' }}</strong> al <strong>{{ e.endDate | date: 'dd/MM/y' }}</strong></dd>
+            <dt><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i> Dove</dt>
+            <dd>in località <strong>{{ e.location }} ({{ e.province }})</strong></dd>
+            <dt><i class="fa-solid fa-coins" aria-hidden="true"></i> Quota</dt>
+            <dd>La quota d'iscrizione è di <strong>{{ e.fee | currency: 'EUR' : 'symbol' : '1.0-2' : 'it' }}</strong></dd>
+            <dt><i class="fa-solid fa-door-open" aria-hidden="true"></i> Iscrizioni</dt>
+            <dd>dal {{ e.registrationOpenDate | date: 'dd/MM/y' }} al {{ e.registrationCloseDate | date: 'dd/MM/y' }}</dd>
+          </dl>
+          @if (e.description) {
+            <p class="description">{{ e.description }}</p>
+          }
+        </p-panel>
 
-    <mat-card appearance="outlined">
-      <mat-card-content>
-        <dl>
-          <dt>Quando</dt>
-          <dd>{{ e.startDate | date: 'd MMMM y' }} – {{ e.endDate | date: 'd MMMM y' }}</dd>
-          <dt>Iscrizioni</dt>
-          <dd>dal {{ e.registrationOpenDate | date: 'd MMMM y' }} al {{ e.registrationCloseDate | date: 'd MMMM y' }}</dd>
-          <dt>Quota</dt>
-          <dd>{{ e.fee | currency: 'EUR' : 'symbol' : '1.0-2' : 'it' }}</dd>
-          <dt>Posti</dt>
-          <dd data-testid="seats">{{ seatsLeft(e) }} liberi su {{ e.seats }}</dd>
-        </dl>
-        @if (e.description) {
-          <p>{{ e.description }}</p>
-        }
-      </mat-card-content>
-    </mat-card>
-
-    @if (e.requirements; as r) {
-      <h2>Chi può partecipare</h2>
-      <ul>
-        @if (r.minAge || r.maxAge) {
-          <li>Età: {{ r.minAge ?? 'qualsiasi' }} – {{ r.maxAge ?? 'qualsiasi' }} anni</li>
-        }
-        @if (r.branches?.length) {
-          <li>Branche: {{ r.branches!.join(', ') }}</li>
-        }
-        @if (r.memberTypes?.length) {
-          <li>Tipo di socio: {{ r.memberTypes!.join(', ') }}</li>
-        }
-        @if (r.maxPerGroup) {
-          <li>Al massimo {{ r.maxPerGroup }} per gruppo</li>
-        }
-      </ul>
-    }
-
-    @if (e.obligations?.length) {
-      <h2>Cosa serve per completare l'iscrizione</h2>
-      <mat-list>
-        @for (o of e.obligations; track $index) {
-          <mat-list-item>{{ o.description || labelOf(obligationLabels, o.type) }}</mat-list-item>
-        }
-      </mat-list>
-    }
-
-    @if (e.contacts?.administrative || e.contacts?.methodological) {
-      <h2>Referenti</h2>
-      <ul>
-        @if (e.contacts?.administrative; as c) {
-          <li>Amministrativo: {{ c.name }} {{ c.email }} {{ c.phone }}</li>
-        }
-        @if (e.contacts?.methodological; as c) {
-          <li>Metodologico: {{ c.name }} {{ c.email }} {{ c.phone }}</li>
-        }
-      </ul>
-    }
-
-    <section class="enroll">
-      @if (e.status === 'CANCELLED') {
-        <!-- niente iscrizione a un evento annullato -->
-      } @else if (!session.loggedIn()) {
-        <a mat-flat-button routerLink="/login" data-testid="login-to-enroll">Accedi per iscriverti</a>
-      } @else if (!session.can('iscrizione:self')) {
-        <p class="hint">Il tuo profilo non può iscriversi agli eventi.</p>
-      } @else if (canEnroll(e)) {
-        <button mat-flat-button type="button" data-testid="enroll" [disabled]="enrolling()" (click)="enroll(e)">
-          {{ e.availability === 'HEAVY_OVERBOOKING' ? 'Mettiti in lista d\u2019attesa' : 'Iscriviti' }}
-        </button>
-      } @else {
-        <p class="hint">{{ labelOf(availabilityLabels, e.availability) }}.</p>
-      }
-      @if (session.loggedIn() && session.isLeader() && session.can('iscrizione:self') && e.enrollmentMode !== 'SELF' && canEnroll(e) && e.status !== 'CANCELLED') {
-        <div class="youth">
-          <p>Iscrivi un ragazzo della tua unità con il suo codice socio.</p>
-          <mat-form-field>
-            <mat-label>Codice socio</mat-label>
-            <input matInput name="memberCode" [(ngModel)]="memberCode" data-testid="member-code" />
-          </mat-form-field>
-          <button mat-stroked-button type="button" data-testid="enroll-youth" [disabled]="enrolling() || !memberCode.trim()" (click)="enroll(e, memberCode.trim())">
-            Iscrivi il ragazzo
-          </button>
-        </div>
-      }
-      @if (enrollError(); as err) {
-        <div class="error" role="alert" data-testid="enroll-error">
-          <p>{{ err.message }}</p>
-          @if (err.details.length) {
-            <ul>
-              @for (d of err.details; track $index) {
-                <li>{{ d.message }}</li>
+        <p-panel class="panel">
+          <ng-template #header><span class="panel-title"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Iscrizione</span></ng-template>
+          <ul class="facts">
+            <li><i class="fa-solid fa-user-check" aria-hidden="true"></i> {{ enrollmentText(e) }}</li>
+            @for (o of payments(e); track $index) {
+              <li><i class="fa-solid fa-euro-sign" aria-hidden="true"></i> {{ o.description || 'Pagamento della quota' }}</li>
+            }
+            @for (a of approvals(e); track a) {
+              <li><i class="fa-solid fa-stamp" aria-hidden="true"></i> Questo evento richiede {{ a }}.</li>
+            }
+          </ul>
+          @if (rules(e).length) {
+            <p class="rules-title"><i class="fa-solid fa-gear" aria-hidden="true"></i> Questo evento è soggetto alle seguenti regole:</p>
+            <ul class="rules">
+              @for (r of rules(e); track r) {
+                <li>{{ r }}</li>
               }
             </ul>
           }
+        </p-panel>
+
+        @if (documents(e).length || hasForm(e)) {
+          <p-panel class="panel">
+            <ng-template #header><span class="panel-title"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Scheda elettronica e documenti</span></ng-template>
+            <ul class="facts">
+              @if (hasForm(e)) {
+                <li><i class="fa-solid fa-rectangle-list" aria-hidden="true"></i> Questo evento prevede la compilazione elettronica della scheda.</li>
+              }
+              @for (d of documents(e); track $index) {
+                <li><i class="fa-solid" [ngClass]="d.delivery === 'PAPER' ? 'fa-print' : 'fa-camera'" aria-hidden="true"></i> {{ documentText(d) }}</li>
+              }
+            </ul>
+          </p-panel>
+        }
+
+        @if (e.contacts?.administrative || e.contacts?.methodological) {
+          <p-panel class="panel">
+            <ng-template #header><span class="panel-title"><i class="fa-solid fa-address-book" aria-hidden="true"></i> Referenti</span></ng-template>
+            <ul class="facts">
+              @if (e.contacts?.administrative; as c) {
+                <li><i class="fa-solid fa-briefcase" aria-hidden="true"></i> <span><strong>Amministrativo:</strong> {{ c.name }} {{ c.email }} {{ c.phone }}</span></li>
+              }
+              @if (e.contacts?.methodological; as c) {
+                <li><i class="fa-solid fa-compass" aria-hidden="true"></i> <span><strong>Metodologico:</strong> {{ c.name }} {{ c.email }} {{ c.phone }}</span></li>
+              }
+            </ul>
+          </p-panel>
+        }
+      </div>
+
+      <aside class="side">
+        <p-panel class="panel enroll-panel">
+          <ng-template #header><span class="panel-title"><i class="fa-solid fa-ticket" aria-hidden="true"></i> Posti e iscrizione</span></ng-template>
+          <p class="fee">{{ e.fee | currency: 'EUR' : 'symbol' : '1.0-2' : 'it' }}</p>
+          <p class="seats" data-testid="seats">{{ seatsLeft(e) }} liberi su {{ e.seats }}</p>
+          <p-progressbar [value]="seatsTakenPercent(e)" [showValue]="false" class="seats-bar" />
+    <div class="enroll">
+          @if (e.status === 'CANCELLED') {
+            <!-- niente iscrizione a un evento annullato -->
+          } @else if (!session.loggedIn()) {
+            <a mat-flat-button routerLink="/login" data-testid="login-to-enroll">Accedi per iscriverti</a>
+          } @else if (!session.can('iscrizione:self')) {
+            <p class="hint">Il tuo profilo non può iscriversi agli eventi.</p>
+          } @else if (canEnroll(e)) {
+            <button mat-flat-button type="button" data-testid="enroll" [disabled]="enrolling()" (click)="enroll(e)">
+              {{ e.availability === 'HEAVY_OVERBOOKING' ? 'Mettiti in lista d\u2019attesa' : 'Iscriviti' }}
+            </button>
+          } @else {
+            <p class="hint">{{ labelOf(availabilityLabels, e.availability) }}.</p>
+          }
+          @if (session.loggedIn() && session.isLeader() && session.can('iscrizione:self') && e.enrollmentMode !== 'SELF' && canEnroll(e) && e.status !== 'CANCELLED') {
+            <div class="youth">
+              <p>Iscrivi un ragazzo della tua unità con il suo codice socio.</p>
+              <mat-form-field>
+                <mat-label>Codice socio</mat-label>
+                <input matInput name="memberCode" [(ngModel)]="memberCode" data-testid="member-code" />
+              </mat-form-field>
+              <button mat-stroked-button type="button" data-testid="enroll-youth" [disabled]="enrolling() || !memberCode.trim()" (click)="enroll(e, memberCode.trim())">
+                Iscrivi il ragazzo
+              </button>
+            </div>
+          }
+          @if (enrollError(); as err) {
+            <div class="error" role="alert" data-testid="enroll-error">
+              <p>{{ err.message }}</p>
+              @if (err.details.length) {
+                <ul>
+                  @for (d of err.details; track $index) {
+                    <li>{{ d.message }}</li>
+                  }
+                </ul>
+              }
+            </div>
+          }
         </div>
-      }
-    </section>
+        </p-panel>
+      </aside>
+    </div>
   </article>
 }

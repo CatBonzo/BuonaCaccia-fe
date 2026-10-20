@@ -3,13 +3,16 @@ import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { InputTextModule } from '@openng/optimus-ui/inputtext';
+import { MessageModule } from '@openng/optimus-ui/message';
+import { PanelModule } from '@openng/optimus-ui/panel';
+import { ProgressBarModule } from '@openng/optimus-ui/progressbar';
+import { SelectModule } from '@openng/optimus-ui/select';
+import { SelectButtonModule } from '@openng/optimus-ui/selectbutton';
+import { TagModule } from '@openng/optimus-ui/tag';
+import { TextareaModule } from '@openng/optimus-ui/textarea';
 import { Api } from '../api/api';
 import { formGet } from '../api/fn/forms/form-get';
 import { formSave } from '../api/fn/forms/form-save';
@@ -21,8 +24,8 @@ import { ApiError } from '../core/api-error';
 @Component({
   selector: 'app-scheda',
   imports: [
-    DatePipe, FormsModule, RouterLink, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule,
-    MatProgressBarModule, MatRadioModule, MatSelectModule,
+    DatePipe, FormsModule, RouterLink, MatButtonModule, MatProgressBarModule, InputTextModule, MessageModule, PanelModule,
+    ProgressBarModule, SelectModule, SelectButtonModule, TagModule, TextareaModule,
   ],
   templateUrl: './scheda.component.html',
   styleUrl: './scheda.component.scss',
@@ -48,6 +51,21 @@ export class SchedaComponent {
 
   protected readOnly(): boolean {
     return this.form()?.status === 'SUBMITTED';
+  }
+
+  protected readonly yesNo = [{ label: 'Sì', value: 'true' }, { label: 'No', value: 'false' }];
+
+  protected totalQuestions(): number {
+    return (this.form()?.sections ?? []).reduce((n, s) => n + (s.questions?.length ?? 0), 0);
+  }
+
+  protected answered(): number {
+    return Object.values(this.answers()).filter((v) => v.trim() !== '').length;
+  }
+
+  protected answeredPercent(): number {
+    const total = this.totalQuestions();
+    return total ? Math.min(Math.round((this.answered() / total) * 100), 100) : 0;
   }
 
   protected setAnswer(questionId: string, value: string): void {

@@ -295,6 +295,14 @@ Artefatti: ramo 030-scheda-iscrizione; iscrizioni.component.{ts,html,scss}, sche
 Problemi: l'iscrizione non dice se la scheda e' gia' iniziata: lo stato si legge chiamando la scheda di ogni iscrizione. Nessuno dei 22 tipi di prova ha la scheda elettronica, quindi nei dati di prova il blocco non compare.
 Spunto: la funzione c'era gia' ma non si vedeva; per chi la usa conta lo stato visibile, non solo la presenza dell'API.
 
+[2026-10-20] Pannello "Scheda e domande" nel form evento
+Cosa: nel form evento un pannello facoltativo per le domande della scheda (editor di sezioni e domande, partenza dal modello del tipo) e due caselle: scheda medica e intolleranze/allergie; il dettaglio evento elenca le domande; il socio le trova nella scheda.
+Chi: Mahima ha deciso chi scrive le domande (la segreteria, per evento) e cosa e' obbligatorio; Claude ha progettato il pannello e scritto codice e test.
+Paradigma: AI-assisted; SDD: il contratto del backend e' cambiato prima (campi dell'evento) e il client e' stato rigenerato; code harness: 44 unit e 49 e2e verdi, controllo a schermo.
+Artefatti: ramo 031-domande-evento; evento-domande/, evento-form.component.*, evento-dettaglio.component.*, e2e/domande-evento.spec.ts.
+Problemi: dopo la pubblicazione il backend rifiuta qualunque cambio alle domande, quindi il form le blocca e rimanda sempre le stesse; senza domande si omette il campo invece di mandare una lista vuota. Il ramo era partito da una copia vecchia di `feature` (senza la PR 30): l'ho riallineato con un merge prima di aprire la PR.
+Spunto: la regola "facoltativo ma obbligatorio se richiesto" vive nel backend (adempimenti automatici), il frontend la mostra con due caselle e un editor.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

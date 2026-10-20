@@ -21,6 +21,7 @@ import { eventGet } from '../api/fn/events/event-get';
 import { eventUpdate } from '../api/fn/events/event-update';
 import { regionFindAll } from '../api/fn/regions/region-find-all';
 import { EventDto, EventRequestDto, EventTypeDto, FormSectionDto, RegionDto } from '../api/models';
+import { EventoAllegatiComponent } from '../evento-allegati/evento-allegati.component';
 import { EventoDomandeComponent } from '../evento-domande/evento-domande.component';
 import { ApiError } from '../core/api-error';
 import { dateToIso, isoToDate } from '../core/data-italiana';
@@ -46,7 +47,7 @@ const EMPTY: EventFields = {
   selector: 'app-evento-form',
   imports: [
     FormsModule, RouterLink, MatButtonModule, MatProgressBarModule,
-    CheckboxModule, DatePickerModule, EventoDomandeComponent, FluidModule, InputNumberModule, InputTextModule, MessageModule, PanelModule, SelectModule, TextareaModule,
+    CheckboxModule, DatePickerModule, EventoAllegatiComponent, EventoDomandeComponent, FluidModule, InputNumberModule, InputTextModule, MessageModule, PanelModule, SelectModule, TextareaModule,
   ],
   templateUrl: './evento-form.component.html',
   styleUrl: './evento-form.component.scss',

@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MessageModule } from '@openng/optimus-ui/message';
+import { EventoAllegatiComponent } from '../evento-allegati/evento-allegati.component';
 import { PanelModule } from '@openng/optimus-ui/panel';
 import { ProgressBarModule } from '@openng/optimus-ui/progressbar';
 import { TagModule } from '@openng/optimus-ui/tag';
@@ -23,7 +24,7 @@ import { AVAILABILITY_LABELS, BRANCH_LABELS, CATEGORY_LABELS, LEVEL_LABELS, MEMB
 /** Dettaglio di un evento a sezioni: logistica, iscrizione, scheda e documenti, referenti, e a lato posti e iscrizione. */
 @Component({
   selector: 'app-evento-dettaglio',
-  imports: [FormsModule, NgClass, MatFormFieldModule, MatInputModule, CurrencyPipe, DatePipe, RouterLink, MatButtonModule, MatProgressBarModule, MessageModule, PanelModule, ProgressBarModule, TagModule],
+  imports: [EventoAllegatiComponent, FormsModule, NgClass, MatFormFieldModule, MatInputModule, CurrencyPipe, DatePipe, RouterLink, MatButtonModule, MatProgressBarModule, MessageModule, PanelModule, ProgressBarModule, TagModule],
   templateUrl: './evento-dettaglio.component.html',
   styleUrl: './evento-dettaglio.component.scss',
 })

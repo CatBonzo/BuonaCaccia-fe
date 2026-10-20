@@ -94,6 +94,8 @@
           </p-panel>
         }
 
+        <app-evento-allegati [eventId]="e.id!" />
+
         @if (e.contacts?.administrative || e.contacts?.methodological) {
           <p-panel class="panel">
             <ng-template #header><span class="panel-title"><i class="fa-solid fa-address-book" aria-hidden="true"></i> Referenti</span></ng-template>

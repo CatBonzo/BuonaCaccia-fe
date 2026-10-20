@@ -303,6 +303,14 @@ Artefatti: ramo 031-domande-evento; evento-domande/, evento-form.component.*, ev
 Problemi: dopo la pubblicazione il backend rifiuta qualunque cambio alle domande, quindi il form le blocca e rimanda sempre le stesse; senza domande si omette il campo invece di mandare una lista vuota. Il ramo era partito da una copia vecchia di `feature` (senza la PR 30): l'ho riallineato con un merge prima di aprire la PR.
 Spunto: la regola "facoltativo ma obbligatorio se richiesto" vive nel backend (adempimenti automatici), il frontend la mostra con due caselle e un editor.
 
+[2026-10-20] Allegati dell'evento
+Cosa: componente evento-allegati: nel form evento la segreteria aggiunge e toglie file (solo dopo aver creato la bozza), nel dettaglio chiunque li vede e li scarica.
+Chi: Mahima ha chiesto di poter caricare file sull'evento; Claude ha eseguito, riusando il download a Blob gia' usato per i documenti.
+Paradigma: AI-assisted; SDD: client rigenerato dal backend con gli endpoint nuovi (PR 16 backend); code harness: e2e allegati-evento (carica, errore su file finto, scarico da visitatore, rimozione).
+Artefatti: ramo 032-allegati-evento; evento-allegati/, evento-form.*, evento-dettaglio.*, e2e/allegati-evento.spec.ts, e2e/login.ts.
+Problemi: nel backend di Mahima ci sono ora tre utenti di prova con username "segreteria" (Lazio, Abruzzo): il login dei test trovava tre bottoni uguali; i test prendono il primo.
+Spunto: i dati di prova condivisi sono parte del contratto dei test: un duplicato cambia l'esito senza toccare il codice.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

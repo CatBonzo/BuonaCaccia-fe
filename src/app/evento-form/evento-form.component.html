@@ -66,12 +66,28 @@
     </p-panel>
 
     <p-panel class="panel">
-      <ng-template #header><span class="panel-title"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Date</span></ng-template>
+      <ng-template #header><span class="panel-title"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Date evento</span></ng-template>
       @for (w of dateWarnings(); track w) {
         <p-message class="warn" severity="warn" data-testid="date-warning">{{ w }} La bozza si salva lo stesso, ma non si potrà pubblicare così.</p-message>
       }
       <div class="grid">
         @for (d of dateFields; track d.key) {
+          <div class="field">
+            <label [for]="d.id">{{ d.label }}</label>
+            <p-datepicker [inputId]="d.id" [name]="d.key" [ngModel]="dates[d.key]" (ngModelChange)="setDate(d.key, $event)" dateFormat="dd/mm/yy" placeholder="gg/mm/aaaa" [showIcon]="true" [showButtonBar]="true" [invalid]="!!err(d.key)" appendTo="body" />
+            @if (err(d.key); as m) { <p-message severity="error" variant="simple" size="small">{{ m }}</p-message> }
+          </div>
+        }
+      </div>
+    </p-panel>
+
+    <p-panel class="panel">
+      <ng-template #header><span class="panel-title"><i class="fa-solid fa-door-open" aria-hidden="true"></i> Iscrizioni</span></ng-template>
+      @for (w of registrationWarnings(); track w) {
+        <p-message class="warn" severity="warn" data-testid="date-warning">{{ w }} La bozza si salva lo stesso, ma non si potrà pubblicare così.</p-message>
+      }
+      <div class="grid">
+        @for (d of registrationFields; track d.key) {
           <div class="field">
             <label [for]="d.id">{{ d.label }}</label>
             <p-datepicker [inputId]="d.id" [name]="d.key" [ngModel]="dates[d.key]" (ngModelChange)="setDate(d.key, $event)" dateFormat="dd/mm/yy" placeholder="gg/mm/aaaa" [showIcon]="true" [showButtonBar]="true" [invalid]="!!err(d.key)" appendTo="body" />

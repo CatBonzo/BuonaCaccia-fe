@@ -271,6 +271,14 @@ Artefatti: PR 14 backend, PR 27 frontend.
 Problemi: Claude aveva tolto il nome solo dove coincideva col codice; Mahima ha chiesto di toglierlo ovunque.
 Spunto: quando una persona dice "togli X", il perimetro e' tutto il sistema, non il punto in cui lo si nota.
 
+[2026-10-19] Form evento: date dell'evento e date delle iscrizioni separate
+Cosa: nel form di creazione/modifica il pannello "Date" e' diviso in "Date evento" (inizio, fine) e "Iscrizioni" (apertura, chiusura); ogni pannello mostra il suo avviso sulle date sbagliate.
+Chi: Mahima ha chiesto la distinzione (con screenshot); Claude ha eseguito.
+Paradigma: AI-assisted; code harness: e2e della gestione eventi verdi (5/5).
+Artefatti: ramo 028-date-evento-iscrizioni; evento-form.component.{ts,html}.
+Problemi: nessuno; i test cercano i campi per id, quindi non sono cambiati.
+Spunto: raggruppare i campi per significato (quando si svolge / quando ci si iscrive) rende il form leggibile.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

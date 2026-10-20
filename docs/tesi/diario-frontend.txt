@@ -287,6 +287,14 @@ Artefatti: ramo 029-dettaglio-evento; evento-dettaglio.component.{html,ts,scss}.
 Problemi: l'evento non porta le domande della scheda (stanno in un'altra API): la pagina dice solo che la scheda e' elettronica. Un e2e del menu su telefono e' fallito una volta nella corsa completa e passato da solo.
 Spunto: dalle stesse informazioni (requisiti, adempimenti) si ricavano frasi leggibili: la pagina traduce i dati, non li elenca.
 
+[2026-10-20] Compilazione della scheda dalle mie iscrizioni
+Cosa: in "Le mie iscrizioni" ogni iscrizione con scheda elettronica ha un blocco con stato (da iniziare, bozza, riaperta, inviata), risposte date su totale e un pulsante che porta a compilare, continuare la bozza o vedere la scheda inviata; la pagina della scheda e' a pannelli Optimus con barra di avanzamento, Salva bozza e Invia la scheda.
+Chi: Mahima ha chiesto il pulsante per compilare, salvare in bozza e poi inviare; Claude ha eseguito.
+Paradigma: AI-assisted; SDD: nessuna nuova API, il contratto della scheda del backend gia' prevedeva bozza e invio; code harness: 43 unit e 47 e2e verdi, controllo a schermo.
+Artefatti: ramo 030-scheda-iscrizione; iscrizioni.component.{ts,html,scss}, scheda.component.{ts,html,scss}.
+Problemi: l'iscrizione non dice se la scheda e' gia' iniziata: lo stato si legge chiamando la scheda di ogni iscrizione. Nessuno dei 22 tipi di prova ha la scheda elettronica, quindi nei dati di prova il blocco non compare.
+Spunto: la funzione c'era gia' ma non si vedeva; per chi la usa conta lo stato visibile, non solo la presenza dell'API.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

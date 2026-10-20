@@ -57,7 +57,17 @@
           <app-documenti-iscrizione [enrollment]="e" (changed)="reload()" />
         }
         @if (hasForm(e)) {
-          <p><a mat-stroked-button [routerLink]="['/iscrizioni', e.id, 'scheda']" data-testid="open-form">Compila la scheda</a></p>
+          <div class="form-block" data-testid="form-block">
+            <div class="form-head">
+              <span><i class="fa-solid fa-file-pen" aria-hidden="true"></i> <strong>Scheda elettronica</strong></span>
+              <p-tag data-testid="form-state" [value]="formStateText(e)" [severity]="formStateSeverity(e)" />
+            </div>
+            @if (formTotal(e) > 0 && formState(e) !== 'SUBMITTED') {
+              <p class="form-count">Risposte date: {{ formAnswered(e) }} su {{ formTotal(e) }}</p>
+              <p-progressbar [value]="formPercent(e)" [showValue]="false" />
+            }
+            <a mat-flat-button [routerLink]="['/iscrizioni', e.id, 'scheda']" data-testid="open-form">{{ formButtonText(e) }}</a>
+          </div>
         }
 
         @if (e.active && e.paymentInfo?.iban && e.payment) {

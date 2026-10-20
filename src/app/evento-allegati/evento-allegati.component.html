@@ -1,0 +1,27 @@
+@if (editable() || items().length) {
+  <p-panel class="panel" data-testid="panel-allegati">
+    <ng-template #header><span class="panel-title"><i class="fa-solid fa-paperclip" aria-hidden="true"></i> Allegati</span></ng-template>
+    @if (items().length) {
+      <ul class="files" data-testid="allegati">
+        @for (a of items(); track a.id) {
+          <li data-testid="allegato">
+            <i class="fa-solid" [class.fa-file-pdf]="a.contentType === 'application/pdf'" [class.fa-file-image]="a.contentType !== 'application/pdf'" aria-hidden="true"></i>
+            <button type="button" class="link" (click)="download(a)" data-testid="allegato-scarica">{{ a.name }}</button>
+            <span class="size">{{ (a.sizeBytes ?? 0) / 1024 | number: '1.0-0' }} kB</span>
+            @if (editable()) {
+              <button mat-button type="button" (click)="remove(a)" [attr.aria-label]="'Togli ' + a.name" data-testid="allegato-togli">Togli</button>
+            }
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="help">Nessun allegato: carica il programma, il regolamento o i moduli.</p>
+    }
+    @if (editable()) {
+      <p class="help">PDF, JPEG o PNG, fino a 10 MB e al massimo 10 file. Si possono aggiungere e togliere anche a evento pubblicato.</p>
+      @if (error()) { <p-message severity="error" variant="simple" size="small" data-testid="allegati-errore">{{ error() }}</p-message> }
+      <input #picker type="file" accept="application/pdf,image/jpeg,image/png" hidden (change)="onPick(picker)" data-testid="allegato-file" />
+      <button mat-stroked-button type="button" [disabled]="busy()" (click)="picker.click()" data-testid="allegato-aggiungi">Aggiungi un file</button>
+    }
+  </p-panel>
+}

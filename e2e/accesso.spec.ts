@@ -15,7 +15,7 @@ test('la sezione riservata chiede il login', async ({ page }) => {
 
 test('la segreteria vede le voci di gestione, il socio no', async ({ page }) => {
   await page.goto('/login');
-  await page.getByRole('button', { name: 'Entra come segreteria', exact: true }).click();
+  await page.getByRole('button', { name: 'Entra come segreteria', exact: true }).first().click();
   await expect(page.getByTestId('who')).toContainText('Sergio Segretario');
   await expect(page.getByRole('link', { name: 'Gestione eventi' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Tipi di evento' })).toHaveCount(0);

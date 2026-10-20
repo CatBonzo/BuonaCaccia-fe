@@ -143,6 +143,15 @@
       @if (err('formSections'); as m) { <p-message severity="error" variant="simple" size="small">{{ m }}</p-message> }
       <app-evento-domande [(sections)]="formSections" [locked]="locked()" />
     </p-panel>
+
+    @if (id(); as eventId) {
+      <app-evento-allegati [eventId]="eventId" [editable]="true" />
+    } @else {
+      <p-panel class="panel">
+        <ng-template #header><span class="panel-title"><i class="fa-solid fa-paperclip" aria-hidden="true"></i> Allegati</span></ng-template>
+        <p class="help" data-testid="allegati-dopo-bozza">Crea la bozza e poi potrai allegare il programma, il regolamento o i moduli.</p>
+      </p-panel>
+    }
   </p-fluid>
 
   <div class="actions">

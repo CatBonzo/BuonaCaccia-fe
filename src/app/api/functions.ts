@@ -59,6 +59,14 @@ export type { PaymentList$Params as PaymentList$Params } from './fn/payments/pay
 export { paymentList as paymentList } from './fn/payments/payment-list';
 export type { PaymentRegister$Params as PaymentRegister$Params } from './fn/payments/payment-register';
 export { paymentRegister as paymentRegister } from './fn/payments/payment-register';
+export type { EventAttachmentList$Params as EventAttachmentList$Params } from './fn/event-attachments/event-attachment-list';
+export { eventAttachmentList as eventAttachmentList } from './fn/event-attachments/event-attachment-list';
+export type { EventAttachmentUpload$Params as EventAttachmentUpload$Params } from './fn/event-attachments/event-attachment-upload';
+export { eventAttachmentUpload as eventAttachmentUpload } from './fn/event-attachments/event-attachment-upload';
+export type { EventAttachmentContent$Params as EventAttachmentContent$Params } from './fn/event-attachments/event-attachment-content';
+export { eventAttachmentContent as eventAttachmentContent } from './fn/event-attachments/event-attachment-content';
+export type { EventAttachmentDelete$Params as EventAttachmentDelete$Params } from './fn/event-attachments/event-attachment-delete';
+export { eventAttachmentDelete as eventAttachmentDelete } from './fn/event-attachments/event-attachment-delete';
 export type { EventEnrollmentList$Params as EventEnrollmentList$Params } from './fn/enrollments/event-enrollment-list';
 export { eventEnrollmentList as eventEnrollmentList } from './fn/enrollments/event-enrollment-list';
 export type { EventEnrollmentEnroll$Params as EventEnrollmentEnroll$Params } from './fn/enrollments/event-enrollment-enroll';

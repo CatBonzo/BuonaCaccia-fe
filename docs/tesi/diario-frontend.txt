@@ -279,6 +279,14 @@ Artefatti: ramo 028-date-evento-iscrizioni; evento-form.component.{ts,html}.
 Problemi: nessuno; i test cercano i campi per id, quindi non sono cambiati.
 Spunto: raggruppare i campi per significato (quando si svolge / quando ci si iscrive) rende il form leggibile.
 
+[2026-10-20] Pagina di dettaglio evento a sezioni
+Cosa: la pagina di un evento e' divisa in pannelli Optimus come il sito vero: testata colorata per categoria con tipo, livello e disponibilita'; Logistica (quando, dove, quota, iscrizioni); Iscrizione (modalita', autorizzazioni dei capi, regole); Scheda elettronica e documenti; Referenti; a lato una colonna fissa con quota, posti, barra e pulsante Iscriviti.
+Chi: Mahima ha dato gli screenshot del sito AGESCI e chiesto sezioni con Optimus; Claude ha scelto la composizione e scritto la pagina.
+Paradigma: AI-assisted (riferimento visivo da immagini); code harness: 43 unit e 47 e2e verdi, controllo a schermo.
+Artefatti: ramo 029-dettaglio-evento; evento-dettaglio.component.{html,ts,scss}.
+Problemi: l'evento non porta le domande della scheda (stanno in un'altra API): la pagina dice solo che la scheda e' elettronica. Un e2e del menu su telefono e' fallito una volta nella corsa completa e passato da solo.
+Spunto: dalle stesse informazioni (requisiti, adempimenti) si ricavano frasi leggibili: la pagina traduce i dati, non li elenca.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

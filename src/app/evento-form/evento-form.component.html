@@ -124,6 +124,25 @@
         </div>
       </div>
     </p-panel>
+
+    <p-panel class="panel" data-testid="panel-domande">
+      <ng-template #header><span class="panel-title"><i class="fa-solid fa-clipboard-question" aria-hidden="true"></i> Scheda e domande</span></ng-template>
+      <div class="checks">
+        <label class="check"><p-checkbox inputId="f-medical" name="medicalFormRequired" [binary]="true" [(ngModel)]="f.medicalFormRequired" [disabled]="locked()" data-testid="f-medical" /> Richiedi la scheda medica (il partecipante carica il documento)</label>
+        <label class="check"><p-checkbox inputId="f-dietary" name="dietaryInfoRequired" [binary]="true" [(ngModel)]="f.dietaryInfoRequired" [disabled]="locked()" data-testid="f-dietary" /> Richiedi intolleranze e allergie (due domande obbligatorie e riservate alla segreteria)</label>
+      </div>
+      <p class="help">Le altre domande sono facoltative: se non ne scrivi nessuna, l'evento non ha scheda da compilare.</p>
+      @if (!locked()) {
+        <p class="template-line">
+          <button mat-stroked-button type="button" [disabled]="!f.typeCode" (click)="useTypeTemplate()" data-testid="use-template">Parti dalle domande del tipo</button>
+          @if (templateMessage(); as m) { <span class="help">{{ m }}</span> }
+        </p>
+      } @else {
+        <p class="help">L'evento è pubblicato: le domande non si possono più cambiare.</p>
+      }
+      @if (err('formSections'); as m) { <p-message severity="error" variant="simple" size="small">{{ m }}</p-message> }
+      <app-evento-domande [(sections)]="formSections" [locked]="locked()" />
+    </p-panel>
   </p-fluid>
 
   <div class="actions">

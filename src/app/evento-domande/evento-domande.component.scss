@@ -1,0 +1,9 @@
+:host { display: block; }
+.empty { margin: 0 0 12px; color: var(--mat-sys-on-surface-variant); }
+.section { margin-bottom: 16px; padding: 16px; border: 1px solid var(--bc-line); border-radius: 16px; background: var(--mat-sys-surface-container-low); display: grid; gap: 14px; justify-items: start; }
+.section-head { display: flex; gap: 12px; align-items: center; width: 100%; }
+.question { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; width: 100%; padding: 12px 0; border-top: 1px solid var(--bc-line); }
+.question > input { flex: 1 1 320px; }
+.check { display: inline-flex; align-items: center; gap: 8px; }
+.options { flex-basis: 100%; }
+.section-head button, .question button { white-space: nowrap; }

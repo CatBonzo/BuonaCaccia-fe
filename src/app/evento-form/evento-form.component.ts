@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CheckboxModule } from '@openng/optimus-ui/checkbox';
 import { DatePickerModule } from '@openng/optimus-ui/datepicker';
 import { FluidModule } from '@openng/optimus-ui/fluid';
 import { InputNumberModule } from '@openng/optimus-ui/inputnumber';
@@ -13,12 +14,14 @@ import { PanelModule } from '@openng/optimus-ui/panel';
 import { SelectModule } from '@openng/optimus-ui/select';
 import { TextareaModule } from '@openng/optimus-ui/textarea';
 import { Api } from '../api/api';
+import { formTemplateGet } from '../api/fn/forms/form-template-get';
 import { eventTypeFindAll } from '../api/fn/event-types/event-type-find-all';
 import { eventCreate } from '../api/fn/events/event-create';
 import { eventGet } from '../api/fn/events/event-get';
 import { eventUpdate } from '../api/fn/events/event-update';
 import { regionFindAll } from '../api/fn/regions/region-find-all';
-import { EventDto, EventRequestDto, EventTypeDto, RegionDto } from '../api/models';
+import { EventDto, EventRequestDto, EventTypeDto, FormSectionDto, RegionDto } from '../api/models';
+import { EventoDomandeComponent } from '../evento-domande/evento-domande.component';
 import { ApiError } from '../core/api-error';
 import { dateToIso, isoToDate } from '../core/data-italiana';
 import { LEVEL_LABELS } from '../core/labels';
@@ -27,7 +30,7 @@ import { SessionService } from '../core/session.service';
 type EventFields = {
   typeCode: string; level: string; region: string; zone: string; title: string; description: string; location: string;
   province: string; startDate: string; endDate: string; registrationOpenDate: string; registrationCloseDate: string;
-  seats: number | null; fee: number | null; enrollmentMode: string;
+  seats: number | null; fee: number | null; enrollmentMode: string; medicalFormRequired: boolean; dietaryInfoRequired: boolean;
 };
 
 type DateField = 'startDate' | 'endDate' | 'registrationOpenDate' | 'registrationCloseDate';
@@ -35,6 +38,7 @@ type DateField = 'startDate' | 'endDate' | 'registrationOpenDate' | 'registratio
 const EMPTY: EventFields = {
   typeCode: '', level: '', region: '', zone: '', title: '', description: '', location: '', province: '', startDate: '', endDate: '',
   registrationOpenDate: '', registrationCloseDate: '', seats: null, fee: null, enrollmentMode: '',
+  medicalFormRequired: false, dietaryInfoRequired: false,
 };
 
 /** Creazione e modifica di un evento, in pannelli (categoria e regione, informazioni, date, posti e quota, capo) con i componenti Optimus. Requisiti e adempimenti arrivano dal tipo scelto e non si cambiano da qui. */
@@ -42,7 +46,7 @@ const EMPTY: EventFields = {
   selector: 'app-evento-form',
   imports: [
     FormsModule, RouterLink, MatButtonModule, MatProgressBarModule,
-    DatePickerModule, FluidModule, InputNumberModule, InputTextModule, MessageModule, PanelModule, SelectModule, TextareaModule,
+    CheckboxModule, DatePickerModule, EventoDomandeComponent, FluidModule, InputNumberModule, InputTextModule, MessageModule, PanelModule, SelectModule, TextareaModule,
   ],
   templateUrl: './evento-form.component.html',
   styleUrl: './evento-form.component.scss',
@@ -79,6 +83,9 @@ export class EventoFormComponent {
   ];
 
   protected f: EventFields = { ...EMPTY };
+  /** Le domande della scheda, facoltative: se non ce n'e' nessuna l'evento non ha scheda. */
+  protected readonly formSections = signal<FormSectionDto[]>([]);
+  protected readonly templateMessage = signal<string | null>(null);
 
   /** Il calendario lavora con date, il modulo e il backend con "aaaa-mm-gg": `dates` e `f` si tengono allineati. */
   protected dates: Record<DateField, Date | null> = { startDate: null, endDate: null, registrationOpenDate: null, registrationCloseDate: null };
@@ -107,6 +114,7 @@ export class EventoFormComponent {
       if (id) this.load(id);
       else {
         this.f = { ...EMPTY, level: 'REGIONAL', region: this.session.regionCode() };
+        this.formSections.set([]);
         this.syncDates();
       }
     });
@@ -114,6 +122,40 @@ export class EventoFormComponent {
 
   protected editing(): boolean {
     return !!this.id();
+  }
+
+  /** Dopo la pubblicazione le domande e le richieste di scheda medica e intolleranze non si cambiano. */
+  protected locked(): boolean {
+    const status = this.current()?.status;
+    return !!status && status !== 'DRAFT';
+  }
+
+  /** Parte dalle domande del modello del tipo scelto, se l'amministrazione ne ha scritto uno. */
+  protected useTypeTemplate(): void {
+    this.templateMessage.set(null);
+    this.api.invoke(formTemplateGet, { code: this.f.typeCode }).then(
+      (r) => this.formSections.set(structuredClone(r.payload?.sections ?? [])),
+      () => this.templateMessage.set('Questo tipo non ha un modello di domande.'),
+    );
+  }
+
+  /** Domande senza testo si scartano; quelle nuove ricevono un identificativo (`d1`, `d2`...), le altre tengono il proprio. */
+  private cleanSections(): FormSectionDto[] | undefined {
+    const sections = this.formSections()
+      .map((s) => ({ ...s, title: s.title?.trim() || 'Domande', questions: (s.questions ?? []).filter((q) => q.text?.trim()) }))
+      .filter((s) => s.questions.length > 0);
+    if (sections.length === 0) return undefined;
+    const taken = new Set(sections.flatMap((s) => s.questions.map((q) => q.id).filter(Boolean)));
+    let counter = 1;
+    return sections.map((s) => ({
+      ...s,
+      questions: s.questions.map((q) => {
+        if (q.id) return { ...q, text: q.text!.trim() };
+        while (taken.has(`d${counter}`)) counter++;
+        taken.add(`d${counter}`);
+        return { ...q, id: `d${counter}`, text: q.text!.trim() };
+      }),
+    }));
   }
 
   protected canNational(): boolean {
@@ -184,6 +226,9 @@ export class EventoFormComponent {
       requirements: event?.requirements,
       obligations: event?.obligations,
       contacts: event?.contacts,
+      formSections: this.cleanSections(),
+      medicalFormRequired: f.medicalFormRequired,
+      dietaryInfoRequired: f.dietaryInfoRequired,
       version: event?.version,
     };
   }
@@ -199,8 +244,9 @@ export class EventoFormComponent {
           description: e.description ?? '', location: e.location ?? '', province: e.province ?? '', startDate: e.startDate ?? '',
           endDate: e.endDate ?? '', registrationOpenDate: e.registrationOpenDate ?? '',
           registrationCloseDate: e.registrationCloseDate ?? '', seats: e.seats ?? null, fee: e.fee ?? null,
-          enrollmentMode: e.enrollmentMode ?? '',
+          enrollmentMode: e.enrollmentMode ?? '', medicalFormRequired: !!e.medicalFormRequired, dietaryInfoRequired: !!e.dietaryInfoRequired,
         };
+        this.formSections.set(structuredClone(e.formSections ?? []));
         this.syncDates();
         this.loading.set(false);
       },

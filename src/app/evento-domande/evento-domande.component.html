@@ -1,0 +1,35 @@
+@if (sections().length === 0) {
+  <p class="empty" data-testid="domande-vuote">Nessuna domanda: l'evento non avrà una scheda da compilare. Le domande sono facoltative.</p>
+}
+
+@for (s of sections(); track $index; let si = $index) {
+  <section class="section" data-testid="domande-sezione">
+    <div class="section-head">
+      <input pInputText fluid placeholder="Titolo della sezione" aria-label="Titolo della sezione" [name]="'title' + si" [(ngModel)]="s.title" [disabled]="locked()" data-testid="section-title" />
+      @if (!locked()) {
+        <button mat-button type="button" (click)="removeSection(si)">Togli la sezione</button>
+      }
+    </div>
+    @for (q of s.questions; track $index; let qi = $index) {
+      <div class="question" data-testid="domanda">
+        <input pInputText fluid placeholder="Testo della domanda" aria-label="Testo della domanda" [name]="'qtext' + si + '-' + qi" [(ngModel)]="q.text" [disabled]="locked()" data-testid="question-text" />
+        <p-select [options]="typeOptions" optionLabel="label" optionValue="value" [name]="'qtype' + si + '-' + qi" [(ngModel)]="q.type" [disabled]="locked()" appendTo="body" ariaLabel="Tipo di risposta" data-testid="question-type" />
+        <label class="check"><p-checkbox [binary]="true" [name]="'qreq' + si + '-' + qi" [(ngModel)]="q.required" [disabled]="locked()" data-testid="question-required" /> Obbligatoria</label>
+        <label class="check"><p-checkbox [binary]="true" [name]="'qsens' + si + '-' + qi" [(ngModel)]="q.sensitive" [disabled]="locked()" data-testid="question-sensitive" /> Riservata alla segreteria</label>
+        @if (!locked()) {
+          <button mat-button type="button" (click)="removeQuestion(s, qi)" aria-label="Togli la domanda">Togli</button>
+        }
+        @if (q.type === 'CHOICE') {
+          <textarea pTextarea fluid rows="3" class="options" placeholder="Opzioni, una per riga" aria-label="Opzioni, una per riga" [name]="'qopt' + si + '-' + qi" [ngModel]="optionsText(q)" (ngModelChange)="setOptions(q, $event)" [disabled]="locked()"></textarea>
+        }
+      </div>
+    }
+    @if (!locked()) {
+      <button mat-stroked-button type="button" data-testid="add-question" (click)="addQuestion(s)">Aggiungi una domanda</button>
+    }
+  </section>
+}
+
+@if (!locked()) {
+  <button mat-stroked-button type="button" data-testid="add-section" (click)="addSection()">Aggiungi una sezione di domande</button>
+}

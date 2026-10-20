@@ -103,6 +103,12 @@ export class EventoDettaglioComponent {
     return (event.obligations ?? []).filter((o) => o.type === 'PAYMENT');
   }
 
+  /** Le domande della scheda: quelle scritte dalla segreteria e, se richieste, intolleranze e allergie. */
+  protected questionTexts(event: EventDto): string[] {
+    const own = (event.formSections ?? []).flatMap((s) => (s.questions ?? []).map((q) => (q.required ? `${q.text} *` : q.text ?? '')));
+    return event.dietaryInfoRequired ? [...own, 'Intolleranze o esigenze alimentari *', 'Allergie *'] : own;
+  }
+
   protected hasForm(event: EventDto): boolean {
     return (event.obligations ?? []).some((o) => o.type === 'ELECTRONIC_FORM');
   }

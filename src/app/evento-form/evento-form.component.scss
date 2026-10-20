@@ -18,3 +18,7 @@
 // Avviso sulle date: testo scuro su fondo chiaro, leggibile.
 :host ::ng-deep .warn { color: #5c3b00; }
 :host ::ng-deep .warn .p-message-text { color: #5c3b00; font-weight: 600; }
+
+.checks { display: grid; gap: 12px; margin-bottom: 8px; }
+.check { display: inline-flex; align-items: center; gap: 10px; }
+.template-line { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 12px 0; }

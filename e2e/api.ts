@@ -31,8 +31,8 @@ export async function publishEvent(
 }
 
 /** Evento per ragazzi RS aperto alle iscrizioni (tipo ROSS, 16-21 anni), con i posti indicati. */
-export function publishRoverEvent(request: APIRequestContext, tag: string, seats = 5) {
-  return publishEvent(request, tag, { typeCode: 'ROSS', seats, fee: 30 });
+export function publishRoverEvent(request: APIRequestContext, tag: string, seats = 5, overrides: Record<string, unknown> = {}) {
+  return publishEvent(request, tag, { typeCode: 'ROSS', seats, fee: 30, ...overrides });
 }
 
 /** Ritira tutte le iscrizioni attive dell'utente: ogni scenario lascia pulito, il tipo ROSS ammette una sola iscrizione attiva. */

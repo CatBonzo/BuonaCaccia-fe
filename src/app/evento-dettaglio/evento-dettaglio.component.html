@@ -78,12 +78,19 @@
             <ng-template #header><span class="panel-title"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> Scheda elettronica e documenti</span></ng-template>
             <ul class="facts">
               @if (hasForm(e)) {
-                <li><i class="fa-solid fa-rectangle-list" aria-hidden="true"></i> Questo evento prevede la compilazione elettronica della scheda.</li>
+                <li><i class="fa-solid fa-rectangle-list" aria-hidden="true"></i> Questo evento prevede la compilazione elettronica della scheda con le seguenti domande:</li>
               }
               @for (d of documents(e); track $index) {
                 <li><i class="fa-solid" [ngClass]="d.delivery === 'PAPER' ? 'fa-print' : 'fa-camera'" aria-hidden="true"></i> {{ documentText(d) }}</li>
               }
             </ul>
+            @if (questionTexts(e).length) {
+              <ul class="rules" data-testid="form-questions">
+                @for (t of questionTexts(e); track $index) {
+                  <li>{{ t }}</li>
+                }
+              </ul>
+            }
           </p-panel>
         }
 

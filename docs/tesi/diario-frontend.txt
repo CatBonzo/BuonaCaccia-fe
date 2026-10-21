@@ -311,6 +311,14 @@ Artefatti: ramo 032-allegati-evento; evento-allegati/, evento-form.*, evento-det
 Problemi: nel backend di Mahima ci sono ora tre utenti di prova con username "segreteria" (Lazio, Abruzzo): il login dei test trovava tre bottoni uguali; i test prendono il primo.
 Spunto: i dati di prova condivisi sono parte del contratto dei test: un duplicato cambia l'esito senza toccare il codice.
 
+[2026-10-21] Il percorso della scheda, provato dall'inizio alla fine
+Cosa: nuovo e2e: evento con le sole due spunte (scheda medica e intolleranze), il socio si iscrive, da "Le mie iscrizioni" apre la scheda con il bottone, scrive, salva in bozza, ricarica, invia.
+Chi: Mahima ha detto di non vedere il bottone per compilare; Claude ha riprodotto il percorso con un test invece di rileggere il codice.
+Paradigma: AI-assisted; code harness: il test passa, quindi il percorso funziona per un evento pubblicato con le spunte; il bottone non compare per eventi pubblicati prima delle domande (le spunte si bloccano alla pubblicazione).
+Artefatti: ramo 033-percorso-scheda; e2e/domande-evento.spec.ts.
+Problemi: una segnalazione "non funziona" puo' dipendere dai dati (evento vecchio senza scheda) e non dal codice.
+Spunto: riprodurre con un test prima di cambiare il codice evita modifiche inutili.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

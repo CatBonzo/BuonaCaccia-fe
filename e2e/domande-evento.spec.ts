@@ -41,4 +41,27 @@ test.describe('domande della scheda di un evento', () => {
     await expect(page.locator('[data-question="intolleranze"] input')).toBeVisible();
     await expect(page.locator('[data-question="allergie"] input')).toBeVisible();
   });
+
+  test('evento con la sola scheda medica e le intolleranze: dalle iscrizioni il socio compila, salva in bozza e invia', async ({ page, request }) => {
+    await withdrawAll(request, 'rover');
+    const event = await publishRoverEvent(request, `solo-spunte${Date.now()}`, 5, { dietaryInfoRequired: true, medicalFormRequired: true });
+    await loginAs(page, 'rover');
+    await page.goto(`/eventi/${event.id}`);
+    await page.getByRole('button', { name: /Iscriviti/ }).first().click();
+
+    await page.goto('/iscrizioni');
+    const card = page.locator('mat-card', { hasText: event.title });
+    await expect(card.getByTestId('form-state')).toContainText('Da iniziare');
+    await card.getByTestId('open-form').click();
+
+    await expect(page.locator('[data-question="intolleranze"]')).toBeVisible();
+    await page.locator('[data-question="intolleranze"] input, [data-question="intolleranze"] textarea').first().fill('Lattosio');
+    await page.getByTestId('save-form').click();
+    await page.reload();
+    await expect(page.locator('[data-question="intolleranze"] input, [data-question="intolleranze"] textarea').first()).toHaveValue('Lattosio');
+
+    await page.locator('[data-question="allergie"] input, [data-question="allergie"] textarea').first().fill('Nessuna');
+    await page.getByTestId('submit-form').click();
+    await expect(page.getByTestId('form-status')).toContainText('Scheda inviata');
+  });
 });

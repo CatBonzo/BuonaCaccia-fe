@@ -2,3 +2,7 @@
 h3 { margin: 8px 0 4px; font-size: 16px; }
 .rule, .when { color: var(--mat-sys-on-surface-variant); font-size: 14px; }
 .rejected { color: var(--mat-sys-error); }
+
+.state { font-weight: 600; }
+.state[data-state='VALIDATED'] { color: var(--bc-success, #2e7d32); }
+.state[data-state='REJECTED'] { color: var(--mat-sys-error); }

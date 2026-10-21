@@ -62,6 +62,13 @@ export class IscrizioniComponent {
     ).length;
   }
 
+  /** Da compilare finche' manca qualcosa; In attesa mentre la segreteria verifica; Completato quando ha verificato tutto. */
+  protected fillState(enrollment: EnrollmentDto): 'todo' | 'waiting' | 'done' {
+    if (this.toDo(enrollment) > 0) return 'todo';
+    const mine = (enrollment.obligations ?? []).filter((o) => o.type === 'ELECTRONIC_FORM' || o.type === 'DOCUMENT');
+    return mine.length > 0 && mine.every((o) => o.status === 'SATISFIED' || o.status === 'NOT_REQUIRED') ? 'done' : 'waiting';
+  }
+
   protected canWithdraw(enrollment: EnrollmentDto): boolean {
     return enrollment.availableActions?.includes('WITHDRAW') ?? false;
   }

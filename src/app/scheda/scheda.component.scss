@@ -21,3 +21,10 @@
 .obligations .state { margin-left: auto; font-weight: 500; }
 .obligations .done .state { color: var(--mat-sys-primary); }
 .note { flex-basis: 100%; color: var(--mat-sys-error); font-size: 14px; }
+
+.form-tag { margin-left: 12px; font-size: 0.9rem; vertical-align: middle; }
+.obligations .state { display: inline-flex; align-items: center; gap: 6px; }
+.obligations .state[data-state='SATISFIED'] { color: var(--bc-success, #2e7d32); }
+.obligations .state[data-state='IN_REVIEW'] { color: var(--bc-accent); }
+.obligations .state[data-state='TODO'] { color: var(--mat-sys-on-surface-variant); }
+.obligations .state[data-state='REJECTED'] { color: var(--mat-sys-error); }

@@ -7,7 +7,15 @@
 
     @if (current(o.code!); as doc) {
       <p data-testid="doc-status">
-        <strong>{{ doc.originalName }}</strong> · {{ labelOf(statusLabels, doc.status) }}
+        <strong>{{ doc.originalName }}</strong> ·
+        <span class="state" [attr.data-state]="doc.status">
+          @switch (doc.status) {
+            @case ('VALIDATED') { <i class="fa-solid fa-circle-check" aria-hidden="true"></i> }
+            @case ('REJECTED') { <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> }
+            @default { <i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> }
+          }
+          {{ labelOf(statusLabels, doc.status) }}
+        </span>
         <span class="when">({{ doc.uploadedAt | date: 'd MMM, HH:mm' }})</span>
       </p>
       @if (doc.status === 'REJECTED' && doc.rejectionReason) {

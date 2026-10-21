@@ -61,6 +61,9 @@ test.describe('documenti e scheda del socio', () => {
     await page.locator('[data-question="ok"]').getByText('Sì').click();
     await page.getByTestId('submit-form').click();
     await expect(page.getByTestId('form-status')).toContainText('Scheda inviata');
+    // Il badge "Inviata" sta accanto al titolo della pagina; gli stati degli adempimenti hanno l'icona.
+    await expect(page.getByRole('heading', { name: /Compila l'iscrizione/ }).getByTestId('form-tag')).toHaveText('Inviata');
+    await expect(page.locator('[data-testid="obligations"] .state i').first()).toBeVisible();
     await expect(page.getByTestId('submit-form')).toHaveCount(0);
 
     await reopenForm(request, enrollment, 'Manca il recapito');

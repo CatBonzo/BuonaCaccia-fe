@@ -12,8 +12,12 @@ test.describe('documenti e scheda del socio', () => {
     const event = await publishEventWithPaperwork(request, `doc${Date.now()}`);
     const enrollment = await enrollId(request, 'rover', event.id);
     await loginAs(page, 'rover');
+    // In "Le mie iscrizioni" c'e' solo l'evento e il bottone: i file si caricano nella pagina di compilazione.
     await page.goto('/iscrizioni');
-    const card = page.locator('mat-card', { hasText: event.title });
+    await page.locator('mat-card', { hasText: event.title }).getByTestId('open-form').click();
+    await expect(page).toHaveURL(new RegExp(`/iscrizioni/${enrollment}/scheda$`));
+    await expect(page.getByTestId('enrollment-title')).toContainText(event.title);
+    const card = page.locator('body');
 
     // Un file di testo non e' un formato ammesso: il motivo del backend arriva a schermo.
     await card.getByTestId('file-SCHEDA_SANITARIA').setInputFiles({ name: 'note.txt', mimeType: 'text/plain', buffer: Buffer.from('ciao') });

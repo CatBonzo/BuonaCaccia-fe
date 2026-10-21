@@ -319,6 +319,14 @@ Artefatti: ramo 033-percorso-scheda; e2e/domande-evento.spec.ts.
 Problemi: una segnalazione "non funziona" puo' dipendere dai dati (evento vecchio senza scheda) e non dal codice.
 Spunto: riprodurre con un test prima di cambiare il codice evita modifiche inutili.
 
+[2026-10-21] La compilazione dell'iscrizione in una pagina a parte
+Cosa: "Le mie iscrizioni" mostra solo l'evento, lo stato, la scadenza e il bottone "Compila l'iscrizione"; la pagina `/iscrizioni/:id/scheda` ora riunisce gli adempimenti ("Cosa serve"), i file da caricare (scheda medica…) e le domande della scheda, con bozza e invio.
+Chi: Mahima ha chiesto (con uno screenshot della pagina troppo piena) di spostare scheda medica e domande in un'altra pagina; Claude ha spostato i blocchi e aggiornato i test.
+Paradigma: AI-assisted; code harness: unit e e2e aggiornati (i test dei file e di "cosa manca" ora passano dalla nuova pagina).
+Artefatti: ramo 034-pagina-compila; iscrizioni.component.*, scheda.component.*, e2e/adempimenti, iscrizione, domande-evento.
+Problemi: la prima versione del bottone compariva solo con file o scheda, ma chi ha solo autorizzazione e quota non avrebbe piu' visto cosa manca: il bottone ora c'e' per ogni iscrizione attiva.
+Spunto: spostare un blocco di interfaccia sposta anche le informazioni che nessuno aveva chiesto di togliere: va deciso dove vanno a finire.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

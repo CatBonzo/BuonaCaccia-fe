@@ -51,7 +51,8 @@ test.describe('domande della scheda di un evento', () => {
 
     await page.goto('/iscrizioni');
     const card = page.locator('mat-card', { hasText: event.title });
-    await expect(card.getByTestId('form-state')).toContainText('Da iniziare');
+    await expect(card.getByTestId('fill-line')).toContainText('Da compilare');
+    await expect(card.getByTestId('form-block')).toHaveCount(0);
     await card.getByTestId('open-form').click();
 
     await expect(page.locator('[data-question="intolleranze"]')).toBeVisible();

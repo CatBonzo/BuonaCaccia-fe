@@ -327,6 +327,13 @@ Artefatti: ramo 034-pagina-compila; iscrizioni.component.*, scheda.component.*, 
 Problemi: la prima versione del bottone compariva solo con file o scheda, ma chi ha solo autorizzazione e quota non avrebbe piu' visto cosa manca: il bottone ora c'e' per ogni iscrizione attiva.
 Spunto: spostare un blocco di interfaccia sposta anche le informazioni che nessuno aveva chiesto di togliere: va deciso dove vanno a finire.
 
+[2026-10-21] Stati con le icone e l'etichetta In attesa / Completato
+Cosa: nella pagina di compilazione ogni adempimento ha un'icona (Fatto, In verifica, Da fare) e il badge Inviata sta accanto al titolo; nelle iscrizioni la frase "Niente da compilare, controlla cosa serve" diventa un'etichetta: Da compilare, In attesa, Completato (quando la segreteria ha verificato).
+Chi: Mahima ha chiesto (screenshot) entrambe le cose; Claude le ha realizzate e ha esteso i test.
+Paradigma: AI-assisted; code harness: e2e controllano badge e icone.
+Artefatti: ramo 035-stati-iscrizione; scheda.component.*, iscrizioni.component.*.
+Problemi: un checkout sbagliato ha cancellato le modifiche non salvate: rifatte da capo. Spunto: commit prima di cambiare ramo.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

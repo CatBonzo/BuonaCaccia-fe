@@ -10,7 +10,12 @@
 @if (enrollment(); as e) {
   <header class="head">
     <div>
-      <h1><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> Compila l'iscrizione</h1>
+      <h1>
+        <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> Compila l'iscrizione
+        @if (form(); as f) {
+          <p-tag class="form-tag" data-testid="form-tag" [value]="f.status === 'SUBMITTED' ? 'Inviata' : 'Bozza'" [severity]="f.status === 'SUBMITTED' ? 'success' : 'warn'" />
+        }
+      </h1>
       <p data-testid="enrollment-title"><strong>{{ e.eventTitle }}</strong> · {{ e.number }} · dal {{ e.eventStartDate | date: 'd MMMM y' }}</p>
       <p>{{ labelOf(statusLabels, e.status) }}@if (e.active && e.deadline) { · da completare entro il <strong>{{ e.deadline | date: "d MMMM y 'alle' HH:mm" }}</strong> }</p>
       @if (!e.active && e.closingReason) {
@@ -27,7 +32,7 @@
           @if (o.status !== 'NOT_REQUIRED') {
             <li [class.done]="o.status === 'SATISFIED'">
               <span>{{ o.description || labelOf(obligationLabels, o.type) }}</span>
-              <span class="state">{{ labelOf(obligationStatusLabels, o.status) }}</span>
+              <span class="state" [attr.data-state]="o.status"><i class="fa-solid" [class]="stateIcon(o.status)" aria-hidden="true"></i> {{ labelOf(obligationStatusLabels, o.status) }}</span>
               @if (o.status === 'REJECTED' && o.note) {
                 <span class="note">{{ o.note }}</span>
               }
@@ -56,7 +61,6 @@
         <p data-testid="form-status">Bozza: puoi salvare e tornare più tardi. Quando è completa, inviala: dopo l'invio non si può più modificare.</p>
       }
     </div>
-    <p-tag [value]="f.status === 'SUBMITTED' ? 'Inviata' : 'Bozza'" [severity]="f.status === 'SUBMITTED' ? 'success' : 'warn'" />
   </header>
 
   @if (f.reopenReason && f.status !== 'SUBMITTED') {

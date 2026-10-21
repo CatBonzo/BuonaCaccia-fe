@@ -38,8 +38,12 @@
         }
 
         @if (canFill(e)) {
-          <p class="fill-line" data-testid="fill-line">
-            @if (toDo(e) > 0) { Da compilare: {{ toDo(e) }}. } @else { Niente da compilare, controlla cosa serve. }
+          <p class="fill-line" data-testid="fill-line" [attr.data-state]="fillState(e)">
+            @switch (fillState(e)) {
+              @case ('todo') { <i class="fa-solid fa-pen" aria-hidden="true"></i> Da compilare: {{ toDo(e) }} }
+              @case ('done') { <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Completato }
+              @default { <i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> In attesa }
+            }
           </p>
           <a mat-flat-button [routerLink]="['/iscrizioni', e.id, 'scheda']" data-testid="open-form">Compila l'iscrizione</a>
         }

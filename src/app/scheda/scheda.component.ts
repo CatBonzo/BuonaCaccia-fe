@@ -46,6 +46,16 @@ export class SchedaComponent {
   protected readonly statusLabels = ENROLLMENT_STATUS_LABELS;
   protected readonly obligationLabels = OBLIGATION_LABELS;
   protected readonly obligationStatusLabels = OBLIGATION_STATUS_LABELS;
+
+  /** Icona accanto allo stato di un adempimento: Fatto, In verifica, Da fare (e Rifiutato). */
+  protected stateIcon(status?: string): string {
+    switch (status) {
+      case 'SATISFIED': return 'fa-circle-check';
+      case 'IN_REVIEW': return 'fa-hourglass-half';
+      case 'REJECTED': return 'fa-circle-xmark';
+      default: return 'fa-clock';
+    }
+  }
   protected readonly closingLabels = CLOSING_REASON_LABELS;
   protected readonly answers = signal<Record<string, string>>({});
   protected readonly loading = signal(true);

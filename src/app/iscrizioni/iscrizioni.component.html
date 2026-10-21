@@ -45,13 +45,20 @@
               @default { <i class="fa-solid fa-hourglass-half" aria-hidden="true"></i> In attesa }
             }
           </p>
-          <a mat-flat-button [routerLink]="['/iscrizioni', e.id, 'scheda']" data-testid="open-form">Compila l'iscrizione</a>
+          <div class="fill-actions">
+            <a mat-flat-button [routerLink]="['/iscrizioni', e.id, 'scheda']" data-testid="open-form">{{ fillState(e) === 'done' ? 'Visualizza iscrizione' : "Compila l'iscrizione" }}</a>
+            @if (hasPayment(e)) {
+              <button mat-stroked-button type="button" data-testid="open-payment" [attr.aria-expanded]="paying() === e.id" (click)="paying.set(paying() === e.id ? null : e.id!)">
+                <i class="fa-solid fa-credit-card" aria-hidden="true"></i> Pagamento
+              </button>
+            }
+          </div>
         }
 
-        @if (e.active && e.paymentInfo?.iban && e.payment) {
+        @if (hasPayment(e) && paying() === e.id && e.payment; as pay) {
           <p data-testid="payment">
-            Quota {{ e.payment.fee | currency: 'EUR' : 'symbol' : '1.0-2' }}, versati {{ e.payment.paid | currency: 'EUR' : 'symbol' : '1.0-2' }},
-            restano {{ e.payment.due | currency: 'EUR' : 'symbol' : '1.0-2' }}. Bonifico a {{ e.paymentInfo!.holder }}, IBAN
+            Quota {{ pay.fee | currency: 'EUR' : 'symbol' : '1.0-2' }}, versati {{ pay.paid | currency: 'EUR' : 'symbol' : '1.0-2' }},
+            restano {{ pay.due | currency: 'EUR' : 'symbol' : '1.0-2' }}. Bonifico a {{ e.paymentInfo!.holder }}, IBAN
             <code>{{ e.paymentInfo!.iban }}</code>.
           </p>
         }

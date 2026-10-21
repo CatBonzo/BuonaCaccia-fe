@@ -7,6 +7,45 @@
   <p-message severity="error" class="banner" role="alert" data-testid="form-error">{{ message }}</p-message>
 }
 
+@if (enrollment(); as e) {
+  <header class="head">
+    <div>
+      <h1><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> Compila l'iscrizione</h1>
+      <p data-testid="enrollment-title"><strong>{{ e.eventTitle }}</strong> · {{ e.number }} · dal {{ e.eventStartDate | date: 'd MMMM y' }}</p>
+      <p>{{ labelOf(statusLabels, e.status) }}@if (e.active && e.deadline) { · da completare entro il <strong>{{ e.deadline | date: "d MMMM y 'alle' HH:mm" }}</strong> }</p>
+      @if (!e.active && e.closingReason) {
+        <p>{{ labelOf(closingLabels, e.closingReason) }}{{ e.closingNote ? ': ' + e.closingNote : '' }}.</p>
+      }
+    </div>
+  </header>
+
+  @if (e.obligations?.length) {
+    <p-panel class="section">
+      <ng-template #header><span class="panel-title"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Cosa serve</span></ng-template>
+      <ul class="obligations" data-testid="obligations">
+        @for (o of e.obligations; track $index) {
+          @if (o.status !== 'NOT_REQUIRED') {
+            <li [class.done]="o.status === 'SATISFIED'">
+              <span>{{ o.description || labelOf(obligationLabels, o.type) }}</span>
+              <span class="state">{{ labelOf(obligationStatusLabels, o.status) }}</span>
+              @if (o.status === 'REJECTED' && o.note) {
+                <span class="note">{{ o.note }}</span>
+              }
+            </li>
+          }
+        }
+      </ul>
+    </p-panel>
+  }
+
+  @if (hasDocuments()) {
+    <p-panel class="section">
+      <ng-template #header><span class="panel-title"><i class="fa-solid fa-paperclip" aria-hidden="true"></i> File da caricare</span></ng-template>
+      <app-documenti-iscrizione [enrollment]="e" (changed)="reloadEnrollment()" />
+    </p-panel>
+  }
+}
+
 @if (form(); as f) {
   <header class="head">
     <div>

@@ -14,17 +14,20 @@ import { SelectButtonModule } from '@openng/optimus-ui/selectbutton';
 import { TagModule } from '@openng/optimus-ui/tag';
 import { TextareaModule } from '@openng/optimus-ui/textarea';
 import { Api } from '../api/api';
+import { enrollmentGet } from '../api/fn/enrollments/enrollment-get';
 import { formGet } from '../api/fn/forms/form-get';
 import { formSave } from '../api/fn/forms/form-save';
 import { formSubmit } from '../api/fn/forms/form-submit';
-import { FormDto } from '../api/models';
+import { EnrollmentDto, FormDto } from '../api/models';
 import { ApiError } from '../core/api-error';
+import { CLOSING_REASON_LABELS, ENROLLMENT_STATUS_LABELS, OBLIGATION_LABELS, OBLIGATION_STATUS_LABELS, label } from '../core/labels';
+import { DocumentiIscrizioneComponent } from '../iscrizioni/documenti-iscrizione/documenti-iscrizione.component';
 
-/** La scheda elettronica di un'iscrizione: si compila a piu' riprese (bozza) e poi si invia. */
+/** La pagina per compilare l'iscrizione: adempimenti, file richiesti (scheda medica…) e scheda elettronica, che si compila a piu' riprese (bozza) e poi si invia. */
 @Component({
   selector: 'app-scheda',
   imports: [
-    DatePipe, FormsModule, RouterLink, MatButtonModule, MatProgressBarModule, InputTextModule, MessageModule, PanelModule,
+    DatePipe, DocumentiIscrizioneComponent, FormsModule, RouterLink, MatButtonModule, MatProgressBarModule, InputTextModule, MessageModule, PanelModule,
     ProgressBarModule, SelectModule, SelectButtonModule, TagModule, TextareaModule,
   ],
   templateUrl: './scheda.component.html',
@@ -37,7 +40,13 @@ export class SchedaComponent {
   /** Dal percorso `/iscrizioni/:id/scheda`: e' l'id dell'iscrizione. */
   readonly id = input.required<string>();
 
+  protected readonly enrollment = signal<EnrollmentDto | null>(null);
   protected readonly form = signal<FormDto | null>(null);
+  protected readonly labelOf = label;
+  protected readonly statusLabels = ENROLLMENT_STATUS_LABELS;
+  protected readonly obligationLabels = OBLIGATION_LABELS;
+  protected readonly obligationStatusLabels = OBLIGATION_STATUS_LABELS;
+  protected readonly closingLabels = CLOSING_REASON_LABELS;
   protected readonly answers = signal<Record<string, string>>({});
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
@@ -106,15 +115,50 @@ export class SchedaComponent {
     );
   }
 
+  protected hasDocuments(): boolean {
+    return !!this.enrollment()?.active && (this.enrollment()?.obligations ?? []).some((o) => o.type === 'DOCUMENT' && o.status !== 'NOT_REQUIRED' && o.code);
+  }
+
+  protected hasForm(): boolean {
+    return (this.enrollment()?.obligations ?? []).some((o) => o.type === 'ELECTRONIC_FORM' && o.status !== 'NOT_REQUIRED');
+  }
+
+  /** Dopo un caricamento il backend ha cambiato gli adempimenti: si rilegge l'iscrizione. */
+  protected reloadEnrollment(): void {
+    this.api.invoke(enrollmentGet, { id: this.id() }).then(
+      (response) => this.enrollment.set(response.payload ?? null),
+      () => undefined,
+    );
+  }
+
   private load(id: string): void {
     this.loading.set(true);
+    this.error.set(null);
+    this.api.invoke(enrollmentGet, { id }).then(
+      (response) => {
+        const enrollment = response.payload ?? null;
+        this.enrollment.set(enrollment);
+        if (this.hasForm()) {
+          this.loadForm(id);
+        } else {
+          this.loading.set(false);
+        }
+      },
+      (e: ApiError) => {
+        this.error.set(e.status === 404 ? 'Iscrizione non trovata.' : e.message);
+        this.loading.set(false);
+      },
+    );
+  }
+
+  private loadForm(id: string): void {
     this.api.invoke(formGet, { id }).then(
       (response) => {
         this.apply(response.payload ?? null);
         this.loading.set(false);
       },
       (e: ApiError) => {
-        this.error.set(e.status === 404 ? 'Questa iscrizione non ha una scheda da compilare.' : e.message);
+        this.error.set(e.message);
         this.loading.set(false);
       },
     );

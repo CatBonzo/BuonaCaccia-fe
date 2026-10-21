@@ -29,8 +29,12 @@ test.describe('iscrizione del socio', () => {
     const card = page.locator('mat-card', { hasText: event.title });
     await expect(card.getByTestId('status')).toHaveText('Iscritto, da completare');
     await expect(card).toContainText('Completa entro il');
-    await expect(card).toContainText('Autorizzazione');
-    await expect(card).toContainText('Quota di partecipazione');
+
+    // Cosa manca si vede nella pagina dell'iscrizione.
+    await card.getByTestId('open-form').click();
+    await expect(page.getByTestId('obligations')).toContainText('Autorizzazione');
+    await expect(page.getByTestId('obligations')).toContainText('Quota di partecipazione');
+    await page.getByRole('link', { name: '← Le mie iscrizioni' }).click();
 
     await card.getByTestId('withdraw').click();
     await card.getByTestId('confirm-withdraw').click();

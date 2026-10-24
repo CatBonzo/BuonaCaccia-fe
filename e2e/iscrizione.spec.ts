@@ -80,6 +80,8 @@ test.describe('iscrizione del socio', () => {
     await expect(page.getByTestId('payment-done')).toBeVisible();
     await expect(page.getByTestId('amounts')).toContainText(/Resta da pagare\s*0/);
     await expect(page.getByTestId('pay')).toHaveCount(0);
+    // Dopo il pagamento non deve comparire "non ancora disponibile" (l'IBAN sparisce, la quota e' pagata).
+    await expect(page.getByTestId('payment-unavailable')).toHaveCount(0);
   });
 
   test('chi non ha i requisiti vede tutti i motivi insieme', async ({ page, request }) => {

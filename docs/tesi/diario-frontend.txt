@@ -365,6 +365,14 @@ Artefatti: ramo 040-gestione-capo-unita; iscrizioni, scheda, pagamento, document
 Problemi: il ragazzo non puo' piu' ritirare, quindi la pulizia dei test passa dal capo (`withdrawPresented`).
 Spunto: quando la regola dipende da chi guarda, e' il backend a dirlo con un campo: il frontend non la ricostruisce.
 
+[2026-10-24] Messaggio sbagliato dopo il pagamento
+Cosa: dopo aver pagato tutta la quota la pagina Pagamento mostrava anche "non ancora disponibile"; ora il messaggio compare solo se l'iscrizione e' attiva e resta qualcosa da pagare.
+Chi: Mahima ha mandato lo screenshot e chiesto il perche'; Claude ha trovato la causa e corretto.
+Paradigma: AI-assisted; code harness: il test dell'intero giro (carta, Paga) ora controlla anche che il messaggio non compaia a pagamento fatto.
+Artefatti: ramo 039-messaggio-pagamento; pagamento.component.html, e2e/iscrizione.spec.ts.
+Problemi: avevo usato "IBAN assente" per dire "autorizzazione mancante", ma il backend toglie l'IBAN anche a quota pagata: due casi diversi dallo stesso segnale. Il test non guardava lo stato dopo il pagamento.
+Spunto: un segnale che dice due cose diverse va controllato in tutti gli stati finali, non solo in quello iniziale.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

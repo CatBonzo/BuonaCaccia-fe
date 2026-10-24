@@ -55,7 +55,9 @@
   <header class="head">
     <div>
       <h1><i class="fa-solid fa-file-pen" aria-hidden="true"></i> Scheda elettronica</h1>
-      @if (f.status === 'SUBMITTED') {
+      @if (enrollment()?.canFill === false) {
+        <p data-testid="managed-by-leader">La scheda la compila il tuo capo unità: qui puoi solo vederla.</p>
+      } @else if (f.status === 'SUBMITTED') {
         <p data-testid="form-status">Scheda inviata il {{ f.submittedAt | date: "d MMMM y 'alle' HH:mm" }}. Non si può più modificare.</p>
       } @else {
         <p data-testid="form-status">Bozza: puoi salvare e tornare più tardi. Quando è completa, inviala: dopo l'invio non si può più modificare.</p>

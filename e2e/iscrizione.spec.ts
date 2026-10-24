@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { enrollId, enrollVia, publishEvent, publishRoverEvent, satisfyObligation, withdrawAll } from './api';
+import { enrollId, enrollVia, enrollYouth, publishEvent, publishRoverEvent, satisfyObligation, withdrawAll, withdrawPresented } from './api';
 import { loginAs } from './login';
 
 test.describe('iscrizione del socio', () => {
@@ -115,5 +115,36 @@ test.describe('iscrizione del socio', () => {
     await loginAs(page, 'lupetto');
     await page.goto('/iscrizioni');
     await expect(page.getByRole('heading', { name: 'Le mie iscrizioni' })).toBeVisible();
+  });
+
+  test('il ragazzo E/G vede la sua iscrizione ma la gestisce il capo unità', async ({ page, request }) => {
+    await withdrawPresented(request, 'socio');
+    const event = await publishEvent(request, `eg${Date.now()}`, { typeCode: 'CAPISQ', enrollmentMode: 'BY_LEADER', fee: 40 });
+    try {
+      const enrolled = await enrollYouth(request, 'socio', event.id, '100006');
+      expect(enrolled.status()).toBe(201);
+      const id = (await enrolled.json()).payload.id as string;
+
+      // Il ragazzo vede la domanda ma non la compila e non paga.
+      await loginAs(page, 'esploratore');
+      await page.goto('/iscrizioni');
+      const card = page.locator('mat-card', { hasText: event.title });
+      await expect(card.getByTestId('managed-by-leader')).toBeVisible();
+      await expect(card.getByTestId('open-form')).toHaveText('Visualizza iscrizione');
+      await expect(card.getByTestId('open-payment')).toHaveCount(0);
+      await expect(card.getByTestId('withdraw')).toHaveCount(0);
+      await page.goto(`/iscrizioni/${id}/pagamento`);
+      await expect(page.getByTestId('managed-by-leader')).toBeVisible();
+      await expect(page.getByTestId('pay')).toHaveCount(0);
+      await page.goto(`/iscrizioni/${id}/scheda`);
+      await expect(page.getByTestId('save-form')).toHaveCount(0);
+
+      // Il capo unità, che l'ha presentata, ha le azioni.
+      await loginAs(page, 'socio');
+      await page.goto(`/iscrizioni/${id}/pagamento`);
+      await expect(page.getByTestId('managed-by-leader')).toHaveCount(0);
+    } finally {
+      await withdrawPresented(request, 'socio');
+    }
   });
 });

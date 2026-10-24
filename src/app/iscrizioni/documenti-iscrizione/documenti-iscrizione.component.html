@@ -26,7 +26,7 @@
       <p>Nessun documento caricato.</p>
     }
 
-    @if (canUpload(o)) {
+    @if (canUpload(o) && enrollment().canFill !== false) {
       <input #file type="file" hidden [accept]="accept(o)" [attr.data-testid]="'file-' + o.code" (change)="onFile(o, file)" />
       <button mat-flat-button type="button" [disabled]="uploading() === o.code" (click)="file.click()" [attr.data-testid]="'upload-' + o.code">
         {{ current(o.code!) ? 'Carica un altro file' : 'Carica il file' }}

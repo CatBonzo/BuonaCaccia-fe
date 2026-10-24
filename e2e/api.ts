@@ -47,6 +47,18 @@ export async function withdrawAll(request: APIRequestContext, username: string):
   }
 }
 
+/** Ritira le iscrizioni attive presentate dal capo: quelle di L/C ed E/G le gestisce lui, i ragazzi non possono ritirarle. */
+export async function withdrawPresented(request: APIRequestContext, leader: string): Promise<void> {
+  const headers = { Authorization: `Bearer ${await tokenOf(request, leader)}` };
+  const presented = (await (await request.get(`${API}/api/v1/enrollments/presented?size=100`, { headers })).json()).payload.content as {
+    id: string;
+    active: boolean;
+  }[];
+  for (const enrollment of presented.filter((e) => e.active)) {
+    await request.post(`${API}/api/v1/enrollments/${enrollment.id}/withdraw`, { headers });
+  }
+}
+
 export async function enrollVia(request: APIRequestContext, username: string, eventId: string) {
   const headers = { Authorization: `Bearer ${await tokenOf(request, username)}` };
   return request.post(`${API}/api/v1/events/${eventId}/enrollments`, { headers, data: {} });

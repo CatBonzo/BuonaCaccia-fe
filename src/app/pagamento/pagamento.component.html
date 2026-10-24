@@ -33,7 +33,9 @@
     </p-message>
   }
 
-  @if (e.active && e.paymentInfo?.iban) {
+  @if (e.canFill === false) {
+    <p-message severity="info" class="banner" data-testid="managed-by-leader">Il pagamento lo gestisce il tuo capo unità: qui puoi solo vedere la quota.</p-message>
+  } @else if (e.active && e.paymentInfo?.iban) {
     <p-panel class="section">
       <ng-template #header><span class="panel-title"><i class="fa-solid fa-building-columns" aria-hidden="true"></i> Come pagare</span></ng-template>
       <p data-testid="bank">Bonifico a <strong>{{ e.paymentInfo!.holder }}</strong>, IBAN <code>{{ e.paymentInfo!.iban }}</code>.</p>

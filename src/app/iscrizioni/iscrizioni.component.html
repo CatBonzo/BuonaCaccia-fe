@@ -46,11 +46,14 @@
             }
           </p>
           <div class="fill-actions">
-            <a mat-flat-button [routerLink]="['/iscrizioni', e.id, 'scheda']" data-testid="open-form">{{ fillState(e) === 'done' ? 'Visualizza iscrizione' : "Compila l'iscrizione" }}</a>
-            @if (hasPayment(e)) {
+            <a mat-flat-button [routerLink]="['/iscrizioni', e.id, 'scheda']" data-testid="open-form">{{ fillState(e) === 'done' || e.canFill === false ? 'Visualizza iscrizione' : "Compila l'iscrizione" }}</a>
+            @if (hasPayment(e) && e.canFill !== false) {
               <a mat-stroked-button [routerLink]="['/iscrizioni', e.id, 'pagamento']" data-testid="open-payment"><i class="fa-solid fa-credit-card" aria-hidden="true"></i> Pagamento</a>
             }
           </div>
+          @if (e.canFill === false) {
+            <p class="managed" data-testid="managed-by-leader"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> La domanda e il pagamento li gestisce il tuo capo unità.</p>
+          }
         }
       </mat-card-content>
       <mat-card-actions>

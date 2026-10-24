@@ -69,7 +69,7 @@ export class SchedaComponent {
   }
 
   protected readOnly(): boolean {
-    return this.form()?.status === 'SUBMITTED';
+    return this.form()?.status === 'SUBMITTED' || this.enrollment()?.canFill === false;
   }
 
   protected readonly yesNo = [{ label: 'Sì', value: 'true' }, { label: 'No', value: 'false' }];

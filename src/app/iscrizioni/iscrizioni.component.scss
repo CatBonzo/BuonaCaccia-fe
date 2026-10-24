@@ -8,3 +8,5 @@
 .fill-line[data-state='waiting'] { color: var(--bc-accent); }
 .fill-line[data-state='todo'] { color: var(--mat-sys-error); }
 .fill-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 8px; }
+
+.managed { color: var(--mat-sys-on-surface-variant); font-size: 14px; margin: 8px 0 0; }

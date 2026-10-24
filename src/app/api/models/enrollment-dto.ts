@@ -9,6 +9,7 @@ export interface EnrollmentDto {
   active?: boolean;
   arrivalOrder?: number;
   availableActions?: Array<'WITHDRAW' | 'SATISFY' | 'APPROVE_UNIT_LEADER' | 'REJECT_UNIT_LEADER' | 'APPROVE_GROUP_LEADER' | 'REJECT_GROUP_LEADER'>;
+  canFill?: boolean;
   closedAt?: string;
   closingNote?: string;
   closingReason?: 'WITHDRAWN' | 'EXPIRED' | 'REJECTED' | 'EVENT_CANCELLED' | 'SEATS_EXHAUSTED';

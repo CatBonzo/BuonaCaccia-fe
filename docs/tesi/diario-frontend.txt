@@ -357,6 +357,14 @@ Artefatti: ramo 038-aggiungi-carta; pagamento.component.*, client rigenerato, e2
 Problemi: l'immagine di riferimento non si poteva aprire dal mio ambiente; a pagamento completato il riquadro scompare con la rilettura, quindi il messaggio di esito sta fuori dal riquadro.
 Spunto: un'interfaccia che raccoglie dati di carta anche per finta va scritta come se fosse vera: il numero intero non lascia il pop-up.
 
+[2026-10-24] Il ragazzo L/C ed E/G vede, il capo unita' gestisce
+Cosa: se l'iscrizione e' di un lupetto/coccinella o di un esploratore/guida, il ragazzo vede la scheda, il pagamento e i file ma non puo' compilare, pagare, caricare ne' ritirarsi: compare "La domanda e il pagamento li gestisce il tuo capo unita'".
+Chi: Mahima ha chiesto che per L/C ed E/G la domanda la compili solo il capo unita'; Claude ha aggiunto `canFill` al contratto del backend e il frontend lo segue.
+Paradigma: AI-assisted; SDD (regola nuova scritta con il motivo in AGENTS.md); code harness: un e2e nuovo (ragazzo in sola lettura, capo con le azioni) piu' tutta la suite (45 unit, 54 e2e).
+Artefatti: ramo 040-gestione-capo-unita; iscrizioni, scheda, pagamento, documenti-iscrizione, client rigenerato, e2e/iscrizione.spec.ts, e2e/api.ts.
+Problemi: il ragazzo non puo' piu' ritirare, quindi la pulizia dei test passa dal capo (`withdrawPresented`).
+Spunto: quando la regola dipende da chi guarda, e' il backend a dirlo con un campo: il frontend non la ricostruisce.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

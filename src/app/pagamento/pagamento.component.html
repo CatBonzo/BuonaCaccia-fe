@@ -100,7 +100,8 @@
         <p-button label="Salva carta" icon="fa-solid fa-check" data-testid="save-card" (onClick)="saveCard()" />
       </ng-template>
     </p-dialog>
-  } @else if (!loading()) {
+  } @else if (!loading() && e.active && (e.payment?.due ?? 0) > 0) {
+    <!-- Dopo il pagamento completo il backend toglie l'IBAN: senza questo controllo si direbbe "non disponibile" a chi ha gia' pagato. -->
     <p-message severity="info" class="banner" data-testid="payment-unavailable">
       Il pagamento non è ancora disponibile: si apre quando il capo unità ha autorizzato l'iscrizione.
     </p-message>

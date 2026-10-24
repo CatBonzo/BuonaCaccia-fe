@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { enrollVia, publishRoverEvent, withdrawAll } from './api';
+import { enrollId, enrollVia, publishEvent, publishRoverEvent, satisfyObligation, withdrawAll } from './api';
 import { loginAs } from './login';
 
 test.describe('iscrizione del socio', () => {
@@ -41,6 +41,23 @@ test.describe('iscrizione del socio', () => {
     await card.getByTestId('confirm-withdraw').click();
     await expect(card.getByTestId('status')).toHaveText('Ritirata');
     await expect(card.getByTestId('withdraw')).toHaveCount(0);
+  });
+
+  test('il pagamento ha una pagina a parte: prima non e\' disponibile, dopo l\'autorizzazione mostra quota e IBAN', async ({ page, request }) => {
+    const event = await publishEvent(request, `paga${Date.now()}`, { typeCode: 'ROSS', fee: 50 });
+    const enrollment = await enrollId(request, 'rover', event.id);
+    await loginAs(page, 'rover');
+    await page.goto('/iscrizioni');
+    const card = page.locator('mat-card', { hasText: event.title });
+    await card.getByTestId('open-payment').click();
+    await expect(page).toHaveURL(new RegExp(`/iscrizioni/${enrollment}/pagamento$`));
+    await expect(page.getByTestId('amounts')).toContainText(/Quota\s*50/);
+    await expect(page.getByTestId('payment-unavailable')).toBeVisible();
+
+    await satisfyObligation(request, enrollment, 'UNIT_LEADER_AUTHORIZATION');
+    await page.reload();
+    await expect(page.getByTestId('bank')).toContainText('IBAN');
+    await expect(page.getByTestId('payment-unavailable')).toHaveCount(0);
   });
 
   test('chi non ha i requisiti vede tutti i motivi insieme', async ({ page, request }) => {

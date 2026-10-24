@@ -1,0 +1,47 @@
+<a mat-button routerLink="/iscrizioni">← Le mie iscrizioni</a>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p-message severity="error" class="banner" role="alert" data-testid="payment-error">{{ message }}</p-message>
+}
+
+@if (enrollment(); as e) {
+  <header class="head">
+    <h1><i class="fa-solid fa-credit-card" aria-hidden="true"></i> Pagamento</h1>
+    <p data-testid="enrollment-title"><strong>{{ e.eventTitle }}</strong> · {{ e.number }} · dal {{ e.eventStartDate | date: 'd MMMM y' }}</p>
+  </header>
+
+  @if (e.payment; as pay) {
+    <p-panel class="section">
+      <ng-template #header><span class="panel-title"><i class="fa-solid fa-euro-sign" aria-hidden="true"></i> Quota di partecipazione</span></ng-template>
+      <dl class="amounts" data-testid="amounts">
+        <div><dt>Quota</dt><dd>{{ pay.fee | currency: 'EUR' : 'symbol' : '1.0-2' }}</dd></div>
+        <div><dt>Versato</dt><dd>{{ pay.paid | currency: 'EUR' : 'symbol' : '1.0-2' }}</dd></div>
+        <div><dt>Resta da pagare</dt><dd [class.paid]="(pay.due ?? 0) === 0">{{ pay.due | currency: 'EUR' : 'symbol' : '1.0-2' }}</dd></div>
+      </dl>
+      @if ((pay.due ?? 0) === 0) {
+        <p class="paid" data-testid="payment-done"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Quota pagata per intero.</p>
+      }
+    </p-panel>
+  }
+
+  @if (e.active && e.paymentInfo?.iban) {
+    <p-panel class="section">
+      <ng-template #header><span class="panel-title"><i class="fa-solid fa-building-columns" aria-hidden="true"></i> Come pagare</span></ng-template>
+      <p data-testid="bank">Bonifico a <strong>{{ e.paymentInfo!.holder }}</strong>, IBAN <code>{{ e.paymentInfo!.iban }}</code>.</p>
+      <p>Codice iscrizione: <code>{{ e.number }}</code></p>
+      @if (e.paymentInfo!.contactEmail || e.paymentInfo!.contactPhone) {
+        <p class="hint">
+          Per chiarimenti: {{ e.paymentInfo!.contactEmail }} {{ e.paymentInfo!.contactPhone }}
+          @if (e.paymentInfo!.hours) { ({{ e.paymentInfo!.hours }}) }
+        </p>
+      }
+    </p-panel>
+  } @else if (!loading()) {
+    <p-message severity="info" class="banner" data-testid="payment-unavailable">
+      Il pagamento non è ancora disponibile: si apre quando il capo unità ha autorizzato l'iscrizione.
+    </p-message>
+  }
+}

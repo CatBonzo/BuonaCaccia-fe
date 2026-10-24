@@ -342,6 +342,13 @@ Artefatti: ramo 036-visualizza-pagamento; iscrizioni.component.*.
 Problemi: nascondere le coordinate dietro un bottone le rende un clic piu' lontane: scelta di Mahima.
 Spunto: lo stesso stato (Completato) ora guida sia l'etichetta sia il testo del bottone.
 
+[2026-10-24] Il pagamento in una pagina a parte
+Cosa: il bottone "Pagamento" delle iscrizioni porta a `/iscrizioni/:id/pagamento`, che mostra quota, versato, residuo e bonifico; il riquadro che si apriva nella scheda e' stato tolto.
+Chi: Mahima ha chiesto la pagina a parte; Claude ha creato modulo, rotta, componente e test.
+Paradigma: AI-assisted; SDD/code harness: e2e che prova la pagina prima e dopo l'autorizzazione del capo.
+Artefatti: ramo 037-pagina-pagamento; src/app/pagamento/*, iscrizioni.component.*, e2e/iscrizione.spec.ts.
+Problemi: nessuno. Spunto: la stessa struttura (componente + modulo + rotta lazy) ripetuta per ogni pagina rende il lavoro quasi meccanico.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

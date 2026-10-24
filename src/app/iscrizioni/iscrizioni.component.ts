@@ -36,6 +36,8 @@ export class IscrizioniComponent {
   protected readonly error = signal<string | null>(null);
   /** L'iscrizione per cui si sta chiedendo conferma del ritiro. */
   protected readonly confirming = signal<string | null>(null);
+  /** Iscrizione di cui e' aperto il riquadro del pagamento. */
+  protected readonly paying = signal<string | null>(null);
   protected readonly pageSize = PAGE_SIZE;
 
   protected readonly labelOf = label;
@@ -67,6 +69,10 @@ export class IscrizioniComponent {
     if (this.toDo(enrollment) > 0) return 'todo';
     const mine = (enrollment.obligations ?? []).filter((o) => o.type === 'ELECTRONIC_FORM' || o.type === 'DOCUMENT');
     return mine.length > 0 && mine.every((o) => o.status === 'SATISFIED' || o.status === 'NOT_REQUIRED') ? 'done' : 'waiting';
+  }
+
+  protected hasPayment(enrollment: EnrollmentDto): boolean {
+    return !!enrollment.active && !!enrollment.paymentInfo?.iban && !!enrollment.payment;
   }
 
   protected canWithdraw(enrollment: EnrollmentDto): boolean {

@@ -29,6 +29,7 @@ test.describe('iscrizione del socio', () => {
     const card = page.locator('mat-card', { hasText: event.title });
     await expect(card.getByTestId('status')).toHaveText('Iscritto, da completare');
     await expect(card).toContainText('Completa entro il');
+    await expect(card.getByTestId('open-form')).toHaveText("Compila l'iscrizione");
 
     // Cosa manca si vede nella pagina dell'iscrizione.
     await card.getByTestId('open-form').click();

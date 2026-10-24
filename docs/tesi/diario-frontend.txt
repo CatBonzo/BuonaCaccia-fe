@@ -334,6 +334,14 @@ Paradigma: AI-assisted; code harness: e2e controllano badge e icone.
 Artefatti: ramo 035-stati-iscrizione; scheda.component.*, iscrizioni.component.*.
 Problemi: un checkout sbagliato ha cancellato le modifiche non salvate: rifatte da capo. Spunto: commit prima di cambiare ramo.
 
+[2026-10-21] Visualizza iscrizione e bottone Pagamento
+Cosa: nelle iscrizioni, a iscrizione completata e approvata dalla segreteria il bottone diventa "Visualizza iscrizione"; accanto c'e' "Pagamento", che apre il riquadro con quota e IBAN (prima sempre visibile). Sistemato lo spazio tra etichetta e bottone.
+Chi: Mahima (screenshot dello spazio mancante); Claude ha eseguito.
+Paradigma: AI-assisted; code harness: e2e sul testo del bottone.
+Artefatti: ramo 036-visualizza-pagamento; iscrizioni.component.*.
+Problemi: nascondere le coordinate dietro un bottone le rende un clic piu' lontane: scelta di Mahima.
+Spunto: lo stesso stato (Completato) ora guida sia l'etichetta sia il testo del bottone.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

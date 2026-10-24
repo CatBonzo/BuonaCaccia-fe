@@ -24,6 +24,12 @@ const routes: Routes = [
     loadChildren: () => import('./scheda/scheda.module').then((m) => m.SchedaModule),
   },
   {
+    path: 'iscrizioni/:id/pagamento',
+    canActivate: [authGuard, entitlementGuard],
+    data: { entitlement: 'iscrizione:self' },
+    loadChildren: () => import('./pagamento/pagamento.module').then((m) => m.PagamentoModule),
+  },
+  {
     path: 'segreteria/eventi',
     canActivate: [authGuard, entitlementGuard],
     data: { entitlement: 'evento:gestione' },

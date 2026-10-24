@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,7 +21,7 @@ const PAGE_SIZE = 10;
 /** Le iscrizioni del socio: stato, posizione, scadenza, cosa manca e ritiro. */
 @Component({
   selector: 'app-iscrizioni',
-  imports: [CurrencyPipe, DatePipe, RouterLink, MatButtonModule, MatCardModule, MatChipsModule, MatPaginatorModule, MatProgressBarModule],
+  imports: [DatePipe, RouterLink, MatButtonModule, MatCardModule, MatChipsModule, MatPaginatorModule, MatProgressBarModule],
   templateUrl: './iscrizioni.component.html',
   styleUrl: './iscrizioni.component.scss',
 })
@@ -36,8 +36,6 @@ export class IscrizioniComponent {
   protected readonly error = signal<string | null>(null);
   /** L'iscrizione per cui si sta chiedendo conferma del ritiro. */
   protected readonly confirming = signal<string | null>(null);
-  /** Iscrizione di cui e' aperto il riquadro del pagamento. */
-  protected readonly paying = signal<string | null>(null);
   protected readonly pageSize = PAGE_SIZE;
 
   protected readonly labelOf = label;
@@ -72,7 +70,7 @@ export class IscrizioniComponent {
   }
 
   protected hasPayment(enrollment: EnrollmentDto): boolean {
-    return !!enrollment.active && !!enrollment.paymentInfo?.iban && !!enrollment.payment;
+    return !!enrollment.active && !!enrollment.payment;
   }
 
   protected canWithdraw(enrollment: EnrollmentDto): boolean {

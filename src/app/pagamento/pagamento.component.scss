@@ -12,3 +12,12 @@
 .amounts dd { margin: 0; font-size: 1.4rem; font-weight: 700; }
 .paid { color: var(--bc-success, #2e7d32); font-weight: 600; }
 .hint { color: var(--mat-sys-on-surface-variant); font-size: 14px; }
+
+.saved-card { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 8px; }
+.saved-card > i { color: var(--bc-accent); font-size: 1.4rem; }
+.pay-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 16px; }
+.card-form { display: flex; flex-direction: column; gap: 6px; }
+.card-form label { font-weight: 600; margin-top: 8px; }
+.card-form .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.card-form .two > div { display: flex; flex-direction: column; gap: 6px; }
+.error { color: var(--mat-sys-error); }

@@ -3,7 +3,7 @@
 
 export interface PaymentRequestDto {
   amount: number;
-  method?: 'BANK_TRANSFER';
+  method?: 'BANK_TRANSFER' | 'CARD';
   receivedOn: string;
   reference?: string;
 }

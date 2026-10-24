@@ -58,6 +58,28 @@ test.describe('iscrizione del socio', () => {
     await page.reload();
     await expect(page.getByTestId('bank')).toContainText('IBAN');
     await expect(page.getByTestId('payment-unavailable')).toHaveCount(0);
+
+    // Con carta (simulato): Paga e' disabilitato finche' la carta non e' salvata.
+    const pay = page.getByTestId('pay').locator('button');
+    await expect(pay).toBeDisabled();
+    await page.getByTestId('add-card').click();
+    await page.getByTestId('save-card').click();
+    await expect(page.getByTestId('error-number')).toBeVisible();
+    await expect(page.getByTestId('error-holder')).toBeVisible();
+    await page.locator('#card-number').fill('4242424242424242');
+    await page.locator('#card-holder').fill('Mario Rossi');
+    await page.locator('#card-expiry').fill('1230');
+    await page.locator('#card-cvv').fill('123');
+    await page.getByTestId('save-card').click();
+    await expect(page.getByTestId('saved-card')).toContainText('4242');
+    await expect(page.getByTestId('saved-card')).not.toContainText('4242 4242');
+    await expect(pay).toBeEnabled();
+    await pay.click();
+    // Il pagamento e' registrato davvero: la quota e' pagata e l'iscrizione risulta completa.
+    await expect(page.getByTestId('paid-card')).toContainText('4242');
+    await expect(page.getByTestId('payment-done')).toBeVisible();
+    await expect(page.getByTestId('amounts')).toContainText(/Resta da pagare\s*0/);
+    await expect(page.getByTestId('pay')).toHaveCount(0);
   });
 
   test('chi non ha i requisiti vede tutti i motivi insieme', async ({ page, request }) => {

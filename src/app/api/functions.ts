@@ -59,6 +59,8 @@ export type { PaymentList$Params as PaymentList$Params } from './fn/payments/pay
 export { paymentList as paymentList } from './fn/payments/payment-list';
 export type { PaymentRegister$Params as PaymentRegister$Params } from './fn/payments/payment-register';
 export { paymentRegister as paymentRegister } from './fn/payments/payment-register';
+export type { PaymentPayByCard$Params as PaymentPayByCard$Params } from './fn/payments/payment-pay-by-card';
+export { paymentPayByCard as paymentPayByCard } from './fn/payments/payment-pay-by-card';
 export type { EventAttachmentList$Params as EventAttachmentList$Params } from './fn/event-attachments/event-attachment-list';
 export { eventAttachmentList as eventAttachmentList } from './fn/event-attachments/event-attachment-list';
 export type { EventAttachmentUpload$Params as EventAttachmentUpload$Params } from './fn/event-attachments/event-attachment-upload';

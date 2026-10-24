@@ -9,7 +9,7 @@ export interface PaymentDto {
   enrollmentId?: string;
   enrollmentNumber?: string;
   id?: string;
-  method?: 'BANK_TRANSFER';
+  method?: 'BANK_TRANSFER' | 'CARD';
   receivedOn?: string;
   reference?: string;
   registeredAt?: string;

@@ -30,6 +30,7 @@ export type { ApiResponseVoid } from './models/api-response-void';
 export type { Authentication } from './models/authentication';
 export type { AuthorizationLinkDto } from './models/authorization-link-dto';
 export type { CancelDto } from './models/cancel-dto';
+export type { CardPaymentRequestDto } from './models/card-payment-request-dto';
 export type { CensusData } from './models/census-data';
 export type { CensusDto } from './models/census-dto';
 export type { ContactDto } from './models/contact-dto';

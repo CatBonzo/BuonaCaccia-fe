@@ -349,6 +349,14 @@ Paradigma: AI-assisted; SDD/code harness: e2e che prova la pagina prima e dopo l
 Artefatti: ramo 037-pagina-pagamento; src/app/pagamento/*, iscrizioni.component.*, e2e/iscrizione.spec.ts.
 Problemi: nessuno. Spunto: la stessa struttura (componente + modulo + rotta lazy) ripetuta per ogni pagina rende il lavoro quasi meccanico.
 
+[2026-10-24] Aggiungi carta e Paga
+Cosa: nella pagina Pagamento il pop-up "Aggiungi carta" (numero, intestatario, scadenza, CVV, con controlli) salva la carta; solo allora il bottone "Paga" si abilita e registra il pagamento nel backend (carta simulata).
+Chi: Mahima ha chiesto pop-up e Paga con la libreria Optimus; ha scelto "con backend" sulla scheda decisioni; Claude ha fatto sia la parte backend (PR 18) sia quella frontend.
+Paradigma: AI-assisted; SDD: una regola della spec (solo bonifico) cambiata in modo esplicito; code harness: e2e dal pop-up al pagamento registrato.
+Artefatti: ramo 038-aggiungi-carta; pagamento.component.*, client rigenerato, e2e/iscrizione.spec.ts.
+Problemi: l'immagine di riferimento non si poteva aprire dal mio ambiente; a pagamento completato il riquadro scompare con la rilettura, quindi il messaggio di esito sta fuori dal riquadro.
+Spunto: un'interfaccia che raccoglie dati di carta anche per finta va scritta come se fosse vera: il numero intero non lascia il pop-up.
+
 2. NOTE APERTE PER IL CAPITOLO 3
 
 - Confrontare quanti difetti del contratto ha trovato il frontend rispetto ai test del backend.

@@ -27,6 +27,12 @@
     </p-panel>
   }
 
+  @if (paid(); as last4) {
+    <p-message severity="success" class="banner" role="status" data-testid="paid-card">
+      Pagamento con la carta •••• {{ last4 }} registrato (carta simulata: nessun addebito reale).
+    </p-message>
+  }
+
   @if (e.active && e.paymentInfo?.iban) {
     <p-panel class="section">
       <ng-template #header><span class="panel-title"><i class="fa-solid fa-building-columns" aria-hidden="true"></i> Come pagare</span></ng-template>
@@ -39,6 +45,61 @@
         </p>
       }
     </p-panel>
+
+    <p-panel class="section">
+      <ng-template #header><span class="panel-title"><i class="fa-regular fa-credit-card" aria-hidden="true"></i> Paga con carta</span></ng-template>
+      @if (card(); as c) {
+        <div class="saved-card" data-testid="saved-card">
+          <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
+          <span><strong>•••• {{ c.last4 }}</strong> · {{ c.holder }} · scade {{ c.expiry }}</span>
+          <p-button label="Cambia carta" severity="secondary" [text]="true" size="small" data-testid="change-card" (onClick)="openCardDialog()" />
+          <p-button label="Rimuovi" severity="secondary" [text]="true" size="small" data-testid="remove-card" (onClick)="removeCard()" />
+        </div>
+      } @else {
+        <p class="hint" data-testid="no-card">Nessuna carta salvata: aggiungila per poter pagare.</p>
+        <p-button label="Aggiungi carta" icon="fa-solid fa-plus" severity="secondary" [outlined]="true" data-testid="add-card" (onClick)="openCardDialog()" />
+      }
+
+      <div class="pay-row">
+        <p-button label="Paga" icon="fa-solid fa-lock" data-testid="pay" [disabled]="!card() || (e.payment?.due ?? 0) === 0 || paying()" [loading]="paying()" (onClick)="pay()" />
+        @if (!card()) {
+          <span class="hint">Si abilita dopo aver salvato la carta.</span>
+        }
+      </div>
+      @if (payError(); as message) {
+        <p-message severity="error" class="banner" role="alert" data-testid="pay-error">{{ message }}</p-message>
+      }
+    </p-panel>
+
+    <p-dialog header="Aggiungi carta" [(visible)]="cardDialog" [modal]="true" [draggable]="false" [style]="{ width: 'min(440px, 94vw)' }" data-testid="card-dialog">
+      <form class="card-form" (ngSubmit)="saveCard()" autocomplete="off" novalidate>
+        <label for="card-number">Numero della carta</label>
+        <p-inputmask inputId="card-number" name="number" mask="9999 9999 9999 9999" placeholder="1234 5678 9012 3456" [(ngModel)]="cardNumber" [invalid]="!!cardErrors()['number']" />
+        @if (cardErrors()['number']; as m) { <small class="error" role="alert" data-testid="error-number">{{ m }}</small> }
+
+        <label for="card-holder">Intestatario</label>
+        <input pInputText id="card-holder" name="holder" placeholder="Come scritto sulla carta" [(ngModel)]="cardHolder" [invalid]="!!cardErrors()['holder']" />
+        @if (cardErrors()['holder']; as m) { <small class="error" role="alert" data-testid="error-holder">{{ m }}</small> }
+
+        <div class="two">
+          <div>
+            <label for="card-expiry">Scadenza</label>
+            <p-inputmask inputId="card-expiry" name="expiry" mask="99/99" placeholder="MM/AA" [(ngModel)]="cardExpiry" [invalid]="!!cardErrors()['expiry']" />
+            @if (cardErrors()['expiry']; as m) { <small class="error" role="alert" data-testid="error-expiry">{{ m }}</small> }
+          </div>
+          <div>
+            <label for="card-cvv">Codice (CVV)</label>
+            <p-inputmask inputId="card-cvv" name="cvv" mask="999" placeholder="123" [(ngModel)]="cardCvv" [invalid]="!!cardErrors()['cvv']" />
+            @if (cardErrors()['cvv']; as m) { <small class="error" role="alert" data-testid="error-cvv">{{ m }}</small> }
+          </div>
+        </div>
+        <p class="hint"><i class="fa-solid fa-lock" aria-hidden="true"></i> Carta simulata: il numero intero non viene salvato né inviato, resta solo la fine.</p>
+      </form>
+      <ng-template #footer>
+        <p-button label="Annulla" severity="secondary" [text]="true" data-testid="cancel-card" (onClick)="cardDialog.set(false)" />
+        <p-button label="Salva carta" icon="fa-solid fa-check" data-testid="save-card" (onClick)="saveCard()" />
+      </ng-template>
+    </p-dialog>
   } @else if (!loading()) {
     <p-message severity="info" class="banner" data-testid="payment-unavailable">
       Il pagamento non è ancora disponibile: si apre quando il capo unità ha autorizzato l'iscrizione.
